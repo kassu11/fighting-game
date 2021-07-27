@@ -14,7 +14,7 @@ function AddBattleParciles({x, y, dmg} = {}, type) {
     div.style.top = y + "px";
     removeElement(div, 2000);
     box.append(div);
-  } else if(type == "meleDmg" || type == "enemyMeleDmg") {
+  } else if(type == "meleDmg" || type == "enemyMeleDmg" || type == "poison") {
     if(dmg == null || dmg <= 0) return;
     const min = 100,
           max = 300;
@@ -28,7 +28,8 @@ function AddBattleParciles({x, y, dmg} = {}, type) {
     p.style.left = x + "px";
     p.style.top = y - 60 + "px";
     if(type == "meleDmg") p.style.fontSize = random(45, 70) + "px";
-    else p.style.fontSize = random(70, 100) + "px";
+    else if(type == "enemyMeleDmg" || type == "poison") p.style.fontSize = random(70, 100) + "px";
+    if(type == "poison") p.classList.add("poison");
     setTimeout(v => {
       p.style.marginLeft = num + "px";
       p.style.transform = `translateX(-50%) rotate(${random(-20, 20)}deg)`;

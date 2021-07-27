@@ -2,6 +2,7 @@ const items = {
   wooden_sword: {
     id: "wooden_sword",
     name: "Wooden sword",
+    tags: ["weapon", "sword"],
     minMeleDmg: 10,
     maxMeleDmg: 20,
     useTime: 2,
@@ -9,7 +10,10 @@ const items = {
     craftingRecipes: [
       {
         items: [
-
+          {
+            item: "weak_stick",
+            amount: 5
+          }
         ],
       }
     ]
@@ -17,6 +21,7 @@ const items = {
   stone_sword: {
     id: "stone_sword",
     name: "Stone sword",
+    tags: ["weapon", "sword"],
     minMeleDmg: 15,
     maxMeleDmg: 25,
     useTime: 1,
@@ -26,6 +31,7 @@ const items = {
   weak_stick: {
     id: "weak_stick",
     name: "Weak stick",
+    tags: ["weapon", "material"],
     minMeleDmg: 2,
     maxMeleDmg: 4,
     useTime: 1,
@@ -35,6 +41,7 @@ const items = {
   dmgBooster: {
     id: "dmgBooster",
     name: "Damage booster",
+    tags: ["consumable"],
     useTime: 1,
     image: "voimaLääke.png",
     // particle: "explosion",
@@ -52,6 +59,7 @@ const items = {
   hp_pot: {
     id: "hp_pot",
     name: "Elämä pullo",
+    tags: ["consumable", "material", "healing"],
     healV: 10,
     useTime: 1,
     amount: 10,
@@ -62,6 +70,7 @@ const items = {
   suicideStick: {
     id: "suicideStick",
     name: "Suicide stick",
+    tags: ["weapon"],
     useTime: 2,
     image: "taika.png",
     selfEffect: [
@@ -75,6 +84,7 @@ const items = {
   helmet: {
     id: "helmet",
     name: "Helmet",
+    tags: ["armor", "helmet"],
     image: "helmet.png",
     canEquipTo: "head",
     hp: 50
@@ -82,6 +92,7 @@ const items = {
   chestplate: {
     id: "chestplate",
     name: "Panssari",
+    tags: ["armor", "chestplate"],
     image: "basechest3.png",
     canEquipTo: "chest",
     hp: 50
@@ -89,6 +100,7 @@ const items = {
   legs: {
     id: "legs",
     name: "Jalat",
+    tags: ["armor", "leggings"],
     image: "baselegs3.png",
     canEquipTo: "legs",
     hp: 50
@@ -111,6 +123,7 @@ function Item(item, user) {
   this.hp = base.hp;
   this.healV = base.healV;
   this.mana = base.mana;
+  this.tags = base.tags?.sort().slice() ?? [];
 
   this.needTarget = base.needTarget ?? true;
 

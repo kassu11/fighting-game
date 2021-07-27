@@ -70,10 +70,8 @@ itemsMenu.querySelector("#levelsMenuButton").addEventListener("click", e => {
   document.body.classList = "levelMenu"
 });
 itemsMenu.querySelector("#armorButton").addEventListener("click", e => {
-  itemsMenu.classList = "inv"
-});
-itemsMenu.querySelector("#craftingMenuButton").addEventListener("click", e => {
-  itemsMenu.classList = "craft"
+  itemsMenu.classList = "inv";
+  itemsMenuInventoryResize();
 });
 
 itemsMenu.addEventListener("click", ({target, x, y}) => {
@@ -233,10 +231,17 @@ function updateItemsArmor() {
 
 window.addEventListener("resize", itemsMenuInventoryResize);
 function itemsMenuInventoryResize() {
-  const num1 = (innerWidth - 550);
-  itemsMenu.querySelector(".inventoryContainer").style.width = Math.max(num1 - 70 - num1 % 80, 0) + "px";
+  const invContainer = itemsMenu.querySelector(".inventoryContainer")
+  if(itemsMenu.classList.contains("inv")) {
+    const screenOffset = innerWidth - 550;
+    const item = 70;
+    const itemSize = item + 10 // item + padding
+    invContainer.style.width = Math.max(screenOffset - item - screenOffset % itemSize, 0) + "px";
+  } else if(itemsMenu.classList.contains("craft")) {
+    const screenOffset = Math.min(innerWidth, 1600) / 2;
+    const item = 70;
+    const itemSize = item + 10 // item + padding
+    invContainer.style.width = Math.max(screenOffset - item - screenOffset % itemSize, 0) + "px";
+  }
 } itemsMenuInventoryResize();
 
-
-
-const allCraftableItems = Object.values(items);

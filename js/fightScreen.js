@@ -27,6 +27,7 @@ function startLevel(lvlId, time) {
   if(!(time > 0)) player.effects = [];
   figtingScreen.querySelectorAll(".playerBox > div").forEach(container => container.style = null);
   Array.from(figtingScreen.querySelector("#victoryDrop").children).forEach(e => removeElement(e, 400));
+  figtingScreen.classList = "";
   updateHotbarHovers();
   updatePlayerBars();
   updatePlayerEffectBox();
@@ -161,9 +162,13 @@ function findParentElementWithClass(elem, text) {
 function addPlayerItemUseParticle(target, particle, {x, y, dmg}) {
   if(particle) AddBattleParciles({x, y}, particle);
   AddBattleParciles({x, y, dmg}, "meleDmg");
-  target.style.animationName = 'none';
-  target.offsetHeight; /* trigger reflow */
-  target.style.animationName = "shake" + random(0, 9);
+  shakeEnemyCard(target);
+}
+
+function shakeEnemyCard(card) {
+  card.style.animationName = 'none';
+  card.offsetHeight; /* trigger reflow */
+  card.style.animationName = "shake" + random(0, 9);
 }
 
 function updateNextRound() {
@@ -363,10 +368,8 @@ async function startEnemyTurn() {
       if(dmg) enemyTurnAnimations("attack", card, dmg, item);
       if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
       if(item.mana) enemy.mp -= item.mana;
-
       updateEnemyCard(card);
       setTimeout(e => card.classList.remove("enemyAttacks"), 350);
-
       await sleep(300);
       if(player.hp <= 0) {
         figtingScreen.classList.remove("enemyTurn");
@@ -375,8 +378,19 @@ async function startEnemyTurn() {
         return;
       }
     }
+    
     giveEffectsToPlAndEn();
     updateNextRound();
+    const enemySize = currentLevel.enemies.size;
+    for(const [card, enemy] of currentLevel.enemies) {
+      if(enemy.hp <= 0) {
+        removeDeadEnemy(card, enemy)}
+        await sleep(50);
+    }
+
+    if(currentLevel.enemies.size == 0) return playerWonTheBattle();
+    else if(enemySize != currentLevel.enemies.size) await sleep(1900) // Animation cooldown
+
     currentLevel.enemyRounds--;
   };
   document.querySelector("#figtingScreen").classList.remove("enemyTurn");
@@ -392,6 +406,41 @@ function reduceBestItemIndexForEnemy(enemy, allMoves) {
 
 function enemyTurnAnimations(type, card, dmg, item) {
   if(type == "attack") {
+    const playerBox = figtingScreen.querySelector(".playerBox");
+    const {left, width, bottom} = card.getBoundingClientRect();
+    const {height: hotbarHeight, width: hotbarWidth} = playerBox.querySelector(".hotbarBox").getBoundingClientRect();
+    const cardLeft = window.innerWidth / 2 - left - width / 2,
+          cardLeftoffset = random(0, hotbarWidth - 250) - (hotbarWidth - 250) / 2;
+    const cardTop = window.innerHeight - bottom - hotbarHeight / 2,
+          cardTopOffset = random(-hotbarHeight / 3, hotbarHeight / 3);
+
+    playerBox.querySelector(".centerContainer").style.animationName = 'none';
+    playerBox.querySelector(".centerContainer").offsetHeight; /* trigger reflow */
+    playerBox.querySelector(".centerContainer").style.animationName = "hotbarShake" + random(0, 3);
+
+    playerBox.querySelector(".leftContainer").style.animationName = 'none';
+    playerBox.querySelector(".leftContainer").offsetHeight; /* trigger reflow */
+    playerBox.querySelector(".leftContainer").style.animationName = "playerBarsShake" + random(0, 3);
+
+    playerBox.querySelector(".rightContainer").style.animationName = 'none';
+    playerBox.querySelector(".rightContainer").offsetHeight; /* trigger reflow */
+    playerBox.querySelector(".rightContainer").style.animationName = "playerBarsShake" + random(0, 3);
+
+    card.style.left = cardLeft + cardLeftoffset + "px";
+    card.style.top = cardTop + cardTopOffset + "px";
+
+    setTimeout(e => {
+      const particleX = window.innerWidth / 2 + cardLeftoffset;
+      const particleY = window.innerHeight - hotbarHeight / 2 + cardTopOffset;
+      card.style.left = null;
+      card.style.top = null;
+      if(item.particle) AddBattleParciles({x: particleX, y: particleY}, item.particle);
+      if(dmg) {
+        updatePlayerBars();
+        AddBattleParciles({x: particleX, y: particleY - 100, dmg}, "enemyMeleDmg");
+      }
+    }, 150);
+  } else if(type == "poison") {
     const playerBox = figtingScreen.querySelector(".playerBox");
     const {left, width, bottom} = card.getBoundingClientRect();
     const {height: hotbarHeight, width: hotbarWidth} = playerBox.querySelector(".hotbarBox").getBoundingClientRect();
@@ -502,6 +551,7 @@ document.querySelector("#figtingScreen .playerBox .hotbarBox").addEventListener(
 document.querySelectorAll("#figthEndScreen .fightButton").forEach(button => button.addEventListener("click", () => {
   document.querySelector("#figthEndScreen").classList = "hidden";
   document.querySelector("#roundNumber").textContent = 1;
+  player.effects = [];
   const levelEnemies = levels[currentLevel.id]?.enemies ?? [];
 
   if(currentLevel.enemies.size == 0) {

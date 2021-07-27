@@ -22,7 +22,7 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
   if(keys.indexOf("default") == -1) keys.unshift("default");
 
   target[0].addEventListener("mouseover", mouseOver);
-  target[0].addEventListener("mousemove", mouseMove);
+  target[0].addEventListener("mousemove", moveHoverBlock);
   target[0].addEventListener("mouseout", mouseOut);
 
   moveHoverBlock();
@@ -56,10 +56,6 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
       div.append(customTextSyntax(texts[keys.indexOf(key)]));
     } if(!div.innerHTML) div.append(customTextSyntax(texts[keys.indexOf("default")]));
     div.style.display = div.querySelector("pre").textContent ? null : "none";
-    moveHoverBlock();
-  }
-
-  function mouseMove({x, y}) {
     moveHoverBlock();
   }
 
@@ -98,7 +94,7 @@ function customTextSyntax(syn = "") {
       if(currentLine.startsWith("<c>")) {
         const [,color, text=""] = currentLine.split("<c>");
         [lineText] = text.split("<");
-        if(line.indexOf("<c>") !== index) {
+        if(selectedSpan.style.color) {
           selectedSpan.append(nspan);
           selectedSpan = nspan;
         } selectedSpan.style.color = runVariableTest(color);
@@ -107,7 +103,7 @@ function customTextSyntax(syn = "") {
       } else if(currentLine.startsWith("<f>")) {
         const [,fontSize, text=""] = currentLine.split("<f>");
         [lineText] = text.split("<");
-        if(line.indexOf("<f>") !== index) {
+        if(selectedSpan.style.fontSize) {
           selectedSpan.append(nspan);
           selectedSpan = nspan;
         } selectedSpan.style.fontSize = runVariableTest(fontSize);
@@ -116,7 +112,7 @@ function customTextSyntax(syn = "") {
       } else if(currentLine.startsWith("<b>")) {
         const [,fontWeight, text=""] = currentLine.split("<b>");
         [lineText] = text.split("<");
-        if(line.indexOf("<b>") !== index) {
+        if(selectedSpan.style.fontWeight) {
           selectedSpan.append(nspan);
           selectedSpan = nspan;
         } selectedSpan.style.fontWeight = runVariableTest(fontWeight);
@@ -125,7 +121,7 @@ function customTextSyntax(syn = "") {
       } else if(currentLine.startsWith("<cl>")) {
         const [,classList, text=""] = currentLine.split("<cl>");
         [lineText] = text.split("<");
-        if(line.indexOf("<cl>") !== index) {
+        if(selectedSpan.classList.value) {
           selectedSpan.append(nspan);
           selectedSpan = nspan;
         } selectedSpan.classList = runVariableTest(classList);
@@ -134,7 +130,7 @@ function customTextSyntax(syn = "") {
       } else if(currentLine.startsWith("<ff>")) {
         const [,fontFamily, text=""] = currentLine.split("<ff>");
         [lineText] = text.split("<");
-        if(line.indexOf("<ff>") !== index) {
+        if(selectedSpan.style.fontFamily) {
           selectedSpan.append(nspan);
           selectedSpan = nspan;
         } selectedSpan.style.fontFamily = runVariableTest(fontFamily);
@@ -168,10 +164,7 @@ function customTextSyntax(syn = "") {
         const className = source.indexOf("[") != -1 ? source.split("[")[1].split("]")[0] : "";
         img.src = runVariableTest(source.replace("[" + className + "]", ""));
         [lineText] = text.split("<");
-        if(line.indexOf("<i>") !== index) {
-          selectedSpan.append(nspan);
-          selectedSpan = nspan;
-        } selectedSpan.append(img);
+        selectedSpan.append(img);
         img.classList = className;
         index = line.indexOf("<i>", index + 1);
         if(index == -1) return console.error(`"<i>" has no closing!`);

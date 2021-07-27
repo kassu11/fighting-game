@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="sass/font.css">
-    <link rel="stylesheet" href="sass/hover.css">
-    <link rel="stylesheet" href="sass/particles.css">
-    <link rel="stylesheet" href="sass/figtingScreen.css">
-    <link rel="stylesheet" href="sass/levelMenu.css">
-    <link rel="stylesheet" href="sass/itemsMenu.css">
+    <link rel="stylesheet" href="css/font.css">
+    <link rel="stylesheet" href="css/hover.css">
+    <link rel="stylesheet" href="css/particles.css">
+    <link rel="stylesheet" href="css/fightingScreen.css">
+    <link rel="stylesheet" href="css/levelMenu.css">
+    <link rel="stylesheet" href="css/itemsMenu.css">
     <title>Fighting Game</title>
   </head>
   <body class="levelMenu">
@@ -139,14 +139,16 @@
           </div>
         </div>
         <div class="crafting">
-          <div class="inventoryBox">
-            <div class="inv hotbar">
-              <p class="slotNum">1</p><img src="./images/taika.png">
+          <div class="toolBar">
+            <input type="text" class="searchBar">
+            <div class="sort">
+              <div class="value"></div>
+              <div class="subMenu"></div>
             </div>
-            <div class="inv hotbar">
-              <p class="slotNum">2</p><img src="./images/heikkous.png">
-            </div>
+            <div class="types"></div>
+            <input type="text" class="whatCanCraft">
           </div>
+          <div class="craftableItems"></div>
         </div>
       </div>
     </div>
@@ -163,3 +165,4 @@
 <script src="js/player.js"></script>
 <script src="js/fightScreen.js"></script>
 <script src="js/itemsMenu.js"></script>
+<script src="js/crafting.js"></script>

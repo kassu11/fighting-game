@@ -35,10 +35,18 @@ function giveEffectsToPlAndEn() {
     if(effect.poisonHP) player.hp -= effect.poisonHP;
   });
 
-  currentLevel.enemies.forEach(enemy => {
-    enemy.effects.forEach((effect, card) => {
+  currentLevel.enemies.forEach((enemy, card) => {
+    enemy.effects.forEach(effect => {
       if(effect.regenHP) enemy.hp = Math.min(enemy.maxHp, enemy.hp + effect.regenHP);
-      if(effect.poisonHP) enemy.hp -= effect.poisonHP;
+      if(effect.poisonHP) {
+        enemy.hp -= effect.poisonHP;
+        const padding = 10;
+        const {width, left, top, height} = card.getBoundingClientRect();
+        const x = random(left + padding, left + width - padding);
+        const y = random(top + padding, top + height - padding);
+        AddBattleParciles({x, y, dmg: effect.poisonHP}, "poison");
+        shakeEnemyCard(card)
+      }
       updateEnemyCard(card);
     });
   });

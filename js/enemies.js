@@ -1,14 +1,14 @@
 const enemies = {
   week_slime: {
     id: "week_slime",
-    maxHp: 10,
+    maxHp: 31,
     maxMp: 30,
     items: [
       {...items["hp_pot"], "amount": 4},
       {...items["weak_stick"]},
     ],
     effects: [
-      {id: "Poison", power: 5, duration: 6},
+      // {id: "Poison", power: 5, duration: 6},
     ],
     drops: [
       {
