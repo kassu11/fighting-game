@@ -1,8 +1,3 @@
-itemsMenu.querySelector("#craftingMenuButton").addEventListener("click", e => {
-  itemsMenu.classList = "craft";
-  itemsMenuInventoryResize();
-});
-
 const allCraftableItems = Object.values(items).map(data => new Item(data, player));
 const craftingValues = {
   gridItems: allCraftableItems,
@@ -41,6 +36,12 @@ function generateCraftingItemsList(array) {
       if(tag1 == tag2) return v1.name > v2.name ? 1 : -1;
       else return tag1 > tag2 ? 1 : -1;
     });
+  } else if(craftingValues.sortOrder.startsWith("Use_time")) {
+    craftingValues.gridItems.sort((v1, v2) => {
+      const [time1, time2] = [v1.useTime ?? 0, v2.useTime ?? 0];
+      if(time1 == time2) return v1.name > v2.name ? 1 : -1;
+      else return time1 < time2 ? 1 : -1;
+    })
   } if(array && craftingValues.sortOrder.indexOf("reverse") !== -1) {
     craftingValues.gridItems.reverse();
   }
@@ -54,27 +55,8 @@ function generateCraftingItemsList(array) {
     item.querySelector(".tags").textContent = `#${v.tags.join(" #")}`
     craftInv.append(item);
     
-    addHover(item, v.hoverText());
+    addHover([item, "crafting"], v.hoverText());
 
-    // const item = document.createElement("div");
-    // const imageContainer = document.createElement("div");
-    // const img = document.createElement("img");
-    // const name = document.createElement("p");
-    // const tags = document.createElement("p");
-
-    // item.classList.add("craftingItem");
-    // imageContainer.classList.add("imageContainer");
-    // img.classList.add("icon");
-    // name.classList.add("name");
-    // tags.classList.add("tags");
-
-    // img.src = "./images/" + v.image;
-    // name.textContent = v.name;
-    // tags.textContent = `#${v.tags.join(" #")}`
-
-    // imageContainer.append(img);
-    // item.append(imageContainer, name, tags);
-    // craftInv.append(item);
   });
 }
 
@@ -85,6 +67,8 @@ searchBar.addEventListener("input", () => {
   const searchTags = [];
 
   const splitWithTags = search.split(/(#)| /g);
+
+  searchBar.classList.remove("failed");
 
   for(let i = 0; i < splitWithTags.length; i++) {
     console.log(splitWithTags[i])
@@ -99,7 +83,7 @@ searchBar.addEventListener("input", () => {
   const mediumSearch = []; // indexOf all words from name (not duplicate) and all tags indexOf
   const easySearch = [];   // indexOf any word and any tag
 
-  if(search.length == 0 || search == "#") generateCraftingItemsList(allCraftableItems);
+  if(search.length == 0 || search == "#") return generateCraftingItemsList(allCraftableItems);
   else allCraftableItems.forEach(item => {
     const itemName = item.name.toLowerCase();
 
@@ -121,80 +105,102 @@ searchBar.addEventListener("input", () => {
     }
   });
 
-  if(strictSearch.length) return generateCraftingItemsList(strictSearch);
-  if(mediumSearch.length) return generateCraftingItemsList(mediumSearch);
-  if(easySearch.length) return generateCraftingItemsList(easySearch);
-  generateCraftingItemsList(allCraftableItems);
-  console.log("Search failed")
+  if(strictSearch.length) generateCraftingItemsList(strictSearch);
+  else if(mediumSearch.length) generateCraftingItemsList(mediumSearch);
+  else if(easySearch.length) generateCraftingItemsList(easySearch);
+  else {
+    console.log("Search failed");
+    searchBar.classList.add("failed");
+  }
+
+  const hoverPopUpItemName = hoverBox.querySelector("div[crafting] .itemTitle")?.textContent;
+  const hoverItemName = craftInv.querySelector("craftingItem:hover>.name")?.textContent;
+  if(hoverPopUpItemName && !hoverItemName) hoverBox.textContent = "";
+  if(hoverPopUpItemName != hoverItemName) hoverBox.textContent = "";
 });
 
 const sortButton = itemsMenu.querySelector(".toolBar .sort");
 sortButton.addEventListener("click", e => {
-
   const subMenuContainer = sortButton.querySelector(".subMenu");
-  if(e.target == sortButton) {
-    if(subMenuContainer.querySelector(".sortValue")) return subMenuContainer.textContent = "";
-    ["Name", "Damage", "Defence", "Tags"].forEach(sortTitle => {
-      const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+img`);
-      subMenuElement.querySelector("p").textContent = sortTitle;
 
+  window.onclick = function hideSortSubMenu() {
+    if(!itemsMenu.querySelector(".toolBar .sort:focus-within")) {
+      subMenuContainer.textContent = "";
+      window.onclick = null;
+    }
+  }
+
+  if(e.target == sortButton) {
+    const lastSortElem = sortButton.querySelector(".value .sortValue");
+    const [,lastName, lastSortState] = lastSortElem?.classList ?? [];
+    if(subMenuContainer.querySelector(".sortValue")) return subMenuContainer.textContent = "";
+    
+    ["Name", "Damage", "Defence", "Use_time","Tags"].forEach(sortTitle => {
+      const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+img`);
+      subMenuElement.querySelector("p").textContent = sortTitle.replaceAll("_", " ");
+      if(sortTitle == lastName) subMenuElement.classList.add(lastSortState);
       subMenuContainer.append(subMenuElement);
-    })
+    });
   } else {
-    const sortSelection = e.target?.classList[1]
-    if(craftingValues.sortOrder.indexOf(sortSelection) !== -1) craftingValues.sortOrder = sortSelection + " reverse";
-    else craftingValues.sortOrder = sortSelection;
+    const sortSelection = e.target?.classList[1];
+    if(!sortSelection) return;
+    if(craftingValues.sortOrder.indexOf(sortSelection) !== -1) {
+      craftingValues.sortOrder = sortSelection + " reverse";
+      e.target.classList.toggle("selected");
+      e.target.classList.toggle("reverse");
+    } else {
+      craftingValues.sortOrder = sortSelection;
+      e.target.classList.add("selected");
+    }
 
     generateCraftingItemsList();
-    if(sortButton.querySelectorAll(".sortValue.reverse") == e.target) e.target.classList.toggle("reverse");
-    else sortButton.querySelectorAll(".sortValue").forEach(elem => elem.classList.remove("reverse"));
+    sortButton.querySelectorAll(`.sortValue:not(.${sortSelection})`).forEach(elem => elem.classList.remove("reverse", "selected"));
 
-    const selectedCopy = e.target?.cloneNode(true)
+    const selectedCopy = e.target?.cloneNode(true);
     sortButton.querySelector(".value").textContent = "";
     sortButton.querySelector(".value").append(selectedCopy);
-
   }
 });
 
+const typesButton = itemsMenu.querySelector(".toolBar .types");
+typesButton.addEventListener("click", e => {
+  const subMenuContainer = typesButton.querySelector(".subMenu");
 
-// const iterations = 20;
-// const arr = [...new Array(iterations)].map(_ => []);
+  window.onclick = function hideTypesSubMenu() {
+    if(!itemsMenu.querySelector(".toolBar .types:focus-within")) {
+      subMenuContainer.textContent = "";
+      window.onclick = null;
+    }
+  }
 
-// arr[0].push({x: 5, y: 5});
+  if(e.target == typesButton) {
+    const lastSortElem = typesButton.querySelector(".value .typeValue");
+    const [,lastName, lastSortState] = lastSortElem?.classList ?? [];
+    if(subMenuContainer.querySelector(".typeValue")) return subMenuContainer.textContent = "";
+    
+    ["Damage", "Defence", "Healing", "Mana", "Use_time"].forEach(sortTitle => {
+      const [subMenuElement] = emmet(`.typeValue.${sortTitle}>div.directionContainer+p+img`);
+      subMenuElement.querySelector("p").textContent = sortTitle.replaceAll("_", " ");
+      if(sortTitle == lastName) subMenuElement.classList.add(lastSortState);
+      subMenuContainer.append(subMenuElement);
+    });
+  } else {
+    const sortSelection = e.target?.classList[1];
+    if(!sortSelection) return;
+    if(craftingValues.sortOrder.indexOf(sortSelection) !== -1) {
+      craftingValues.sortOrder = sortSelection + " reverse";
+      e.target.classList.toggle("selected");
+      e.target.classList.toggle("reverse");
+    } else {
+      craftingValues.sortOrder = sortSelection;
+      e.target.classList.add("selected");
+    }
 
-// const maxValueCords = {x: null, y: null, v: 0};
-// const maxNum = map[vihu.y][vihu.x];
+    generateCraftingItemsList();
+    typesButton.querySelectorAll(`.typeValue:not(.${sortSelection})`).forEach(elem => elem.classList.remove("reverse", "selected"));
 
-// map[vihu.y][vihu.x] = 0;
-
-// for (let i = 0; i < arr.length; i++) {
-//   for (let i2 = maxNum - 1; i2 < maxNum + iterations; i2++) {
-//     for (const value of arr[i]) {
-//       if(map[value.y][value.x] !== 0) continue;
-
-//       const left = map[value.y]?.[value.x - 1] ?? null;
-//       const right = map[value.y]?.[value.x + 1] ?? null;
-//       const top = map[value.y - 1]?.[value.x] ?? null;
-//       const bottom = map[value.y + 1]?.[value.x] ?? null;
-  
-//       // if(i != 0) map[value.y][value.x] = min + 1;
-//       if([left, right, top, bottom].find(e => e == i2)) {
-//         map[value.y][value.x] = i2 + 1;
-
-//         if(left == 0) arr[i + 1]?.push({y: value.y, x: value.x - 1});
-//         if(right == 0) arr[i + 1]?.push({y: value.y, x: value.x + 1});
-//         if(top == 0) arr[i + 1]?.push({y: value.y - 1, x: value.x});
-//         if(bottom == 0) arr[i + 1]?.push({y: value.y + 1, x: value.x});
-//       }
-  
-  
-//       if(i2 >= maxValueCords.v - 1) {
-//         Object.assign(maxValueCords, {y: value.y, x: value.x, v: i2 + 1});
-//         // if(left == 0) Object.assign(maxValueCords, {y: value.y, x: value.x - 1, v: min + 1});
-//         // else if(right == 0) Object.assign(maxValueCords, {y: value.y, x: value.x + 1, v: min + 1});
-//         // else if(top == 0) Object.assign(maxValueCords, {y: value.y - 1, x: value.x, v: min + 1});
-//         // else if(bottom == 0) Object.assign(maxValueCords, {y: value.y + 1, x: value.x, v: min + 1});
-//       }
-//     } 
-//   }
-// }
+    const selectedCopy = e.target?.cloneNode(true);
+    typesButton.querySelector(".value").textContent = "";
+    typesButton.querySelector(".value").append(selectedCopy);
+  }
+});

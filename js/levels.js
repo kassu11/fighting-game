@@ -30,13 +30,6 @@ const levels = {
   },
 }
 
-document.querySelector("#inventoryButton").addEventListener("click", () => {
-  document.body.classList = "itemsMenu";
-  updateItemsMenuHotbar();
-  updateItemsArmor();
-  generateItemsOnGrid(player.inventory.slice());
-});
-
 const levelMenu = document.querySelector("#levelMenu");
 
 for(const [key, value] of Object.entries(levels)) {

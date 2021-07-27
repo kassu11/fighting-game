@@ -7,22 +7,32 @@
 
   #levelMenu {
     display: unset;
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 50px);
+    bottom: 0px;
+    left: 0;
   }
 
-  .levelButton {
-    background: red;
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border: 1px solid black;
-
-    .info {
-      background: green;
-      width: 40px;
-      height: 40px;
-      position: absolute;
-      right: 0px;
-      bottom: 0px;
+  .levelButtons {
+    margin-top: 20px;
+    margin-left: 20px;
+    .levelButton {
+      background: red;
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border: 1px solid black;
+      margin-bottom: 10px;
+  
+      .info {
+        background: green;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+      }
     }
   }
 

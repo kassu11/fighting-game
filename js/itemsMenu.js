@@ -66,14 +66,6 @@ function updateItemsMenuHotbar() {
   });
 }
 
-itemsMenu.querySelector("#levelsMenuButton").addEventListener("click", e => {
-  document.body.classList = "levelMenu"
-});
-itemsMenu.querySelector("#armorButton").addEventListener("click", e => {
-  itemsMenu.classList = "inv";
-  itemsMenuInventoryResize();
-});
-
 itemsMenu.addEventListener("click", ({target, x, y}) => {
   const container = itemsMenu.querySelector("#itemMenuPopUp .container");
   const isHotbarItem = target.classList.contains("slot");

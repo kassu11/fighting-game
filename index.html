@@ -9,10 +9,24 @@
     <link rel="stylesheet" href="css/fightingScreen.css">
     <link rel="stylesheet" href="css/levelMenu.css">
     <link rel="stylesheet" href="css/itemsMenu.css">
+    <link rel="stylesheet" href="css/navBar.css">
     <title>Fighting Game</title>
   </head>
   <body class="levelMenu">
     <div id="hoverBox"></div>
+
+    <div id="navBar">
+      <div id="levelsMenuButton" class="button">
+        <img src="/images/treasure-map.svg">
+      </div>
+      <div id="inventoryButton" class="button">
+        <img src="/images/locked-chest.svg">
+      </div>
+      <div id="craftingMenuButton" class="button">
+        <img src="/images/gear-hammer.svg">
+      </div>
+    </div>
+
     <div id="figtingScreen">
       <div class="effectContainer"></div>
       <div id="figthEndScreen" class="hidden">
@@ -99,10 +113,7 @@
     </div>
 
     <div id="levelMenu">
-      <div class="levelButtons">
-        <button id="inventoryButton">Inventory</button>
-      </div>
-
+      <div class="levelButtons"></div>
       <div class="enemyBox"></div>
       <div class="levelInfoScreen" style="display: none;">
         <div class="infoBox">
@@ -121,11 +132,6 @@
       <div id="itemMenuPopUp">
         <div class="container"></div>
       </div>
-      <div class="navBar">
-        <button id="levelsMenuButton">Levels menu</button>
-        <button id="armorButton">Armor & Hotbar menu</button>
-        <button id="craftingMenuButton">Crafting menu</button>
-      </div>
       <div class="menuWindow">
         <div class="inventoryContainer">
           <div class="inventoryBox"></div>
@@ -140,12 +146,17 @@
         </div>
         <div class="crafting">
           <div class="toolBar">
-            <input type="text" class="searchBar">
-            <div class="sort">
+            <input type="text" class="searchBar" placeholder="Search">
+            <div class="sort" tabindex="-1">
+              <div class="value">
+                <p>Sort items</p>
+              </div>
+              <div class="subMenu"></div>
+            </div>
+            <div class="types" tabindex="-1">
               <div class="value"></div>
               <div class="subMenu"></div>
             </div>
-            <div class="types"></div>
             <input type="text" class="whatCanCraft">
           </div>
           <div class="craftableItems"></div>
@@ -166,3 +177,4 @@
 <script src="js/fightScreen.js"></script>
 <script src="js/itemsMenu.js"></script>
 <script src="js/crafting.js"></script>
+<script src="js/navBar.js"></script>

@@ -14,15 +14,6 @@
     left: 0px;
     color: white;
 
-    .navBar {
-      position: absolute;
-      width: 100%;
-      height: 50px;
-      top: 0px;
-      left: 0px;
-      background: black;
-    }
-
     #itemMenuPopUp {
       position: absolute;
       left: 0px;
@@ -384,11 +375,44 @@
           background: chocolate;
           display: flex;
 
+          .searchBar {
+            position: relative;
+            width: 150px;
+            height: 25px;
+            background: rgb(241, 248, 142);
+
+            &.failed {
+              background: rgb(255, 107, 107);
+            }
+          }
+
           .sort {
             position: relative;
             width: 150px;
             height: 25px;
             background: rebeccapurple;
+
+            .sortValue {
+              position: relative;
+              width: 100%;
+              display: flex;
+
+              > * {
+                pointer-events: none;
+              }
+
+              p {
+                margin: 0px;
+              }
+              
+            }
+
+            .reverse {
+              --color: red;
+            }
+            .selected {
+              --color: rgb(0, 174, 255);
+            }
             
             .value {
               position: absolute;
@@ -409,20 +433,15 @@
               flex-direction: column;
               top: 100%;
               width: 100%;
-              background: rgb(73, 255, 73);
+              background: #4a4a4a;
+            }
 
-              .sortValue {
-                position: relative;
-                width: 100%;
-
-                > * {
-                  pointer-events: none;
-                }
-
-                p {
-                  margin: 0px;
-                }
-              }
+            .directionContainer {
+              position: relative;
+              width: 20px;
+              height: 20px;
+              background: var(--color);
+              
             }
           }
 
@@ -431,6 +450,18 @@
             width: 150px;
             height: 25px;
             background: seagreen;
+
+            .subMenu {
+              position: absolute;
+              z-index: 2;
+              background: gray;
+              top: 100%;
+              width: 100%;
+            }
+
+            p {
+              margin: 0px;
+            }
           }
           
           .whatCanCraft {
