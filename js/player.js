@@ -7,7 +7,56 @@ let player = new Player({
     {...items["weak_stick"], slot: "hotbarSlot1"},
     {...items["stone_sword"], slot: "hotbarSlot2"},
     {...items["suicideStick"], slot: "hotbarSlot3"},
-    {...items["dmgBooster"], slot: "hotbarSlot4"},
+    {...items["suicideStick"]},
+    {...items["suicideStick"]},
+    {...items["suicideStick"]},
+    {...items["suicideStick"]},
+    {...items["suicideStick"]},
+    {...items["suicideStick"]},
+    {...items["suicideStick"]},
+    {...items["suicideStick"]},
+    {...items["dmgBooster"], slot: "hotbarSlot4", amount: 100},
+    {...items["iron"], amount: 50},
+    {...items["helmet"]},
+    {...items["helmet"]},
+    {...items["helmet"]},
+    {...items["helmet"]},
+    {...items["helmet"]},
+    {...items["helmet"]},
+    {...items["helmet"]},
+    {...items["helmet"]},
+    {...items["chestplate"]},
+    {...items["chestplate"]},
+    {...items["chestplate"]},
+    {...items["chestplate"]},
+    {...items["chestplate"]},
+    {...items["chestplate"]},
+    {...items["chestplate"]},
+    {...items["chestplate"]},
+    {...items["chestplate"]},
+    {...items["legs"]},
+    {...items["legs"]},
+    {...items["legs"]},
+    {...items["legs"]},
+    {...items["legs"]},
+    {...items["legs"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["weak_stick"]},
+    {...items["hp_pot"], amount: 69},
     // {id: "dmgBooster", slot: "hotbarSlot5"},
   ],
   currentSlot: "slot1",
@@ -82,7 +131,13 @@ function Player(arr) {
     if(slot.startsWith("hotbarSlot")) this.hotbar["slot" + slot.substr(10)] = nItem;
     return nItem;
   }) ?? [];
-}
 
+  this.giveItem = itemData => {
+    const item = new Item(itemData);
+    const index = itemStackIndex(this.inventory, item);
+    if(index == -1) this.inventory.push(item);
+    else this.inventory[index].amount += item.amount;
+  }
+}
 
 Player.prototype.effect = effect;

@@ -213,7 +213,7 @@ function playerWonTheBattle() {
     if(item.amount) p.textContent = item.amount;
     div.append(img, p)
     figtingScreen.querySelector("#victoryDrop").append(div);
-    givePlayerItem(item);
+    player.giveItem(item);
     addHover(div, item.hoverText() ?? "");
   });
 }
@@ -226,16 +226,9 @@ function convertArrayOfNumbers(arr) {
 }
 
 function itemStackIndex(arr, item) {
-  if(!("amount" in item)) return -1;
+  if(!(item.amount)) return -1;
   if(Array.isArray(arr)) return arr.findIndex(v => v.id == item.id);
   return -1;
-}
-
-function givePlayerItem(itemData) {
-  const item = new Item(itemData);
-  const index = itemStackIndex(player.inventory, item);
-  if(index == -1) player.inventory.push(item);
-  else player.inventory[index].amount += item.amount;
 }
 
 function updateEnemyCard(target) {

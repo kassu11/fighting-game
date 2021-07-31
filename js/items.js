@@ -26,7 +26,21 @@ const items = {
     maxMeleDmg: 25,
     useTime: 1,
     image: "heikkous.png",
-    particle: "explosion2"
+    particle: "explosion2",
+    craftingRecipes: [
+      {
+        items: [
+          {
+            item: "weak_stick",
+            amount: 5
+          },
+          {
+            item: "wooden_sword",
+            amount: 1
+          }
+        ],
+      }
+    ]
   },
   weak_stick: {
     id: "weak_stick",
@@ -35,8 +49,30 @@ const items = {
     minMeleDmg: 2,
     maxMeleDmg: 4,
     useTime: 1,
-    image: "taika.png",
-    particle: "explosion"
+    image: "weak_stick.png",
+    particle: "explosion",
+    craftingRecipes: [
+      {
+        items: [
+          {
+            item: "hp_pot",
+            amount: 20
+          },
+        ],
+      },
+      {
+        items: [
+          {
+            item: "helmet",
+            amount: 1
+          },
+          {
+            item: "chestplate",
+            amount: 1
+          },
+        ],
+      }
+    ]
   },
   dmgBooster: {
     id: "dmgBooster",
@@ -54,7 +90,21 @@ const items = {
       {id: "Poison", power: 1, duration: 20, effectStatus: "bad"}
     ],
     amount: 2,
-    needTarget: true
+    needTarget: true,
+    craftingRecipes: [
+      {
+        items: [
+          {
+            item: "hp_pot",
+            amount: 2
+          },
+          {
+            item: "suicideStick",
+            amount: 6
+          }
+        ],
+      }
+    ]
   },
   hp_pot: {
     id: "hp_pot",
@@ -65,7 +115,22 @@ const items = {
     amount: 10,
     needTarget: false,
     image: "hpPottu.png",
-    mana: 15
+    mana: 15,
+    craftingRecipes: [
+      {
+        items: [
+          {
+            item: "iron",
+            amount: 2
+          },
+          {
+            item: "suicideStick",
+            amount: 1
+          }
+        ],
+        craftingAmount: 5
+      }
+    ]
   },
   suicideStick: {
     id: "suicideStick",
@@ -105,6 +170,13 @@ const items = {
     canEquipTo: "legs",
     hp: 50
   },
+  iron: {
+    id: "iron",
+    name: "Block of iron",
+    tags: ["material"],
+    image: "iron.png",
+    amount: 5
+  },
 }
 
 function Item(item, user) {
@@ -124,6 +196,9 @@ function Item(item, user) {
   this.healV = base.healV;
   this.mana = base.mana;
   this.tags = base.tags?.sort().slice() ?? [];
+  this.index = item.index;
+
+  this.craftingRecipes = base.craftingRecipes;
 
   this.needTarget = base.needTarget ?? true;
 
