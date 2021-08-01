@@ -364,7 +364,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        background: green;
+        background: black;
         
         @at-root #itemsMenu:not(.craft) .crafting {display: none;}
 
@@ -372,34 +372,57 @@
           position: relative;
           width: 100%;
           height: 50px;
-          background: chocolate;
+          background: #1f1f1f;
           display: flex;
 
-          .history {
-            position: relative;
-            width: 25px;
-            height: 25px;
-
-            &.back {background: red};
-            &.forward {background: green};
-          }
-
           .searchBar {
+            cursor: pointer;
             position: relative;
-            width: 150px;
-            height: 25px;
-            background: rgb(241, 248, 142);
+            width: 230px;
+            height: 35px;
+            background: #3c3c3c;
+            border: 2px solid dimgrey;
+            border-radius: 35px;
+            padding-left: 10px;
+            margin-top: 7px;
+            margin-left: 7px;
+            color: rgb(202, 202, 202);
+            font-family: 'font3';
+            font-weight: 500;
+            outline: 0;
+            font-size: 16px;
+            transition: background .1s, border .1s, color .2s, filter .2s;
+            filter: brightness(.8);
 
-            &.failed {
-              background: rgb(255, 107, 107);
+            &.failed, &.failed:focus {
+              background: #6b2828;
+              border-color: #b70000;
+              color: #b9b9b9;
+            }
+
+            &:hover {
+              filter: brightness(.9);
+            }
+            &:focus {
+              filter: brightness(1);
+              color: rgb(255, 255, 255);
             }
           }
 
           .sort {
             position: relative;
             width: 150px;
-            height: 25px;
-            background: rebeccapurple;
+            height: 35px;
+            background: #424242;
+            font-family: "font3";
+            margin: 7px;
+            cursor: pointer;
+            box-shadow: inset 0 2px 0 0px #535353, inset -2px 0px 0 0px #535353, inset 2px 0px 0 0px #535353;
+
+            &:hover {
+              background: #494949;
+              box-shadow: inset 0 2px 0 0px #5e5e5e, inset -2px 0px 0 0px #5e5e5e, inset 2px 0px 0 0px #5e5e5e;
+            }
 
             .sortValue {
               position: relative;
@@ -407,9 +430,9 @@
               display: flex;
               cursor: pointer;
 
-              &:hover {
-                background: rgb(31, 31, 31);
-              }
+              &:hover {background: #414141;}
+              &:active {background: #3d3d3d;}
+
 
               > * {
                 pointer-events: none;
@@ -417,15 +440,88 @@
 
               p {
                 margin: 0px;
+                margin-left: 3px;
+              }
+
+              img {
+                object-fit: contain;
+                width: 22px;
+                height: 22px;
+                margin-left: 5px;
               }
               
             }
 
+
+            .reverse, .selected {
+              &.sortValue {
+                background: #383838;
+              }
+              .directionContainer {
+                display: block;
+              }
+
+              .removeSelection {
+                position: absolute;
+                width: 19px;
+                height: 19px;
+                background: #920e0e;
+                right: 2px;
+                top: 2px;
+                pointer-events: all;
+  
+                &::before {
+                  content: "";
+                  position: absolute;
+                  width: 4px;
+                  height: 17px;
+                  top: 1px;
+                  right: 7px;
+                  background: #f00;
+                  border-radius: 13px;
+                  transform: rotate(-45deg);
+                }
+  
+                &::after {
+                  content: "";
+                  position: absolute;
+                  width: 4px;
+                  height: 17px;
+                  top: 1px;
+                  right: 7px;
+                  background: #f00;
+                  border-radius: 13px;
+                  transform: rotate(45deg);     
+                }
+              }
+            }
             .reverse {
-              --color: red;
+              // --color: red;
+              .directionContainer:after {
+                content: "";
+                position: absolute;
+                width: 50%;
+                height: 50%;
+                top: 3px;
+                left: 5px;
+                background: #330606;
+                transform: rotate(45deg);
+                box-shadow: 2px 2px 0 0 #920606, 4.5px 4.5px 0 -1px #ff0000;
+              }
             }
             .selected {
-              --color: rgb(0, 174, 255);
+              // --color: rgb(0, 174, 255);
+              .directionContainer:after {
+                content: "";
+                position: absolute;
+                width: 50%;
+                height: 50%;
+                top: 8px;
+                left: 5px;
+                background: #061e33;
+                transform: rotate(225deg);
+                box-shadow: 2px 2px 0 0 #063d92, 4.5px 4.5px 0 -1px #007eff;
+              }
             }
             
             .value {
@@ -434,6 +530,23 @@
               height: 100%;
               background: rgba(0, 0, 0, 0.178);
               pointer-events: none;
+
+              > p {
+                position: relative;
+                top: 8px;
+                left: 10px;
+              }
+
+              .sortValue {
+                top: 7px;
+                left: 4px;
+                background: unset;
+
+                .removeSelection {
+                  right: 10px;
+                }
+              }
+
 
               p {
                 margin: 0px;
@@ -447,18 +560,9 @@
               flex-direction: column;
               top: 100%;
               width: 100%;
-              background: #4a4a4a;
-
-              :is(.selected, .reverse) .removeSelection {
-                position: absolute;
-                width: 15px;
-                height: 15px;
-                border-radius: 50%;
-                background: violet;
-                right: 5px;
-                top: 5px;
-                pointer-events: all;
-              }
+              background: #545454;
+              border: 2px solid #444;
+              border-top: 0px;
             }
 
             .directionContainer {
@@ -466,7 +570,7 @@
               width: 20px;
               height: 20px;
               background: var(--color);
-              
+              display: none;
             }
           }
 
@@ -546,27 +650,29 @@
           max-height: 100%;
           overflow-y: auto;
           display: flex;
-          flex-wrap: wrap;
+          cursor: pointer;
+          flex-direction: column;
 
           .craftingItem {
             position: relative;
-            width: min(100%, 700px);
+            width: 100%;
             min-height: 50px;
-            background: tomato;
+            background: #3c3c3c;
             overflow: hidden;
             flex-grow: 1;
 
-            &:nth-child(odd) {
-              background: rgb(197, 75, 54);
-              .imageContainer {background: rgb(5, 5, 189)}
+            &:hover {
+              background: #333333;
+              .imageContainer {background: #131313}
             }
-            
+
             .imageContainer {
               position: absolute;
               left: 0px;
               height: 50px;
               aspect-ratio: 1 / 1;
-              background: blue;
+              background: #1b1b1b;
+              box-shadow: -8px 0 13px 7px black;
 
               img {
                 position: absolute;
@@ -584,23 +690,48 @@
               }
             }
 
-            p {
-              position: relative;
-              margin: 3px;
-              left: 50px;
-              font-family: font3;
-              width: calc(100% - 90px);
-            }
 
-            .name {
-              font-weight: 600;
+            p {
+              position: absolute;
+              left: 55px;
+              margin: 0;
+              font-family: font3;
+              max-width: calc(100% - 90px);
+              width: max-content;
+              cursor: text;
+
+              &.name {
+                top: 2px;
+                font-weight: 600;
+                font-size: 19px;
+                text-shadow: 0 0 2px #ffffffba;
+              }
+
+              &.tags {
+                top: 25px;
+                background: #0000003d;
+                padding: 1px 3px;
+                border-radius: 8px;
+                color: #a7a7a7;
+              }
             }
 
             .recipes {
+              transition: height .5s;
+              height: 0px;
+              position: relative;
+              top: 1px;
+              margin-top: 49px;
+              cursor: default;
 
               .row {
                 display: flex;
-                background: #0055ab;
+                // background: #0055ab;
+                background: #0c0c0c;
+
+                &:nth-child(even) {
+                  background: #101010;
+                }
 
                 .craftingButton {
                   position: relative;
@@ -613,37 +744,38 @@
                   position: relative;
                   display: flex;
                   margin-left: 50px;
-                  .item {
-                    position: relative;
-                    --color: #2b2b2b;
-                    width: 70px;
-                    height: 70px;
-                    background: #171717;
-                    margin: 5px;
-                    border: 5px solid var(--color);
-                    transition: border .15s,background .15s;
-                    cursor: pointer;
-                    
-                    img {
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translateX(-50%) translateY(-50%);
-                      max-width: calc(100% - 6px);
-                      max-height: calc(100% - 6px);
-                      object-fit: contain;
-                      width: 1000%;
-                      image-rendering: pixelated;
-                      image-rendering: optimizespeed;
-                      pointer-events: none;
-                      user-select: none;
-                    }
+                }
 
-                    .itemAmont {
-                      position: absolute;
-                      left: 0px;
-                      top: 0px;
-                    }
+                .item, .craftingButton {
+                  position: relative;
+                  --color: #2b2b2b;
+                  width: 70px;
+                  height: 70px;
+                  background: #171717;
+                  margin: 5px;
+                  border: 5px solid var(--color);
+                  transition: border .15s,background .15s;
+                  cursor: pointer;
+                  
+                  img {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translateX(-50%) translateY(-50%);
+                    max-width: calc(100% - 6px);
+                    max-height: calc(100% - 6px);
+                    object-fit: contain;
+                    width: 1000%;
+                    image-rendering: pixelated;
+                    image-rendering: optimizespeed;
+                    pointer-events: none;
+                    user-select: none;
+                  }
+
+                  p {
+                    position: absolute;
+                    left: 0px;
+                    top: 0px;
                   }
                 }
               }

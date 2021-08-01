@@ -94,3 +94,14 @@
     bottom: 14px;
   }
 }
+
+#hoverBox {
+  div[craftingButton] {
+    background: red;
+    border: 5px solid gold;
+
+    pre {
+      font-size: 20px;
+    }
+  }
+}
