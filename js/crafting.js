@@ -22,7 +22,7 @@ function generateCraftingItemsList(array) {
   if(!array && craftingValues.sortOrder.indexOf("reverse") !== -1) {
     craftingValues.gridItems.reverse();
   } else if(craftingValues.sortOrder.startsWith("Name")) {
-    craftingValues.gridItems.sort((v1, v2) => v1.name < v2.name ? 1 : -1)
+    craftingValues.gridItems.sort((v1, v2) => v1.name > v2.name ? 1 : -1)
   } else if(craftingValues.sortOrder.startsWith("Damage")) {
     craftingValues.gridItems.sort((v1, v2) => {
       const dm1 = v1.calcDamage().maxMeleDmg ?? 0;
@@ -57,7 +57,7 @@ function generateCraftingItemsList(array) {
 
 
   craftingValues.gridItems.forEach((v, i) => {
-    const [item] = emmet(".craftingItem>.imageContainer>img.icon^p.name+p.tags+div.recipes");
+    const [item] = emmet(".craftingItem>.imageContainer>img.icon^p.name+p.tags+div.arrow+div.recipes");
     item.querySelector(".icon").src = "./images/" + v.image;
     item.querySelector(".name").textContent = v.name;
     item.querySelector(".tags").textContent = `#${v.tags.join(" #")}`;
@@ -91,7 +91,9 @@ function filterCraftingItems(array) {
 }
 
 const searchBar = itemsMenu.querySelector(".toolBar input.searchBar");
-searchBar.addEventListener("input", () => {
+searchBar.addEventListener("input", craftingSearch)
+
+function craftingSearch(returnEmpty = false) {
   const search = searchBar.value.toLowerCase().replaceAll(/ +/g, " ");
   const searchName = [];
   const searchTags = [];
@@ -145,21 +147,26 @@ searchBar.addEventListener("input", () => {
   else {
     console.log("Search failed");
     searchBar.classList.add("failed");
+
+    if(returnEmpty) generateCraftingItemsList([]);
   }
 
   const hoverPopUpItemName = hoverBox.querySelector("div[crafting] .itemTitle")?.textContent;
   const hoverItemName = craftInv.querySelector("craftingItem:hover>.name")?.textContent;
   if(hoverPopUpItemName && !hoverItemName) hoverBox.textContent = "";
   if(hoverPopUpItemName != hoverItemName) hoverBox.textContent = "";
-});
+};
 
 const sortButton = itemsMenu.querySelector(".toolBar .sort");
 sortButton.addEventListener("click", e => {
   const subMenuContainer = sortButton.querySelector(".subMenu");
+  sortButton.classList.add("active");
 
   window.onclick = function hideSortSubMenu() {
     typesButton.querySelector(".subMenu").textContent = "";
+    typesButton.classList.remove("active");
     if(!itemsMenu.querySelector(".toolBar .sort:focus-within")) {
+      sortButton.classList.remove("active");
       subMenuContainer.textContent = "";
       window.onclick = null;
     }
@@ -168,25 +175,29 @@ sortButton.addEventListener("click", e => {
   if(e.target == sortButton) {
     const lastSortElem = sortButton.querySelector(".value .sortValue");
     const [,lastName, lastSortState] = lastSortElem?.classList ?? [];
-    if(subMenuContainer.querySelector(".sortValue")) return subMenuContainer.textContent = "";
+    if(subMenuContainer.querySelector(".sortValue")) {
+      sortButton.classList.remove("active");
+      return subMenuContainer.textContent = "";
+    }
     
     ["Name", "Damage", "Defence", "Use_time","Tags"].forEach(sortTitle => {
       const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+img+div.removeSelection`);
       subMenuElement.querySelector("p").textContent = sortTitle.replaceAll("_", " ");
-      subMenuElement.querySelector("img").src = "./images/sort" + sortTitle + ".png"
+      subMenuElement.querySelector("img").src = "./images/dropDown" + sortTitle + ".png"
       if(sortTitle == lastName) subMenuElement.classList.add(lastSortState);
       subMenuContainer.append(subMenuElement);
     });
   } else if(e.target.classList.contains("removeSelection")) {
     if(e.target.parentElement.parentElement?.classList.contains("value")) {
       subMenuContainer.textContent = "";
+      sortButton.classList.remove("active");
     }
     e.target?.parentElement.classList.remove("reverse", "selected");
     craftingValues.sortOrder = "";
     sortButton.querySelector(".value").textContent = "";
-    const p = document.createElement("p");
+    const [p, div] = emmet("p+div.arrow");
     p.textContent = "Sort items"
-    sortButton.querySelector(".value").append(p);
+    sortButton.querySelector(".value").append(p, div);
     generateCraftingItemsList();
   } else {
     const sortSelection = e.target?.classList[1];
@@ -212,33 +223,44 @@ sortButton.addEventListener("click", e => {
 const typesButton = itemsMenu.querySelector(".toolBar .types");
 typesButton.addEventListener("click", e => {
   const subMenuContainer = typesButton.querySelector(".subMenu");
+  typesButton.classList.add("active");
 
   window.onclick = function hideTypesSubMenu() {
     sortButton.querySelector(".subMenu").textContent = "";
+    sortButton.classList.remove("active");
     if(!itemsMenu.querySelector(".toolBar .types:focus-within")) {
+      typesButton.classList.remove("active");
       subMenuContainer.textContent = "";
       window.onclick = null;
     }
   }
 
   if(e.target == typesButton) {
-    if(subMenuContainer.querySelector(".typeValue")) return subMenuContainer.textContent = "";
+    if(subMenuContainer.querySelector(".typeValue")) {
+      typesButton.classList.remove("active");
+      return subMenuContainer.textContent = "";
+    }
     
-    ["Damage", "Defence", "Healing", "Mana", "Use_time"].forEach(title => {
+    return ["Damage", "Defence", "Healing", "Mana", "Use_time"].forEach(title => {
       const [subMenuElement] = emmet(`.typeValue.${title}>div.directionContainer+p+img+div.removeSelection`);
       subMenuElement.querySelector("p").textContent = title.replaceAll("_", " ");
+      subMenuElement.querySelector("img").src = `./images/dropDown${title}.png`
       if(craftingValues.removeFilter.find(e => e === title)) subMenuElement.classList.add("remove");
       else if(craftingValues.addFilter.find(e => e === title)) subMenuElement.classList.add("add");
       subMenuContainer.append(subMenuElement);
     });
   } else if(e.target.classList.contains("removeSelection")) {
     const typeSelection = e.target?.parentElement.classList[1];
+    if(e.target.parentElement.parentElement?.classList?.contains("value")) {
+      subMenuContainer.textContent = "";
+      craftingValues.addFilter = [];
+      craftingValues.removeFilter = [];
+      typesButton.classList.remove("active");
+    }
     craftingValues.addFilter = craftingValues.addFilter.filter(e => e !== typeSelection);
     craftingValues.removeFilter = craftingValues.removeFilter.filter(e => e !== typeSelection);
     e.target?.parentElement.classList.remove("add", "remove");
-
-    if(craftingValues.removeFilter.length + craftingValues.addFilter.length == 0) generateCraftingItemsList(allCraftableItems)
-    else generateCraftingItemsList( filterCraftingItems(allCraftableItems) );
+    craftingSearch(true);
   } else {
     const typeSelection = e.target?.classList[1];
     if(!typeSelection) return;
@@ -254,8 +276,7 @@ typesButton.addEventListener("click", e => {
       e.target.classList.add("add");
     }
 
-    if(craftingValues.removeFilter.length + craftingValues.addFilter.length == 0) generateCraftingItemsList(allCraftableItems)
-    else generateCraftingItemsList( filterCraftingItems(allCraftableItems) );
+    craftingSearch(true);
   }
 
   const totalFilterCount = craftingValues.addFilter.length + craftingValues.removeFilter.length;
@@ -266,15 +287,16 @@ typesButton.addEventListener("click", e => {
     valueContainer.textContent = "";
     valueContainer.append(selectedCopy);
   } else if(totalFilterCount > 1) {
+    const [valueContent] = emmet(".typeValue>p+div.removeSelection");
     valueContainer.textContent = "";
-    const p = document.createElement("p");
-    p.textContent = `${totalFilterCount} Filter(s) active`
-    valueContainer.append(p);
+    valueContent.querySelector("p").textContent = `${totalFilterCount} Filter(s) active`
+    valueContainer.append(valueContent);
   } else {
+    console.log("??")
     valueContainer.textContent = "";
-    const p = document.createElement("p");
+    const [p, arrow] = emmet("p+div.arrow");
     p.textContent = `Filter items`
-    valueContainer.append(p);
+    valueContainer.append(p, arrow);
   }
 });
 
@@ -379,11 +401,9 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
   }
 
   if(clickedItem.classList.toggle("selected")) {
-    const childrenCount = recipesSubmenu.childElementCount;
-    const lastChild = recipesSubmenu.children[childrenCount - 1];
-    const {height} = lastChild.getBoundingClientRect();
-    recipesSubmenu.style.height = `${height * childrenCount}px`;
-  } else recipesSubmenu.style.height = null;
+    const totalHeight = Array.from(recipesSubmenu.children).map(e => e.getBoundingClientRect().height).reduce((a, v) => a + v);
+    recipesSubmenu.style.maxHeight = `${totalHeight}px`;
+  } else recipesSubmenu.style.maxHeight = null;
 
   console.log(item.craftingRecipes, itemIndex);
 

@@ -103,6 +103,7 @@ const items = {
             amount: 6
           }
         ],
+        craftingAmount: 2
       }
     ]
   },
@@ -152,7 +153,14 @@ const items = {
     tags: ["armor", "helmet"],
     image: "helmet.png",
     canEquipTo: "head",
-    hp: 50
+    hp: 50,
+    craftingRecipes: [
+      {
+        items: [
+          {item: "iron", amount: 6}
+        ]
+      }
+    ]
   },
   chestplate: {
     id: "chestplate",
@@ -160,7 +168,14 @@ const items = {
     tags: ["armor", "chestplate"],
     image: "basechest3.png",
     canEquipTo: "chest",
-    hp: 50
+    hp: 50,
+    craftingRecipes: [
+      {
+        items: [
+          {item: "iron", amount: 8}
+        ]
+      }
+    ]
   },
   legs: {
     id: "legs",
@@ -168,7 +183,26 @@ const items = {
     tags: ["armor", "leggings"],
     image: "baselegs3.png",
     canEquipTo: "legs",
-    hp: 50
+    hp: 50,
+    craftingRecipes: [
+      {
+        items: [
+          {item: "iron", amount: 5}
+        ]
+      },
+      {
+        items: [
+          {item: "iron", amount: 1},
+          {item: "chestplate", amount: 1},
+          {item: "helmet", amount: 1},
+          {item: "suicideStick", amount: 1},
+          {item: "hp_pot", amount: 1},
+          {item: "dmgBooster", amount: 1},
+          {item: "weak_stick", amount: 1},
+          {item: "stone_sword", amount: 1},
+        ]
+      }
+    ]
   },
   iron: {
     id: "iron",

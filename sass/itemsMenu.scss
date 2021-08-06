@@ -116,6 +116,7 @@
       left: 0px;
       display: flex;
       flex-direction: row;
+      overflow: hidden;
 
       .inventoryContainer {
         position: relative;
@@ -365,6 +366,11 @@
         width: 100%;
         height: 100%;
         background: black;
+
+        .craftingContainer {
+          position: absolute;
+          inset: 0px;
+        }
         
         @at-root #itemsMenu:not(.craft) .crafting {display: none;}
 
@@ -393,6 +399,7 @@
             font-size: 16px;
             transition: background .1s, border .1s, color .2s, filter .2s;
             filter: brightness(.8);
+            user-select: none;
 
             &.failed, &.failed:focus {
               background: #6b2828;
@@ -406,22 +413,24 @@
             &:focus {
               filter: brightness(1);
               color: rgb(255, 255, 255);
+              user-select: all;
             }
           }
 
           .sort {
+            user-select: none;
             position: relative;
             width: 150px;
             height: 35px;
-            background: #424242;
+            background: #023e8a;
             font-family: "font3";
             margin: 7px;
             cursor: pointer;
-            box-shadow: inset 0 2px 0 0px #535353, inset -2px 0px 0 0px #535353, inset 2px 0px 0 0px #535353;
+            flex-shrink: 0;
+            box-shadow: inset 0 2px 0 0px #0096c7, inset -2px 0px 0 0px #0096c7, inset 2px 0px 0 0px #0096c7;
 
-            &:hover {
-              background: #494949;
-              box-shadow: inset 0 2px 0 0px #5e5e5e, inset -2px 0px 0 0px #5e5e5e, inset 2px 0px 0 0px #5e5e5e;
+            &:hover, &.active {
+              background: hsl(214deg 97% 32%);
             }
 
             .sortValue {
@@ -429,10 +438,246 @@
               width: 100%;
               display: flex;
               cursor: pointer;
+              color: #caf0f8;
+              height: 30px;
+              transition: padding .2s .1s, background .1s;
 
-              &:hover {background: #414141;}
-              &:active {background: #3d3d3d;}
+              &:hover {
+                background: hsl(195, 100%, 39%);
+              }
+              &:active {background: hsl(195, 100%, 40%)}
 
+
+              > * {
+                pointer-events: none;
+              }
+
+              p {
+                margin: 0px;
+                margin-left: 3px;
+                font-weight: 600;
+                margin-top: 5px;
+              }
+
+              img {
+                object-fit: contain;
+                width: 29px;
+                height: 29px;
+                margin-left: 5px;
+                image-rendering: pixelated;
+                image-rendering: optimizespeed;
+              }
+              
+            }
+
+            .removeSelection {
+              position: absolute;
+              width: 19px;
+              height: 19px;
+              right: 4px;
+              top: 6px;
+              pointer-events: none;
+              transform: scale(0) translateX(200%) rotate(90deg);
+              transition: transform .3s;
+
+              &::before, &::after {
+                content: "";
+                position: absolute;
+                width: 2px;
+                height: 10px;
+                top: 5px;
+                right: 8px;
+              }
+
+              &::before {
+                transform: rotate(-45deg);
+              }
+
+              &::after {
+                transform: rotate(45deg);     
+              }
+            }
+
+            .reverse, .selected {
+              &.sortValue {
+                background: hsl(201deg 100% 29%);
+                padding-left: 20px;
+                transition: padding .2s;
+              }
+              .directionContainer {
+                transition: transform .2s;
+                transform: translateX(-20px);
+                &:after {
+                  width: 5px;
+                  transition: box-shadow .25s, width .25s;
+                }
+              }
+
+              .removeSelection {
+                pointer-events: all;
+                transform: scale(1);
+
+                &::before, &::after {
+                  content: "";
+                  position: absolute;
+                  width: 4px;
+                  height: 17px;
+                  top: 1px;
+                  right: 7px;
+                  background: hsl(214deg 98% 90%);
+                  border-radius: 13px;
+                }
+  
+                &::before {
+                  transform: rotate(-45deg);
+                }
+  
+                &::after {
+                  transform: rotate(45deg);     
+                }
+              }
+            }
+            .reverse {
+              .directionContainer:after {
+                box-shadow: 2px 0 hsl(190, 76%, 70%), -2px 0 hsl(190, 76%, 70%), 
+                0 -4px hsl(189, 75%, 60%), 0 -4px hsl(189, 75%, 60%), 0 -4px hsl(189, 75%, 60%), 
+                0 4px hsl(190, 77%, 74%), 4px 4px hsl(190, 77%, 74%), -4px 4px hsl(190, 77%, 74%);
+              }
+            }
+            .selected {
+              .directionContainer:after {
+                box-shadow: 
+                  2px 0 hsl(190, 76%, 70%), -2px 0 hsl(190, 76%, 70%), 
+                  0 -4px hsl(190, 77%, 74%), 4px -4px hsl(190, 77%, 74%), -4px -4px hsl(190, 77%, 74%), 
+                  0 4px hsl(189, 75%, 60%), 0 4px hsl(189, 75%, 60%), 0 4px hsl(189, 75%, 60%);
+              }
+            }
+            
+            .value {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              pointer-events: none;
+
+              > p {
+                position: relative;
+                top: 8px;
+                left: 10px;
+                margin: 0px;
+                font-weight: 600;
+              }
+
+              .sortValue {
+                top: 3px;
+                left: 4px;
+                background: unset;
+
+                .removeSelection {
+                  right: 10px;
+                }
+
+                p {
+                  color: white;
+                }
+              }
+
+              .arrow {
+                position: absolute;
+                width: 25px;
+                height: 25px;
+                transition: transform .2s;
+                right: 5px;
+                top: 7px;
+                color: #cde2fe;
+
+                @at-root #itemsMenu .crafting .toolBar .active .arrow {
+                  transform: rotate(180deg) translateY(2px);
+                } 
+
+                &::before, &::after {
+                  content: "";
+                  position: absolute;
+                  width: 3px;
+                  height: 10px;
+                  top: 7px;
+                  border-radius: 10px 10px 0 0;
+                  background: currentColor;
+                }
+  
+                &::before {
+                  left: 8px;
+                  transform: rotate(-45deg);
+                }
+  
+                &::after {
+                  right: 8px;
+                  transform: rotate(45deg);
+                }
+              }
+            }
+
+            .subMenu {
+              position: absolute;
+              z-index: 2;
+              display: flex;
+              flex-direction: column;
+              top: 100%;
+              width: 100%;
+              background: #0077b6;
+              border: 2px solid #0096c7;
+              border-top: 0px;
+            }
+
+            .directionContainer {
+              position: absolute;
+              width: 20px;
+              height: 20px;
+              transition: transform .2s .1s;
+              top: 5px;
+
+              &:after {
+                content: "";
+                position: absolute;
+                width: 0px;
+                height: 3px;
+                left: 8px;
+                top: 8px;
+                background: hsl(190, 77%, 70%);
+                transition: box-shadow .25s, width .25s;
+                box-shadow: 
+                  0 0 hsl(190, 77%, 82%), 0 0 hsl(190, 77%, 82%), 
+                  0 -4px hsl(190, 77%, 70%), 0 -4px hsl(190, 77%, 70%), 0 -4px hsl(190, 77%, 70%), 
+                  0 4px hsl(189, 75%, 75%), 0 4px hsl(189, 75%, 75%), 0 4px hsl(189, 75%, 75%);
+              }
+            }
+          }
+
+          .types {
+            user-select: none;
+            position: relative;
+            width: 150px;
+            height: 35px;
+            background: hsl(268, 88%, 40%);
+            font-family: "font3";
+            margin: 7px;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: inset 0 2px 0 0px hsl(268, 88%, 70%), inset -2px 0px 0 0px hsl(268, 88%, 70%), inset 2px 0px 0 0px hsl(268, 88%, 70%);
+
+            &:hover, &.active {
+              background: hsl(268, 88%, 45%);
+            }
+
+
+            .typeValue {
+              position: relative;
+              width: 100%;
+              display: flex;
+              cursor: pointer;
+              font-weight: 600;
+              padding-top: 5px;
+              padding-left: 2px;
+              transition: padding .2s .1s,background .1s;
 
               > * {
                 pointer-events: none;
@@ -452,104 +697,111 @@
               
             }
 
+            .removeSelection {
+              position: absolute;
+              width: 19px;
+              height: 19px;
+              right: 4px;
+              top: 6px;
+              pointer-events: none;
+              transform: scale(0) translateX(200%) rotate(90deg);
+              transition: transform .3s;
 
-            .reverse, .selected {
-              &.sortValue {
-                background: #383838;
+              &::before, &::after {
+                content: "";
+                position: absolute;
+                width: 2px;
+                height: 10px;
+                top: 5px;
+                right: 8px;
               }
+
+              &::before {
+                transform: rotate(-45deg);
+              }
+
+              &::after {
+                transform: rotate(45deg);     
+              }
+            }
+
+            .remove {
+              --color: rgb(255, 72, 72);
+
               .directionContainer {
+                filter: drop-shadow(2px 2px 0px #9e0000);
                 display: block;
+                &:after {
+                  content: "";
+                  position: absolute;
+                  width: 16px;
+                  height: 4px;
+                  background: rgb(255, 72, 72);
+                  top: 8px;
+                  left: 2px;
+                }
               }
+            }
+            .add {
+              --color: rgb(0, 255, 34);
+
+              .directionContainer {
+                filter: drop-shadow(2px 2px 0px green);
+                display: block;
+                &:before {
+                  content: "";
+                  position: absolute;
+                  width: 4px;
+                  height: 16px;
+                  top: 2px;
+                  background: #2cff05;
+                  left: 8px;
+                }
+
+                &:after {
+                  content: "";
+                  position: absolute;
+                  width: 16px;
+                  height: 4px;
+                  background: #2cff05;
+                  top: 8px;
+                  left: 2px;
+                }
+              }
+            }
+
+            .remove, .add {
+              padding-left: 20px;
+              transition: padding .2s, background .1s;
+              .directionContainer {
+                transform: scale(1) rotate(0deg);
+              }
+            }
+
+            .remove, .add, .value {
 
               .removeSelection {
-                position: absolute;
-                width: 19px;
-                height: 19px;
-                background: #920e0e;
-                right: 2px;
-                top: 2px;
                 pointer-events: all;
-  
-                &::before {
+                transform: scale(1);
+
+                &::before, &::after {
                   content: "";
                   position: absolute;
                   width: 4px;
                   height: 17px;
                   top: 1px;
                   right: 7px;
-                  background: #f00;
+                  background: hsl(268, 88%, 85%);
                   border-radius: 13px;
+                }
+  
+                &::before {
                   transform: rotate(-45deg);
                 }
   
                 &::after {
-                  content: "";
-                  position: absolute;
-                  width: 4px;
-                  height: 17px;
-                  top: 1px;
-                  right: 7px;
-                  background: #f00;
-                  border-radius: 13px;
                   transform: rotate(45deg);     
                 }
-              }
-            }
-            .reverse {
-              // --color: red;
-              .directionContainer:after {
-                content: "";
-                position: absolute;
-                width: 50%;
-                height: 50%;
-                top: 3px;
-                left: 5px;
-                background: #330606;
-                transform: rotate(45deg);
-                box-shadow: 2px 2px 0 0 #920606, 4.5px 4.5px 0 -1px #ff0000;
-              }
-            }
-            .selected {
-              // --color: rgb(0, 174, 255);
-              .directionContainer:after {
-                content: "";
-                position: absolute;
-                width: 50%;
-                height: 50%;
-                top: 8px;
-                left: 5px;
-                background: #061e33;
-                transform: rotate(225deg);
-                box-shadow: 2px 2px 0 0 #063d92, 4.5px 4.5px 0 -1px #007eff;
-              }
-            }
-            
-            .value {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              background: rgba(0, 0, 0, 0.178);
-              pointer-events: none;
-
-              > p {
-                position: relative;
-                top: 8px;
-                left: 10px;
-              }
-
-              .sortValue {
-                top: 7px;
-                left: 4px;
-                background: unset;
-
-                .removeSelection {
-                  right: 10px;
-                }
-              }
-
-
-              p {
-                margin: 0px;
               }
             }
 
@@ -560,70 +812,116 @@
               flex-direction: column;
               top: 100%;
               width: 100%;
-              background: #545454;
-              border: 2px solid #444;
+              background: hsl(268, 88%, 55%);
+              border: 2px solid hsl(268, 88%, 70%);
               border-top: 0px;
-            }
 
-            .directionContainer {
-              position: relative;
-              width: 20px;
-              height: 20px;
-              background: var(--color);
-              display: none;
-            }
-          }
+              p {
+                color: hsl(268, 88%, 95%);
+              }
 
-          .types {
-            position: relative;
-            width: 150px;
-            height: 25px;
-            background: seagreen;
+              .typeValue:hover {
+                background: hsl(268, 88%, 60%);
+              }
+              .typeValue:active {
+                background: hsl(268, 88%, 65%);
+              }
 
-            .remove {
-              --color: rgb(255, 72, 72);
-            }
-            .add {
-              --color: rgb(0, 255, 34);
-            }
+              .typeValue:is(.remove, .add) {
+                background: hsl(268, 88%, 50%);
 
-            .subMenu {
-              position: absolute;
-              z-index: 2;
-              background: gray;
-              top: 100%;
-              width: 100%;
-
-              :is(.remove, .add) .removeSelection {
-                position: absolute;
-                width: 15px;
-                height: 15px;
-                border-radius: 50%;
-                background: violet;
-                right: 5px;
-                top: 5px;
-                pointer-events: all;
+                &:hover {
+                  background: hsl(268, 88%, 46%);
+                }
               }
             }
 
             .value {
               pointer-events: none;
+              position: absolute;
+              inset: 0px;
+              padding-left: 4px;
+              padding-top: 3px;
+              font-weight: 600;
+
+              .removeSelection {
+                top: 6px;
+                right: 7px;
+              }
+
+              > p {
+                padding-left: 4px;
+                padding-top: 5px;
+              }
+
+              // .typeValue {
+                // left: -2px;
+                // width: calc(100% - 10px);
+                // top: 5px;
+
+                // .removeSelection {
+                //   right: 3px;
+                //   top: 3px;
+              //   }
+              // }
+
+              .arrow {
+                position: absolute;
+                width: 25px;
+                height: 25px;
+                transition: transform .2s;
+                right: 5px;
+                top: 7px;
+                color: hsl(268, 88%, 85%);
+
+                @at-root #itemsMenu .crafting .toolBar .active .arrow {
+                  transform: rotate(180deg) translateY(2px);
+                } 
+
+                &::before, &::after {
+                  content: "";
+                  position: absolute;
+                  width: 3px;
+                  height: 10px;
+                  top: 7px;
+                  border-radius: 10px 10px 0 0;
+                  background: hsl(268, 88%, 85%);
+                }
+  
+                &::before {
+                  left: 8px;
+                  transform: rotate(-45deg);
+                }
+  
+                &::after {
+                  right: 8px;
+                  transform: rotate(45deg);
+                }
+              }
             }
 
             .typeValue {
               position: relative;
               display: flex;
               cursor: pointer;
+              height: 30px;
 
-              &:hover {
-                background: rgb(85, 85, 85);
+              :where(.directionContainer) {
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                left: 1px;
+                transition: transform .2s;
+                transform: scale(0) rotate(180deg);
               }
 
-              .directionContainer {
-                position: relative;
-                width: 25px;
-                height: 25px;
-                background: var(--color);
+              :where(.removeSelection) {
+                position: absolute;
+                width: 15px;
+                height: 15px;
+                right: 5px;
+                top: 5px;
+                pointer-events: all;
               }
 
               * {
@@ -647,11 +945,16 @@
         .craftableItems {
           position: relative;
           width: 100%;
-          max-height: 100%;
+          max-height: calc(100% - 50px);
           overflow-y: auto;
           display: flex;
           cursor: pointer;
           flex-direction: column;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+          &::-webkit-scrollbar {
+            display: none;
+          }
 
           .craftingItem {
             position: relative;
@@ -660,6 +963,54 @@
             background: #3c3c3c;
             overflow: hidden;
             flex-grow: 1;
+            flex-shrink: 0;
+
+            .arrow {
+              position: absolute;
+              width: 25px;
+              height: 25px;
+              transition: transform .2s;
+              right: 10px;
+              top: 10px;
+
+              &::before {
+                content: "";
+                position: absolute;
+                width: 5px;
+                height: 15px;
+                left: 6px;
+                top: 5px;
+                border-radius: 10px 10px 0 0;
+                background: #676767;
+                transform: rotate(-45deg);
+              }
+
+              &::after {
+                content: "";
+                position: absolute;
+                width: 5px;
+                height: 15px;
+                right: 6px;
+                top: 5px;
+                border-radius: 10px 10px 0 0;
+                background: #676767;
+                transform: rotate(45deg);
+              }
+            }
+
+            &.selected {
+              background: #2e2e2e;
+              .imageContainer {background: #0f0f0f}
+
+              .arrow {
+                transform: rotate(180deg);
+              }
+
+              &:hover {
+                background: #292929;
+                .imageContainer {background: rgb(15, 15, 15)}
+              }
+            }
 
             &:hover {
               background: #333333;
@@ -698,7 +1049,6 @@
               font-family: font3;
               max-width: calc(100% - 90px);
               width: max-content;
-              cursor: text;
 
               &.name {
                 top: 2px;
@@ -717,17 +1067,22 @@
             }
 
             .recipes {
-              transition: height .5s;
-              height: 0px;
+              transition: max-height .5s;
+              max-height: 0px;
               position: relative;
               top: 1px;
               margin-top: 49px;
               cursor: default;
+              user-select: none;
+              width: 100%;
 
               .row {
+                position: relative;
+                width: 100%;
                 display: flex;
-                // background: #0055ab;
                 background: #0c0c0c;
+                height: 88px;
+                box-shadow: inset 0 -8px #1f1f1f;
 
                 &:nth-child(even) {
                   background: #101010;
@@ -744,6 +1099,27 @@
                   position: relative;
                   display: flex;
                   margin-left: 50px;
+                  overflow-y: auto;
+                  scrollbar-width: thin;
+                  scrollbar-color: hsl(0, 0%, 20%) hsl(0, 0%, 12%);
+                  &:hover {scrollbar-color: hsl(0, 0%, 28%) hsl(0, 0%, 15%)}
+                  &:active {scrollbar-color: hsl(0, 0%, 38%) hsl(0, 0%, 20%)}
+                  
+                  &::-webkit-scrollbar {
+                    height: 8px;
+                    
+                    &-track {
+                      background: hsl(0, 0%, 12%);
+                      &:hover {background: hsl(0, 0%, 15%)}
+                      &:active {background: hsl(0, 0%, 20%)}
+                    }
+
+                    &-thumb {
+                      background: hsl(0, 0%, 20%);
+                      &:hover {background: hsl(0, 0%, 28%)}
+                      &:active {background: hsl(0, 0%, 38%)}
+                    }
+                  }
                 }
 
                 .item, .craftingButton {
@@ -756,6 +1132,7 @@
                   border: 5px solid var(--color);
                   transition: border .15s,background .15s;
                   cursor: pointer;
+                  flex-shrink: 0;
                   
                   img {
                     position: absolute;
@@ -782,7 +1159,6 @@
             }
           }
         }
-
       }
     }
   }
