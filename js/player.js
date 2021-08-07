@@ -132,11 +132,35 @@ function Player(arr) {
     return nItem;
   }) ?? [];
 
+  this.totalItemCounts = arr.inventory.reduce((ac, item) => {
+    ac[item.id] ??= 0;
+    ac[item.id] += (item.amount ?? 1);
+    return ac;
+  }, {});
+
   this.giveItem = itemData => {
     const item = new Item(itemData);
     const index = itemStackIndex(this.inventory, item);
     if(index == -1) this.inventory.push(item);
     else this.inventory[index].amount += item.amount;
+
+    this.totalItemCounts[item.id] ??= 0;
+    this.totalItemCounts[item.id] += item.amount ?? 1;
+  }
+
+  this.takeItem = (index, amount = 1) => {
+    const item = this.inventory[index];
+    if(!item) return;
+    if(item.amount) item.amount -= amount;
+    if(!item.amount || item.amount <= 0) {
+      if(item.slot?.startsWith("hotbarSlot")) this.hotbar[`slot${item.slot.substr(10)}`] = {};
+      else if(item.slot === "headSlot") this.armor.head = {}
+      else if(item.slot === "chestSlot") this.armor.chest = {}
+      else if(item.slot === "legsSlot") this.armor.legs = {}
+      this.inventory.splice(index, 1);
+    }
+
+    this.totalItemCounts[item.id] = Math.max(this.totalItemCounts[item.id] - (amount ?? 1), 0);
   }
 }
 

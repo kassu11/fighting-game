@@ -135,11 +135,7 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
   if(item.mana) player.mp -= item.mana;
   if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
   if(item.needTarget) addPlayerItemUseParticle(target, item.particle, {x: e.x, y: e.y, dmg}); 
-  if(item.amount && --item.amount <= 0) {
-    const index = player.inventory.findIndex(e => e.slot == item.slot);
-    if(index != -1) player.inventory.splice(index, 1);
-    player.hotbar[player.currentSlot] = {};
-  }
+  if(item.amount) player.takeItem(player.inventory.findIndex(e => e.slot == item.slot), 1);
 
   updateNextRound();
   

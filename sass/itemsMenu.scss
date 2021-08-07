@@ -438,7 +438,7 @@
               width: 100%;
               display: flex;
               cursor: pointer;
-              color: #caf0f8;
+              color: hsl(191, 78%, 93%);
               height: 30px;
               transition: padding .2s .1s, background .1s;
 
@@ -466,6 +466,7 @@
                 margin-left: 5px;
                 image-rendering: pixelated;
                 image-rendering: optimizespeed;
+                display: none;
               }
               
             }
@@ -500,10 +501,11 @@
 
             .reverse, .selected {
               &.sortValue {
-                background: hsl(201deg 100% 29%);
                 padding-left: 20px;
                 transition: padding .2s;
+                background: hsl(201deg 100% 29%); 
               }
+
               .directionContainer {
                 transition: transform .2s;
                 transform: translateX(-20px);
@@ -626,6 +628,10 @@
               background: #0077b6;
               border: 2px solid #0096c7;
               border-top: 0px;
+
+              .sortValue:is(.reverse, .selected):hover {
+                background: hsl(201deg 100% 26%);
+              }
             }
 
             .directionContainer {
@@ -693,6 +699,7 @@
                 width: 22px;
                 height: 22px;
                 margin-left: 5px;
+                display: none;
               }
               
             }
@@ -731,7 +738,8 @@
               .directionContainer {
                 filter: drop-shadow(2px 2px 0px #9e0000);
                 display: block;
-                &:after {
+
+                &:before, &:after {
                   content: "";
                   position: absolute;
                   width: 16px;
@@ -739,6 +747,7 @@
                   background: rgb(255, 72, 72);
                   top: 8px;
                   left: 2px;
+                  transition: width .25s, height .25s, top .25s, left .25s, background .25s;
                 }
               }
             }
@@ -756,6 +765,7 @@
                   top: 2px;
                   background: #2cff05;
                   left: 8px;
+                  transition: width .25s, height .25s, top .25s, left .25s, background .25s;
                 }
 
                 &:after {
@@ -766,6 +776,7 @@
                   background: #2cff05;
                   top: 8px;
                   left: 2px;
+                  transition: width .25s, height .25s, top .25s, left .25s, background .25s;
                 }
               }
             }
@@ -950,10 +961,22 @@
           display: flex;
           cursor: pointer;
           flex-direction: column;
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+
+          scrollbar-color: hsl(0, 0%, 40%) hsl(0, 0%, 22%);
+
           &::-webkit-scrollbar {
-            display: none;
+            width: 17px;
+            &-track {
+              background: hsl(0, 0%, 22%);
+              &:hover {background: hsl(0, 0%, 25%)}
+              &:active {background: hsl(0, 0%, 30%)}
+            }
+
+            &-thumb {
+              background: hsl(0, 0%, 40%);
+              &:hover {background: hsl(0, 0%, 48%)}
+              &:active {background: hsl(0, 0%, 58%)}
+            }
           }
 
           .craftingItem {
@@ -1042,7 +1065,7 @@
             }
 
 
-            p {
+            > p {
               position: absolute;
               left: 55px;
               margin: 0;
@@ -1122,6 +1145,9 @@
                   }
                 }
 
+                .item.cantCraft {
+                  border-color: red;
+                }
                 .item, .craftingButton {
                   position: relative;
                   --color: #2b2b2b;
@@ -1149,10 +1175,24 @@
                     user-select: none;
                   }
 
-                  p {
+                  > p {
                     position: absolute;
-                    left: 0px;
-                    top: 0px;
+                    margin: 0px;
+                    background: #3b3b3b;
+                    font-family: font2;
+                    font-size: 16px;
+                    padding-left: 9px;
+                    padding-right: 4px;
+                    padding-bottom: 0px;
+                    padding-top: 2px;
+                    text-align: right;
+                    clip-path: polygon(calc(0% + 9px) 0%, 100% 0%, 100% 100%, 0% 100%);
+                    letter-spacing: -1px;
+                    text-shadow: 0 0 5px #000;
+                    min-width: 20px;
+                    pointer-events: none;
+                    right: 0px;
+                    bottom: 0px;
                   }
                 }
               }
