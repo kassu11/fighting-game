@@ -1146,7 +1146,12 @@
                 }
 
                 .item.cantCraft {
-                  border-color: red;
+                  border-color: #380000;
+                  background: #560000;
+
+                  .itemAmont {
+                    background-color: #790000;
+                  }
                 }
                 .item, .craftingButton {
                   position: relative;

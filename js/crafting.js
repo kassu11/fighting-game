@@ -20,6 +20,7 @@ generateCraftingItemsList();
 function generateCraftingItemsList(array) {
   if(array) craftingValues.gridItems = array;
   craftInv.textContent = "";
+  craftingValues.allOpenRecipes = {}
 
   if(!array && craftingValues.sortOrder.indexOf("reverse") !== -1) {
     craftingValues.gridItems.reverse();
@@ -93,7 +94,7 @@ function filterCraftingItems(array) {
 }
 
 const searchBar = itemsMenu.querySelector(".toolBar input.searchBar");
-searchBar.addEventListener("input", craftingSearch)
+searchBar.addEventListener("input", e => craftingSearch())
 
 function craftingSearch(returnEmpty = false) {
   const search = searchBar.value.toLowerCase().replaceAll(/ +/g, " ");
@@ -112,6 +113,7 @@ function craftingSearch(returnEmpty = false) {
     } else searchName.push(splitWithTags[i])
   }
 
+  const perfectSearch = []; // Name and tags are identical
   const strictSearch = []; // indexOf whole name and all tags startWith
   const mediumSearch = []; // indexOf all words from name (not duplicate) and all tags indexOf
   const easySearch = [];   // indexOf any word and any tag
@@ -125,7 +127,10 @@ function craftingSearch(returnEmpty = false) {
   else filteredVersionOfitems.forEach(item => {
     const itemName = item.name.toLowerCase();
 
-    if(itemName.indexOf(searchName.join(" ")) !== -1) { // Strict
+    if(itemName === searchName.join(" ")) {
+      const tagNotFound = item.tags.find(itag => !searchTags.find(tag => itag.startsWith(tag)));
+      if(!tagNotFound) return perfectSearch.push(item);
+    } if(perfectSearch.length === 0 && itemName.indexOf(searchName.join(" ")) !== -1) { // Strict
       const tagNotFound = !searchTags.find(tag => item.tags.find(itag => itag.startsWith(tag)) == null);
       if(tagNotFound || searchTags.length == 0) return strictSearch.push(item);
     } if(strictSearch.length == 0) { // Medium
@@ -143,11 +148,12 @@ function craftingSearch(returnEmpty = false) {
     }
   });
 
-  if(strictSearch.length) generateCraftingItemsList(strictSearch);
+  if(perfectSearch.length) generateCraftingItemsList(perfectSearch);
+  else if(strictSearch.length) generateCraftingItemsList(strictSearch);
   else if(mediumSearch.length) generateCraftingItemsList(mediumSearch);
   else if(easySearch.length) generateCraftingItemsList(easySearch);
   else {
-    console.log("Search failed");
+    console.log("Search failed", returnEmpty);
     searchBar.classList.add("failed");
 
     if(returnEmpty) generateCraftingItemsList([]);
@@ -294,7 +300,6 @@ typesButton.addEventListener("click", e => {
     valueContent.querySelector("p").textContent = `${totalFilterCount} Filters active`
     valueContainer.append(valueContent);
   } else {
-    console.log("??")
     valueContainer.textContent = "";
     const [p, arrow] = emmet("p+div.arrow");
     p.textContent = `Filter items`
@@ -318,16 +323,25 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
       const [rowElem] = emmet(".row>.craftingButton>img+p^div.items");
       const items = recipe.items.map(data => {
         const item = new Item({id: data.item}, player);
-        const [itemElem] = emmet(".item>img+p.itemAmont+.bar");
+        const [itemElem] = emmet(".item>img+p.itemAmont");
         const img = itemElem.querySelector("img");
         const amount = itemElem.querySelector("p");
-        const bar = itemElem.querySelector("div.bar");
+
+        itemElem.addEventListener("contextmenu", e => {e.preventDefault(); return false});
+        itemElem.addEventListener("mouseup", e => {
+          console.log(e.button)
+          if(e.button === 0 && item.craftingRecipes) {
+            itemsMenu.querySelector("input.searchBar").value = item.name + "#" + item.tags.join("#");
+            craftingSearch();
+            craftInv.querySelector(".craftingItem").click();
+            hoverBox.querySelector("[recipe]").remove();
+          }
+        });
 
         amount.textContent = data.amount;
         img.src = "./images/" + item.image;
-        bar.style.width = "50%";
 
-        addHover(itemElem, item.hoverText());
+        addHover([itemElem, "recipe"], item.hoverText());
 
         return itemElem;
       });
@@ -385,7 +399,7 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
                   if(allItems.length - howManyInActiveSlots >= recipeData.amount) continue;
                   howManyInActiveSlots--;
                 };
-        
+                
                 player.takeItem(i);
                 howManyRemoved++;
                 if(howManyRemoved == recipeData.amount) break;
@@ -399,8 +413,6 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
           });
 
           generateItemsOnGrid(player.inventory.slice())
-        } else {
-          console.log(resursesNotNeeded);
         }
       };
 
@@ -437,7 +449,7 @@ function getCraftingNeededItemsHistory(index, recipeIndex = null) {
     return ac;
   }, {});
 
-  let amountOfCraftableItemInventory = player.totalItemCounts[selectedItem.id];
+  let amountOfCraftableItemInventory = player.totalItemCounts[selectedItem.id] ?? 0;
   const extraArray = [];
 
   for(const [key, value] of Object.entries(allNeededItems)) {
@@ -454,7 +466,7 @@ function getCraftingNeededItemsHistory(index, recipeIndex = null) {
   main: for(let i = 1; i < 1000; i++) {
     for(const key of Object.keys(allNeededItems)) {
       allNeededItems[key] -= selectedRecipe.items.find(e => e.item === key).amount ?? 1;
-      if(allNeededItems[key] <= 0) break main;
+      if(allNeededItems[key] < 0) break main;
     }
 
     craftingValues.allOpenRecipes[selectedItem.id]?.forEach(v => {

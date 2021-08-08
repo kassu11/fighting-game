@@ -70,7 +70,39 @@ const items = {
             item: "chestplate",
             amount: 1
           },
+        ]
+      }
+    ]
+  },
+  weak_stick_2: {
+    id: "weak_stick_2",
+    name: "Weak stick 2",
+    tags: ["weapon", "material"],
+    minMeleDmg: 2,
+    maxMeleDmg: 4,
+    useTime: 1,
+    image: "weak_stick.png",
+    particle: "explosion",
+    craftingRecipes: [
+      {
+        items: [
+          {
+            item: "hp_pot",
+            amount: 20
+          },
         ],
+      },
+      {
+        items: [
+          {
+            item: "helmet",
+            amount: 1
+          },
+          {
+            item: "chestplate",
+            amount: 1
+          },
+        ]
       }
     ]
   },
