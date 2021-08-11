@@ -100,7 +100,7 @@ figtingScreen.querySelector(".endFightBox").addEventListener("click", () => {
 });
 
 figtingScreen.querySelector(".skipRoundBox").addEventListener("click", async () => {
-  if(currentLevel.enemyRounds !== 0) return;
+  if(currentLevel.enemyRounds >= 1) return;
   currentLevel.enemyRounds = 1;
   giveEffectsToPlAndEn();
   updateNextRound();
@@ -119,13 +119,13 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
   const enemy = !item.needTarget ? {} : currentLevel.enemies.get(target);
   
   if(!item.needTarget) {
-    if(currentLevel.enemyRounds > 0) return;
-  } else if(item.id == null || enemy?.hp == null || currentLevel.enemyRounds > 0) return;
+    if(currentLevel.enemyRounds >= 1) return;
+  } else if(item.id == null || enemy?.hp == null || currentLevel.enemyRounds >= 1) return;
   if(item.mana > player.mp || !("id" in item)) return;
 
   giveEffectsToPlAndEn();
   
-  currentLevel.enemyRounds = item.useTime ?? 1;
+  currentLevel.enemyRounds += item.useTime ?? 1;
   
   if(item.needTarget) item.giveEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
   const dmg = item.calcDamage().meleDmg;
@@ -339,7 +339,7 @@ function updatePlayerBars() {
 async function startEnemyTurn() {
   await sleep(200);
   figtingScreen.classList.add("enemyTurn");
-  while(currentLevel.enemyRounds > 0) {
+  while(currentLevel.enemyRounds >= 1) {
     await sleep(350);
     for(const [card, enemy] of currentLevel.enemies) {
       const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
@@ -353,11 +353,14 @@ async function startEnemyTurn() {
       const dmg = item?.calcDamage().meleDmg;
       player.hp -= dmg ?? 0;
       
-      if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
       if(dmg) enemyTurnAnimations("attack", card, dmg, item);
       if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
       if(item.mana) enemy.mp -= item.mana;
+      if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
+      
       updateEnemyCard(card);
+      if(item.healV) await sleep(200);
+      
       setTimeout(e => card.classList.remove("enemyAttacks"), 350);
       await sleep(300);
       if(player.hp <= 0) {
@@ -571,7 +574,7 @@ document.querySelectorAll("#figthEndScreen .backButton").forEach(button => butto
 const numberGridObject = {};
 function numberGrid(itemsCount = 2, Turns = 3) {
   const num = Math.min( Math.max(itemsCount, 0), 7 );
-  const amount = Math.min( Math.max(Turns, 1), 6 );
+  const amount = Math.floor( Math.min( Math.max(Turns, 1), 6 ) );
   const key = `${num}x${amount}`;
   if(key in numberGridObject) return numberGridObject[key];
   function loop(array, col) {

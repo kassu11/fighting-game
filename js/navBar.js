@@ -18,3 +18,7 @@ document.querySelector("#inventoryButton").addEventListener("click", () => {
   updateItemsArmor();
   generateItemsOnGrid(player.inventory.slice());
 });
+
+
+
+craftingMenuButton.click();

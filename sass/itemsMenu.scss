@@ -1180,7 +1180,7 @@
                     user-select: none;
                   }
 
-                  > p {
+                  > .itemAmont {
                     position: absolute;
                     margin: 0px;
                     background: #3b3b3b;
@@ -1199,6 +1199,32 @@
                     right: 0px;
                     bottom: 0px;
                   }
+
+                  .warning {
+                    position: absolute;
+                    margin: 0px;
+                    right: -5px;
+                    top: -5px;
+                    background: #ff7600;
+                    font-family: "font3";
+                    font-weight: 900;
+                    font-size: 13px;
+                    padding: 0;
+                    height: 17px;
+                    width: 11px;
+                    padding-top: 3px;
+                    padding-right: 3px;
+                    line-height: .8;
+                    text-align: right;
+                    border-radius: 0 0 0 25px;
+                    border-width: 0 0 3px 3px;
+                    text-shadow: 0 0 2px black;
+                    box-shadow: -1px 1px 0 1px #9a4700;
+                  }
+                }
+
+                .cantBeCrafted {
+                  cursor: default;
                 }
               }
             }

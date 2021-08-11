@@ -148,6 +148,7 @@ function craftingSearch(returnEmpty = false) {
     }
   });
 
+  console.log(perfectSearch)
   if(perfectSearch.length) generateCraftingItemsList(perfectSearch);
   else if(strictSearch.length) generateCraftingItemsList(strictSearch);
   else if(mediumSearch.length) generateCraftingItemsList(mediumSearch);
@@ -327,6 +328,14 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
         const img = itemElem.querySelector("img");
         const amount = itemElem.querySelector("p");
 
+        if(!item.craftingRecipes) {
+          const [warningElem] = emmet("p.warning");
+          warningElem.textContent = "!";
+          addHover([warningElem, "cantBeCrafted"], "Item can't be crafted");
+          itemElem.classList.add("cantBeCrafted");
+          itemElem.append(warningElem);
+        }
+
         itemElem.addEventListener("contextmenu", e => {e.preventDefault(); return false});
         itemElem.addEventListener("mouseup", e => {
           console.log(e.button)
@@ -492,3 +501,21 @@ function updateNeededItemsForCrafting(index) {
   }));
 }
 
+
+
+const allItemsUsedForCrafting = allCraftableItems.reduce((ac, va) => {
+  va.craftingRecipes.forEach(row => {
+    row.items.forEach(({item}) => {
+      ac[item] ??= [];
+      if(ac[item].findIndex(e => e === va) === -1) ac[item].push(va);
+    });
+  });
+  return ac;
+}, {});
+const listOfAllItemsUsedForCrafting = Object.keys(allItemsUsedForCrafting).map(e => new Item({id: e}));
+
+
+
+document.querySelector(".whatCanCraft").addEventListener("input", e => {
+  console.log(e)
+});

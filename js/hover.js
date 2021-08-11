@@ -79,10 +79,11 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
 function customTextSyntax(syn = "") {
   const pre = document.createElement("pre");
   const lines = syn.split("§");
+  let selectedContainer = pre;
 
   for(const line of lines) {
     const span = document.createElement("span");
-    pre.append(span);
+    selectedContainer.append(span);
     let selectedSpan = span;
     let index = 0;
 
@@ -90,7 +91,7 @@ function customTextSyntax(syn = "") {
       const currentLine = line.substring(index);
       const nspan = document.createElement("span");
       let [lineText] = currentLine.split("<");
-      
+
       if(currentLine.startsWith("<c>")) {
         const [,color, text=""] = currentLine.split("<c>");
         [lineText] = text.split("<");
@@ -148,7 +149,7 @@ function customTextSyntax(syn = "") {
       } else if(currentLine.startsWith("<bcss>")) {
         const [,rawCss, text=""] = currentLine.split("<bcss>");
         [lineText] = text.split("<");
-        pre.style.cssText += runVariableTest(rawCss);
+        selectedContainer.style.cssText += runVariableTest(rawCss);
         index = line.indexOf("<bcss>", index + 1);
         if(index == -1) return console.error(`"<bcss>" has no closing!`);
       } else if(currentLine.startsWith("<v>")) {
@@ -168,7 +169,33 @@ function customTextSyntax(syn = "") {
         img.classList = className;
         index = line.indexOf("<i>", index + 1);
         if(index == -1) return console.error(`"<i>" has no closing!`);
-      } selectedSpan.innerHTML += lineText;
+      } else if(currentLine.startsWith("<ct>")) {
+        const [,className, text=""] = currentLine.split("<ct>", 3);
+        const container = document.createElement("div");
+        if(className.length) container.classList = runVariableTest(className);
+        [lineText] = text.split("<", 1);
+        selectedContainer.append(container);
+        selectedContainer = container;
+        if(selectedSpan.outerHTML !== "<span></span>") {
+          selectedContainer.append(nspan);
+          selectedSpan = nspan;
+        } else selectedContainer.append(selectedSpan);
+        index = line.indexOf("<ct>", index + 1);
+        if(index == -1) return console.error(`"<ct>" has no closing!`);
+      } else if(currentLine.startsWith("<nct>")) {
+        const [,className, text=""] = currentLine.split("<nct>", 3);
+        const container = document.createElement("div");
+        if(className.length) container.classList = runVariableTest(className);
+        [lineText] = text.split("<", 1);
+        pre.append(container);
+        selectedContainer = container;
+        if(selectedSpan.outerHTML !== "<span></span>") {
+          selectedContainer.append(nspan);
+          selectedSpan = nspan;
+        } else selectedContainer.append(selectedSpan);
+        index = line.indexOf("<nct>", index + 1);
+        if(index == -1) return console.error(`"<nct>" has no closing!`);
+      } selectedSpan.textContent += lineText;
       index = line.indexOf("<", index + 1);
     } while(index !== -1);
   } return pre;
@@ -194,17 +221,20 @@ function customTextSyntax(syn = "") {
   }
 }
 
+
 // <f><f> = font size
 // \n = line break
 // <css><css> = raw css
 // <c><c> = color
 // <v><v> = variable
-// <bcss><bcss> = raw css on base pre element
+// <bcss><bcss> = raw css on base pre or container element
 // <cl><cl> = set classlist on span
 // <b><b> = fontweight
 // <ff><ff> = font-family
 // <i>img src [class name]<i> = add image
 // § = new span
+// <ct>class name<ct> = add div container
+// <nct>class name<nct> = add new div container
 
 // luoGlobalHover("pelaaja", [
 //   "<css> color: #f00; font-size: 18px; font-weight: 600; <css> Parannus pullo <br>§ Tyyppi: §Taika<c>#f90<c> <br> § Vahinko: §10 - 50<c>#ffe000<c> <br> § Nopeus: §5s<c>#41ee36<c> <br> § Manan kulutus: §50m<c>#2eb3e0<c> <br> § lisatietoja paina [shift] <c>#4d4d4d<c> <fs>12px<fs>",
