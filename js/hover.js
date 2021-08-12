@@ -195,7 +195,7 @@ function customTextSyntax(syn = "") {
         } else selectedContainer.append(selectedSpan);
         index = line.indexOf("<nct>", index + 1);
         if(index == -1) return console.error(`"<nct>" has no closing!`);
-      } selectedSpan.textContent += lineText;
+      } selectedSpan.innerHTML += lineText;
       index = line.indexOf("<", index + 1);
     } while(index !== -1);
   } return pre;

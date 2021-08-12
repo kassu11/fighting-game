@@ -148,6 +148,7 @@
           <div class="craftingContainer">
             <div class="toolBar">
               <input type="text" class="searchBar" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+              <div id="clearCraftingSearchBar" class="hidden"></div>
               <div class="sort" tabindex="-1">
                 <div class="value">
                   <p>Sort items</p>
@@ -162,7 +163,11 @@
                 </div>
                 <div class="subMenu"></div>
               </div>
-              <input type="text" class="whatCanCraft">
+              <div class="whatCanCraftContainer" tabindex="-1">
+                <div class="value"></div>
+                <input type="text" class="whatCanCraft">
+                <div class="subMenu"></div>
+              </div>
             </div>
             <div class="craftableItems" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
           </div>

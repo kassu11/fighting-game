@@ -71,7 +71,15 @@ const items = {
             amount: 1
           },
         ]
-      }
+      },
+      {
+        items: [
+          {
+            item: "dmgBooster",
+            amount: 2
+          },
+        ],
+      },
     ]
   },
   dmgBooster: {
@@ -210,7 +218,7 @@ const items = {
     tags: ["material"],
     image: "iron.png",
     amount: 5
-  },
+  }
 }
 
 function Item(item, user) {

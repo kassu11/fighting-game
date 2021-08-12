@@ -6,6 +6,7 @@ const craftingValues = {
   addFilter: [],
   selectedResipe: "",
   allOpenRecipes: {},
+  itemNeedsToBeInRecipe: "",
   lastCrafted: {index: 0, id: "", updates: null}
 }
 const craftInv = itemsMenu.querySelector(".crafting .craftableItems");
@@ -94,7 +95,14 @@ function filterCraftingItems(array) {
 }
 
 const searchBar = itemsMenu.querySelector(".toolBar input.searchBar");
-searchBar.addEventListener("input", e => craftingSearch())
+searchBar.addEventListener("input", e => craftingSearch());
+
+const clearCraftingSearchBar = itemsMenu.querySelector(".toolBar #clearCraftingSearchBar");
+clearCraftingSearchBar.addEventListener("click", () => {
+  searchBar.value = "";
+  craftingSearch();
+  searchBar.focus();
+})
 
 function craftingSearch(returnEmpty = false) {
   const search = searchBar.value.toLowerCase().replaceAll(/ +/g, " ");
@@ -104,6 +112,9 @@ function craftingSearch(returnEmpty = false) {
   const splitWithTags = search.split(/(#)| /g);
 
   searchBar.classList.remove("failed");
+  if(search.length) {
+    clearCraftingSearchBar.classList.remove("hidden");
+  } else clearCraftingSearchBar.classList.add("hidden");
 
   for(let i = 0; i < splitWithTags.length; i++) {
     if(!splitWithTags[i] || splitWithTags[i] == " ") continue;
@@ -118,12 +129,10 @@ function craftingSearch(returnEmpty = false) {
   const mediumSearch = []; // indexOf all words from name (not duplicate) and all tags indexOf
   const easySearch = [];   // indexOf any word and any tag
 
-  const filteredVersionOfitems = filterCraftingItems( allCraftableItems );
+  const lookForItems = craftingValues.itemNeedsToBeInRecipe;
+  const filteredVersionOfitems = lookForItems ? filterCraftingItems( allItemsUsedForCrafting[lookForItems] ) : filterCraftingItems( allCraftableItems );
 
-  if(search.length == 0 || search == "#") {
-    if(filteredVersionOfitems.length === craftingValues.gridItems.length) return
-    else return generateCraftingItemsList(filteredVersionOfitems);
-  }
+  if(search.length == 0 || search == "#") return generateCraftingItemsList(filteredVersionOfitems);
   else filteredVersionOfitems.forEach(item => {
     const itemName = item.name.toLowerCase();
 
@@ -148,13 +157,12 @@ function craftingSearch(returnEmpty = false) {
     }
   });
 
-  console.log(perfectSearch)
   if(perfectSearch.length) generateCraftingItemsList(perfectSearch);
   else if(strictSearch.length) generateCraftingItemsList(strictSearch);
   else if(mediumSearch.length) generateCraftingItemsList(mediumSearch);
   else if(easySearch.length) generateCraftingItemsList(easySearch);
   else {
-    console.log("Search failed", returnEmpty);
+    console.log("Search failed");
     searchBar.classList.add("failed");
 
     if(returnEmpty) generateCraftingItemsList([]);
@@ -171,15 +179,17 @@ sortButton.addEventListener("click", e => {
   const subMenuContainer = sortButton.querySelector(".subMenu");
   sortButton.classList.add("active");
 
-  window.onclick = function hideSortSubMenu() {
-    typesButton.querySelector(".subMenu").textContent = "";
-    typesButton.classList.remove("active");
-    if(!itemsMenu.querySelector(".toolBar .sort:focus-within")) {
-      sortButton.classList.remove("active");
-      subMenuContainer.textContent = "";
-      window.onclick = null;
-    }
-  }
+  window.onclick = closeCraftingDropdownMenus;
+  
+  // function hideSortSubMenu() {
+  //   typesButton.querySelector(".subMenu").textContent = "";
+  //   typesButton.classList.remove("active");
+  //   if(!itemsMenu.querySelector(".toolBar .sort:focus-within")) {
+  //     sortButton.classList.remove("active");
+  //     subMenuContainer.textContent = "";
+  //     window.onclick = null;
+  //   }
+  // }
 
   if(e.target == sortButton) {
     const lastSortElem = sortButton.querySelector(".value .sortValue");
@@ -234,15 +244,7 @@ typesButton.addEventListener("click", e => {
   const subMenuContainer = typesButton.querySelector(".subMenu");
   typesButton.classList.add("active");
 
-  window.onclick = function hideTypesSubMenu() {
-    sortButton.querySelector(".subMenu").textContent = "";
-    sortButton.classList.remove("active");
-    if(!itemsMenu.querySelector(".toolBar .types:focus-within")) {
-      typesButton.classList.remove("active");
-      subMenuContainer.textContent = "";
-      window.onclick = null;
-    }
-  }
+  window.onclick = closeCraftingDropdownMenus;
 
   if(e.target == typesButton) {
     if(subMenuContainer.querySelector(".typeValue")) {
@@ -308,6 +310,22 @@ typesButton.addEventListener("click", e => {
   }
 });
 
+function closeCraftingDropdownMenus() {
+  const buttons = [".sort", ".types", ".whatCanCraftContainer"];
+
+  const allNotFocused = buttons.reduce((a, v) => {
+    const notFocus = itemsMenu.querySelector(`.toolBar ${v}:not(:focus-within)`);
+
+    if(notFocus) {
+      notFocus.classList.remove("active");
+      notFocus.querySelector(".subMenu").textContent = "";
+      return a;
+    } return false;
+  }, true);
+
+  if(allNotFocused) window.onclick = null;
+}
+
 craftInv.addEventListener("click", function openCraftingRecipes(e) {
   const clickedItem = e.target.classList.contains("craftingItem") ? e.target : e.target.parentElement;
   if(e.target == craftInv || !clickedItem.classList.contains("craftingItem")) return;
@@ -321,10 +339,10 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
   if(!recipesSubmenu.textContent && recipes?.length) {
     addHover(recipesSubmenu, "");
     const rows = recipes.map((recipe, y) => {
-      const [rowElem] = emmet(".row>.craftingButton>img+p^div.items");
+      const [rowElem] = emmet(".row>.craftingButton>img+p.itemAmount^div.items");
       const items = recipe.items.map(data => {
         const item = new Item({id: data.item}, player);
-        const [itemElem] = emmet(".item>img+p.itemAmont");
+        const [itemElem] = emmet(".item>img+p.itemAmount");
         const img = itemElem.querySelector("img");
         const amount = itemElem.querySelector("p");
 
@@ -336,7 +354,18 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
           itemElem.append(warningElem);
         }
 
-        itemElem.addEventListener("contextmenu", e => {e.preventDefault(); return false});
+        itemElem.addEventListener("contextmenu", e => {
+          craftingValues.itemNeedsToBeInRecipe = item.id;
+          craftingSearch();
+          hoverBox.querySelector("div[recipe]")?.remove?.();
+          whatCanCraftButton.querySelector(".value").innerHTML = `<div class="row selected" itemid="${item.id}">
+            <img src="./images/${item.image}">
+            <p>${item.name}</p>
+            <div class="remove"></div>
+          </div>`;
+          e.preventDefault();
+          return false
+        });
         itemElem.addEventListener("mouseup", e => {
           console.log(e.button)
           if(e.button === 0 && item.craftingRecipes) {
@@ -515,7 +544,127 @@ const allItemsUsedForCrafting = allCraftableItems.reduce((ac, va) => {
 const listOfAllItemsUsedForCrafting = Object.keys(allItemsUsedForCrafting).map(e => new Item({id: e}));
 
 
+const whatCanCraft = itemsMenu.querySelector(".whatCanCraft");
+whatCanCraft.addEventListener("input", craftWithSearch)
 
-document.querySelector(".whatCanCraft").addEventListener("input", e => {
-  console.log(e)
+function craftWithSearch(e) {
+  const search = whatCanCraft.value.toLowerCase().replaceAll(/ +/g, " ");
+  const searchName = [];
+  const searchTags = [];
+
+  const splitWithTags = search.split(/(#)| /g);
+
+  // searchBar.classList.remove("failed");
+  // if(search.length) {
+  //   clearCraftingSearchBar.classList.remove("hidden");
+  // } else clearCraftingSearchBar.classList.add("hidden");
+
+  for(let i = 0; i < splitWithTags.length; i++) {
+    if(!splitWithTags[i] || splitWithTags[i] == " ") continue;
+    if(splitWithTags[i] == "#") {
+      if(splitWithTags[i + 1]) searchTags.push(splitWithTags[i + 1]);
+      i++; continue;
+    } else searchName.push(splitWithTags[i])
+  }
+
+  const perfectSearch = []; // Name and tags are identical
+  const strictSearch = []; // indexOf whole name and all tags startWith
+  const mediumSearch = []; // indexOf all words from name (not duplicate) and all tags indexOf
+  const easySearch = [];   // indexOf any word and any tag
+
+  // const lookForItems = craftingValues.itemNeedsToBeInRecipe;
+  const filteredVersionOfitems = listOfAllItemsUsedForCrafting;
+
+  if(search.length == 0 || search == "#") return generateWhatCanCraftList(filteredVersionOfitems);
+  else filteredVersionOfitems.forEach(item => {
+    const itemName = item.name.toLowerCase();
+
+    if(itemName === searchName.join(" ")) {
+      const tagNotFound = searchTags.find(tag => item.tags.find(itag => itag.indexOf(tag) !== -1) == null);
+      if(!tagNotFound) return perfectSearch.push(item);
+    } if(perfectSearch.length === 0 && itemName.indexOf(searchName.join(" ")) !== -1) { // Strict
+      const tagNotFound = !searchTags.find(tag => item.tags.find(itag => itag.startsWith(tag)) == null);
+      if(tagNotFound || searchTags.length == 0) return strictSearch.push(item);
+    } if(strictSearch.length == 0) { // Medium
+      let newItemName = itemName;
+      const tagNotFound = searchTags.find(tag => item.tags.find(itag => itag.indexOf(tag) !== -1) == null);
+      const nameNotFound = searchName.find(name => {
+        const length = newItemName.length;
+        newItemName = newItemName.replace(name, "");
+        return newItemName.length === length;
+      }); if(!(nameNotFound || tagNotFound)) return mediumSearch.push(item);
+    } if(mediumSearch.length == 0) { // Easy
+      const findName = searchName.length == 0 ? true : searchName.find(name => itemName.indexOf(name) !== -1);
+      const findTag = searchTags.length == 0 ? true : searchTags.find(tag => item.tags.find(itag => itag.indexOf(tag) !== -1));
+      if(findTag && findName) return easySearch.push(item);
+    }
+  });
+
+  if(perfectSearch.length) generateWhatCanCraftList(perfectSearch);
+  else if(strictSearch.length) generateWhatCanCraftList(strictSearch);
+  else if(mediumSearch.length) generateWhatCanCraftList(mediumSearch);
+  else if(easySearch.length) generateWhatCanCraftList(easySearch);
+  else {
+    console.log("Search failed");
+    // searchBar.classList.add("failed");
+
+    // if(returnEmpty) generateCraftingItemsList([]);
+  }
+
+  // const hoverPopUpItemName = hoverBox.querySelector("div[crafting] .itemTitle")?.textContent;
+  // const hoverItemName = craftInv.querySelector("craftingItem:hover>.name")?.textContent;
+  // if(hoverPopUpItemName && !hoverItemName) hoverBox.textContent = "";
+  // if(hoverPopUpItemName != hoverItemName) hoverBox.textContent = "";
+
+  // generateWhatCanCraftList()
+};
+
+const whatCanCraftButton = itemsMenu.querySelector(".whatCanCraftContainer");
+
+function generateWhatCanCraftList(arr) {
+  const submenu = whatCanCraftButton.querySelector(".subMenu");
+
+  submenu.textContent = "";
+  arr.forEach(item => {
+    const [elem] = emmet("div.row>img+p+div.remove");
+    elem.querySelector("img").src = "./images/" + item.image;
+    elem.querySelector("p").textContent = item.name;
+    elem.setAttribute("itemId", item.id)
+    submenu.append(elem);
+
+    if(craftingValues.itemNeedsToBeInRecipe === item.id) elem.classList.add("selected")
+  })
+}
+
+whatCanCraftButton.querySelector(".subMenu").addEventListener("click", e => {
+  const id = e.target?.getAttribute("itemId");
+  if(id) {
+    whatCanCraftButton.querySelectorAll(".subMenu > .row.selected").forEach(elem => elem.classList.remove("selected"));
+    craftingValues.itemNeedsToBeInRecipe = id;
+    e.target.classList.add("selected");
+  } else if(e.target?.classList.contains("remove")) {
+    e.target.parentElement.classList.remove("selected");
+    craftingValues.itemNeedsToBeInRecipe = "";
+  } else return;
+  
+  console.log("====")
+  craftingSearch();
+  whatCanCraftButton.querySelector(".value").innerHTML = e.target.outerHTML;
+})
+
+whatCanCraftButton.addEventListener("mousedown", e => {
+  if(!whatCanCraftButton.classList.contains("active")) {
+    whatCanCraft.value = "";
+    if(e.target === whatCanCraft) {
+      craftWithSearch();
+      whatCanCraftButton.classList.add("active")
+    
+      window.onclick = closeCraftingDropdownMenus;
+    } else if(e.target?.classList.contains("remove")) {
+      craftingValues.itemNeedsToBeInRecipe = "";
+      whatCanCraftButton.querySelector(".value").innerHTML = "";
+      craftingSearch();
+    }
+  }
+
 });
