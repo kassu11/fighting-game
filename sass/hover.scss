@@ -93,6 +93,39 @@
     margin-left: 5px;
     bottom: 14px;
   }
+
+  div.craftingTooltip {
+    display: block;
+    // position: relative;
+    // background-color: red;
+    min-width: 160px;
+    font-size: 13px;
+    margin-top: 20px;
+
+    span {
+      font-weight: 700;
+    }
+
+    .hide {
+      opacity: .4;
+      // filter: grayscale(.5)
+    }
+    .hotkey {
+      color: orange;
+      font-size: 10px;
+      text-shadow: 0 0 2px yellow;
+      font-weight: 500;
+    }
+
+    .left {
+      float: left;
+    }
+
+    .right {
+      text-align: right;
+      float: right;
+    }
+  }
 }
 
 #hoverBox {

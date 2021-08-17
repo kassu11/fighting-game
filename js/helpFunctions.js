@@ -70,3 +70,8 @@ function emmet(syn) {
     }
   } return base;
 }
+
+
+window.addEventListener("keyup", e => {
+  if(e.code === "BracketLeft") debugger;
+})

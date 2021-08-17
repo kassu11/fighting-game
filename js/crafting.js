@@ -11,11 +11,6 @@ const craftingValues = {
 }
 const craftInv = itemsMenu.querySelector(".crafting .craftableItems");
 
-const craftingHistory = {
-  index: 0,
-  history: []
-}
-
 generateCraftingItemsList();
 
 function generateCraftingItemsList(array) {
@@ -319,6 +314,7 @@ function closeCraftingDropdownMenus() {
     if(notFocus) {
       notFocus.classList.remove("active");
       notFocus.querySelector(".subMenu").textContent = "";
+      if(v === ".whatCanCraftContainer") whatCanCraft.value = "";
       return a;
     } return false;
   }, true);
@@ -352,11 +348,21 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
           addHover([warningElem, "cantBeCrafted"], "Item can't be crafted");
           itemElem.classList.add("cantBeCrafted");
           itemElem.append(warningElem);
-        }
+        } else itemElem.addEventListener("mouseup", e => {
+          // console.log(e.button)
+          if(e.button === 0 && item.craftingRecipes) {
+            itemsMenu.querySelector("input.searchBar").value = item.name + "#" + item.tags.join("#");
+            generateCraftingItemsList([item]);
+            itemsMenu.querySelector("#clearCraftingSearchBar").classList.remove("hidden");
+            craftInv.querySelector(".craftingItem").click();
+            hoverBox.querySelector("[recipe]").remove();
+          }
+        });
 
         itemElem.addEventListener("contextmenu", e => {
           craftingValues.itemNeedsToBeInRecipe = item.id;
-          craftingSearch();
+          // craftingSearch();
+          generateCraftingItemsList(allItemsUsedForCrafting[item.id]);
           hoverBox.querySelector("div[recipe]")?.remove?.();
           whatCanCraftButton.querySelector(".value").innerHTML = `<div class="row selected" itemid="${item.id}">
             <img src="./images/${item.image}">
@@ -366,21 +372,18 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
           e.preventDefault();
           return false
         });
-        itemElem.addEventListener("mouseup", e => {
-          console.log(e.button)
-          if(e.button === 0 && item.craftingRecipes) {
-            itemsMenu.querySelector("input.searchBar").value = item.name + "#" + item.tags.join("#");
-            craftingSearch();
-            craftInv.querySelector(".craftingItem").click();
-            hoverBox.querySelector("[recipe]").remove();
-          }
-        });
-
+        
         amount.textContent = data.amount;
         img.src = "./images/" + item.image;
+        const tooltipText = [
+          "<ct>craftingTooltip<ct>", 
+          `[Left click]<cl>left hotkey${item.craftingRecipes ? "" : " hide"}<cl>`,
+          `§<cl>right hotkey<cl>[Right click]`,
+          `§\nShow recipe${item.craftingRecipes ? "" : "<cl>hide<cl>"}`,
+          `§<cl>right<cl>Used in`].join("");
 
-        addHover([itemElem, "recipe"], item.hoverText());
-
+        addHover([itemElem, "recipe"], item.hoverText() + tooltipText);
+        
         return itemElem;
       });
 
