@@ -654,6 +654,7 @@ whatCanCraftButton.querySelector(".subMenu").addEventListener("click", e => {
   } else return;
   
   craftingSearch(true);
+  whatCanCraft.focus();
   whatCanCraftButton.querySelector(".value").innerHTML = e.target.outerHTML;
 })
 
