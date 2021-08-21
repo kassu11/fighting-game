@@ -21,4 +21,4 @@ document.querySelector("#inventoryButton").addEventListener("click", () => {
 
 
 
-craftingMenuButton.click();
+// craftingMenuButton.click();

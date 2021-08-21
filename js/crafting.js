@@ -336,7 +336,7 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
     addHover(recipesSubmenu, "");
     const rows = recipes.map((recipe, y) => {
       const [rowElem] = emmet(".row>.craftingButton>img+p.itemAmount^div.items");
-      const items = recipe.items.map(data => {
+      const items = recipe.items.map((data, x) => {
         const item = new Item({id: data.item}, player);
         const [itemElem] = emmet(".item>img+p.itemAmount");
         const img = itemElem.querySelector("img");
@@ -375,6 +375,8 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
         
         amount.textContent = data.amount;
         img.src = "./images/" + item.image;
+
+        const notEnoughText  = `<nct><v>craftInv.children[${itemIndex}].querySelector(".row:nth-child(${y + 1}) .item:nth-child(${x + 1})")?.classList.contains("cantCraft") ? "notEnough" : "notEnough hidden"<v><nct>Not enough items§<nct>itemData<nct>`
         const tooltipText = [
           "<ct>craftingTooltip<ct>", 
           `[Left click]<cl>left hotkey${item.craftingRecipes ? "" : " hide"}<cl>`,
@@ -382,7 +384,7 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
           `§\nShow recipe${item.craftingRecipes ? "" : "<cl>hide<cl>"}`,
           `§<cl>right<cl>Used in`].join("");
 
-        addHover([itemElem, "recipe"], item.hoverText() + tooltipText);
+        addHover([itemElem, "recipe"], notEnoughText + item.hoverText() + tooltipText);
         
         return itemElem;
       });
