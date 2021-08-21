@@ -635,7 +635,10 @@ function generateWhatCanCraftList(arr) {
     elem.setAttribute("itemId", item.id)
     submenu.append(elem);
 
-    if(craftingValues.itemNeedsToBeInRecipe === item.id) elem.classList.add("selected")
+    if(craftingValues.itemNeedsToBeInRecipe === item.id) {
+      elem.classList.add("selected");
+      elem.scrollIntoView();
+    }
   })
 }
 
@@ -650,8 +653,7 @@ whatCanCraftButton.querySelector(".subMenu").addEventListener("click", e => {
     craftingValues.itemNeedsToBeInRecipe = "";
   } else return;
   
-  console.log("====")
-  craftingSearch();
+  craftingSearch(true);
   whatCanCraftButton.querySelector(".value").innerHTML = e.target.outerHTML;
 })
 
@@ -659,14 +661,14 @@ whatCanCraftButton.addEventListener("mousedown", e => {
   if(!whatCanCraftButton.classList.contains("active")) {
     whatCanCraft.value = "";
     if(e.target === whatCanCraft) {
-      craftWithSearch();
+      craftWithSearch(true);
       whatCanCraftButton.classList.add("active")
     
       window.onclick = closeCraftingDropdownMenus;
     } else if(e.target?.classList.contains("remove")) {
       craftingValues.itemNeedsToBeInRecipe = "";
       whatCanCraftButton.querySelector(".value").innerHTML = "";
-      craftingSearch();
+      craftingSearch(true);
     }
   }
 

@@ -96,8 +96,6 @@
 
   div.craftingTooltip {
     display: block;
-    // position: relative;
-    // background-color: red;
     min-width: 160px;
     font-size: 13px;
     margin-top: 20px;
@@ -108,7 +106,6 @@
 
     .hide {
       opacity: .4;
-      // filter: grayscale(.5)
     }
     .hotkey {
       color: orange;
