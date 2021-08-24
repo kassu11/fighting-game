@@ -171,11 +171,6 @@ levelButtons.addEventListener("wheel", e => {
   }
   
   const {width: w2, height: h2} = container.getBoundingClientRect();
-  
-  
-  // console.log(width, w2);
-  // console.log(">", offsetX);
-  // console.log(width / (width - startX), w2);
 
   const trueX = width - startX + x - width;
   const trueY = height - startY + y - height;
@@ -185,12 +180,7 @@ levelButtons.addEventListener("wheel", e => {
 
   const trueScaledX = w2 * perX;
   const trueScaledY = h2 * perY;
-
-  console.log(Math.round(trueX - trueScaledX));
-  // console.log(w2 * (886 / width))
   
   container.style.left = x - trueScaledX + "px";
   container.style.top = y - trueScaledY + "px";
-  // container.style.left = Math.round((startX + (trueX - trueScaledX)) / 2) + "px";
-  // container.style.top = Math.round((startY + (trueY - trueScaledY)) / 2)  + "px";
 });

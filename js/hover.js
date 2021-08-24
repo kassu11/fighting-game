@@ -21,9 +21,9 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
   if(typeof keys == "string") keys = [keys];
   if(keys.indexOf("default") == -1) keys.unshift("default");
 
-  target[0].addEventListener("mouseover", mouseOver);
-  target[0].addEventListener("mousemove", moveHoverBlock);
-  target[0].addEventListener("mouseout", mouseOut);
+  target[0].onmouseover = mouseOver;
+  target[0].onmousemove = moveHoverBlock;
+  target[0].onmouseout = mouseOut;
 
   moveHoverBlock();
 

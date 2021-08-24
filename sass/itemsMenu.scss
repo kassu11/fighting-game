@@ -361,7 +361,8 @@
         }
       }
 
-      .crafting {
+      @at-root #itemsMenu .crafting {
+        @at-root #itemsMenu:not(.craft) .crafting {display: none}
         position: relative;
         width: 100%;
         height: 100%;
@@ -370,531 +371,416 @@
         .craftingContainer {
           position: absolute;
           inset: 0px;
-        }
-        
-        @at-root #itemsMenu:not(.craft) .crafting {display: none;}
 
-        .toolBar {
-          position: relative;
-          width: 100%;
-          height: 50px;
-          background: #1f1f1f;
-          display: flex;
-
-          .searchBar {
-            cursor: pointer;
+          @at-root #itemsMenu .crafting .toolBar {
             position: relative;
-            height: 35px;
-            background: #3c3c3c;
-            border: 2px solid dimgrey;
-            border-radius: 35px;
-            padding-left: 10px;
-            margin-top: 7px;
-            margin-left: 7px;
-            color: rgb(202, 202, 202);
-            font-family: 'font3';
-            font-weight: 500;
-            outline: 0;
-            font-size: 16px;
-            transition: background .1s, border .1s, color .2s, filter .2s;
-            filter: brightness(.8);
-            user-select: none;
-            padding-right: 31px;
-            text-overflow: ellipsis;
-            min-width: 170px;
-            width: min(100%, 300px);
+            width: 100%;
+            height: 50px;
+            background: #1f1f1f;
+            display: flex;
 
-            &.failed, &.failed:focus {
-              background: #6b2828;
-              border-color: #b70000;
-              color: #b9b9b9;
-            }
-
-            &:hover {
-              filter: brightness(.9);
-            }
-            &:focus {
-              filter: brightness(1);
-              color: rgb(255, 255, 255);
-              user-select: all;
-            }
-          }
-
-          #clearCraftingSearchBar {
-            position: relative;
-            width: 16px;
-            height: 16px;
-            /* background: red; */
-            flex-shrink: 0;
-            margin-left: -16px;
-            top: 17px;
-            left: -11px;
-            cursor: pointer;
-            opacity: .5;
-            transition: opacity .2s;
-
-            &.hidden {
-              transition: opacity .2s, visibility 0s .2s;
-              visibility: hidden;
-              opacity: 0;
-            }
-
-            &:after, &:before {
-              content: "";
-              position: absolute;
-              width: 4px;
-              height: 16px;
-              top: 0px;
-              right: 6px;
-              background: #e2e2e2;
-              border-radius: 13px;
-            }
-
-            &:after {
-              transform: rotate(-45deg);
-            }
-            &:before {
-              transform: rotate(45deg);
-            }
-          }
-
-          .sort {
-            user-select: none;
-            position: relative;
-            width: 150px;
-            height: 35px;
-            background: #023e8a;
-            font-family: "font3";
-            margin: 7px;
-            cursor: pointer;
-            flex-shrink: 0;
-            box-shadow: inset 0 2px 0 0px #0096c7, inset -2px 0px 0 0px #0096c7, inset 2px 0px 0 0px #0096c7;
-
-            &:hover, &.active {
-              background: hsl(214deg 97% 32%);
-            }
-
-            .sortValue {
+            .searchBar {
               position: relative;
-              width: 100%;
-              display: flex;
               cursor: pointer;
-              color: hsl(191, 78%, 93%);
-              height: 30px;
-              transition: padding .2s .1s, background .1s;
+              min-width: 170px;
+              width: min(100%, 300px);
+              height: 35px;
+              border-radius: 35px;
+              border: 2px solid dimgrey;
+              padding-left: 10px;
+              padding-right: 31px;
+              margin-top: 7px;
+              margin-left: 7px;
+              background: #3c3c3c;
+              color: rgb(202, 202, 202);
+              font-family: 'font3';
+              font-weight: 500;
+              outline: 0;
+              font-size: 16px;
+              filter: brightness(.8);
+              transition: background .1s, border .1s, color .2s, filter .2s;
+              user-select: none;
+              text-overflow: ellipsis;
 
-              &:hover {
-                background: hsl(195, 100%, 39%);
+              &.failed, &.failed:focus {
+                background: #6b2828;
+                border-color: #b70000;
+                color: #b9b9b9;
               }
-              &:active {background: hsl(195, 100%, 40%)}
 
-
-              > * {
-                pointer-events: none;
+              &:hover {filter: brightness(.9)}
+              &:focus {
+                filter: brightness(1);
+                color: rgb(255, 255, 255);
+                user-select: all;
               }
+            }
 
-              p {
-                margin: 0px;
-                margin-left: 3px;
-                font-weight: 600;
-                margin-top: 5px;
-              }
+            @at-root #clearCraftingSearchBar { // ########################### Search Bar #########################
+              position: relative;
+              width: 16px;
+              height: 16px;
+              top: 17px;
+              left: -11px;
+              margin-left: -16px;
+              flex-shrink: 0;
+              opacity: .5;
+              transition: opacity .2s;
+              cursor: pointer;
 
-              img {
-                object-fit: contain;
-                width: 29px;
-                height: 29px;
-                margin-left: 5px;
-                image-rendering: pixelated;
-                image-rendering: optimizespeed;
-                display: none;
+              &.hidden {
+                transition: opacity .2s, visibility 0s .2s;
+                visibility: hidden;
+                opacity: 0;
               }
               
-            }
-
-            .removeSelection {
-              position: absolute;
-              width: 19px;
-              height: 19px;
-              right: 4px;
-              top: 6px;
-              pointer-events: none;
-              transform: scale(0) translateX(200%) rotate(90deg);
-              transition: transform .3s;
-
-              &::before, &::after {
-                content: "";
+              &:after, &:before {
                 position: absolute;
-                width: 2px;
-                height: 10px;
-                top: 5px;
-                right: 8px;
+                content: "";
+                width: 4px;
+                height: 16px;
+                top: 0px;
+                right: 6px;
+                background: #e2e2e2;
+                border-radius: 13px;
               }
 
-              &::before {
-                transform: rotate(-45deg);
-              }
-
-              &::after {
-                transform: rotate(45deg);     
-              }
+              &:after {transform: rotate(-45deg)}
+              &:before {transform: rotate(45deg)}
             }
 
-            .reverse, .selected {
-              &.sortValue {
-                padding-left: 20px;
-                transition: padding .2s;
-                background: hsl(201deg 100% 29%); 
-              }
+            @at-root #itemsMenu .crafting .sort { // ######################## Sort Button #########################
+              position: relative;
+              user-select: none;
+              width: 150px;
+              height: 35px;
+              margin: 7px;
+              flex-shrink: 0;
+              font-family: "font3";
+              cursor: pointer;
+              background: #023e8a;
+              box-shadow: inset 0 2px 0 0px #0096c7, inset -2px 0px 0 0px #0096c7, inset 2px 0px 0 0px #0096c7;
 
-              .directionContainer {
-                transition: transform .2s;
-                transform: translateX(-20px);
-                &:after {
-                  width: 5px;
-                  transition: box-shadow .25s, width .25s;
-                }
-              }
+              &:hover, &.active {background: #0247a1}
 
-              .removeSelection {
-                pointer-events: all;
-                transform: scale(1);
+              .arrow {color: #cde2fe}
 
-                &::before, &::after {
-                  content: "";
-                  position: absolute;
-                  width: 4px;
-                  height: 17px;
-                  top: 1px;
-                  right: 7px;
-                  background: hsl(214deg 98% 90%);
-                  border-radius: 13px;
-                }
+              .subMenu {
+                position: absolute;
+                top: 100%;
+                width: 100%;
+                border: 2px solid #0096c7;
+                border-top: 0px;
+                display: flex;
+                z-index: 2;
+                flex-direction: column;
+                background: #0077b6;
+
+                @at-root #itemsMenu .crafting .sort .sortValue {
+                  position: relative;
+                  width: 100%;
+                  height: 30px;
+                  display: flex;
+                  cursor: pointer;
+                  color: hsl(191, 78%, 93%);
+                  transition: padding .2s .1s, background .1s;
+
+                  @at-root #itemsMenu .crafting .sort .subMenu .sortValue {
+                    &:hover {background: hsl(195, 100%, 39%)}
+                    &:active {background: hsl(195, 100%, 40%)}
+                    &:is(.reverse, .selected):hover {background: hsl(201, 100%, 26%)}
+                  }
+
+                  &:where(.reverse, .selected) {
+                    padding-left: 20px;
+                    transition: padding .2s;
+                    background: #006094;
+                  }
+
+                  .directionContainer {
+                    position: absolute;
+                    width: 20px;
+                    height: 20px;
+                    transition: transform .2s .1s;
+                    top: 5px;
+    
+                    &:after {
+                      content: "";
+                      position: absolute;
+                      width: 0px;
+                      height: 3px;
+                      left: 8px;
+                      top: 8px;
+                      background: hsl(190, 77%, 70%);
+                      transition: box-shadow .25s, width .25s;
+                      box-shadow: 
+                        0 0 hsl(190, 77%, 82%), 0 0 hsl(190, 77%, 82%), 
+                        0 -4px hsl(190, 77%, 70%), 0 -4px hsl(190, 77%, 70%), 0 -4px hsl(190, 77%, 70%), 
+                        0 4px hsl(189, 75%, 75%), 0 4px hsl(189, 75%, 75%), 0 4px hsl(189, 75%, 75%);
+                    }
+                  }
+
+                  > * {pointer-events: none}
   
-                &::before {
-                  transform: rotate(-45deg);
-                }
+                  p {
+                    margin: 0px;
+                    margin-left: 3px;
+                    font-weight: 600;
+                    margin-top: 5px;
+                  }
   
-                &::after {
-                  transform: rotate(45deg);     
+                  .removeSelection {
+                    position: absolute;
+                    width: 19px;
+                    height: 19px;
+                    right: 4px;
+                    top: 6px;
+                    pointer-events: none;
+                    transform: scale(0) translateX(200%) rotate(90deg);
+                    transition: transform .3s;
+    
+                    &::before, &::after {
+                      content: "";
+                      position: absolute;
+                      width: 2px;
+                      height: 10px;
+                      top: 5px;
+                      right: 8px;
+                    }
+    
+                    &::before {
+                      transform: rotate(-45deg);
+                    }
+    
+                    &::after {
+                      transform: rotate(45deg);     
+                    }
+                  }
                 }
               }
-            }
-            .reverse {
-              .directionContainer:after {
-                box-shadow: 2px 0 hsl(190, 76%, 70%), -2px 0 hsl(190, 76%, 70%), 
-                0 -4px hsl(189, 75%, 60%), 0 -4px hsl(189, 75%, 60%), 0 -4px hsl(189, 75%, 60%), 
-                0 4px hsl(190, 77%, 74%), 4px 4px hsl(190, 77%, 74%), -4px 4px hsl(190, 77%, 74%);
-              }
-            }
-            .selected {
-              .directionContainer:after {
-                box-shadow: 
-                  2px 0 hsl(190, 76%, 70%), -2px 0 hsl(190, 76%, 70%), 
-                  0 -4px hsl(190, 77%, 74%), 4px -4px hsl(190, 77%, 74%), -4px -4px hsl(190, 77%, 74%), 
-                  0 4px hsl(189, 75%, 60%), 0 4px hsl(189, 75%, 60%), 0 4px hsl(189, 75%, 60%);
-              }
-            }
-            
-            .value {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              pointer-events: none;
 
-              > p {
-                position: relative;
-                top: 8px;
-                left: 10px;
-                margin: 0px;
-                font-weight: 600;
-              }
+              :is(.reverse, .selected) {
+                .directionContainer {
+                  transition: transform .2s;
+                  transform: translateX(-20px);
+                  &:after {
+                    width: 5px;
+                    transition: box-shadow .25s, width .25s;
+                  }
+                }
 
-              .sortValue {
-                top: 3px;
-                left: 4px;
-                background: unset;
+                @at-root #itemsMenu .crafting .sort .reverse {
+                  .directionContainer:after {
+                    box-shadow: 2px 0 hsl(190, 76%, 70%), -2px 0 hsl(190, 76%, 70%), 
+                    0 -4px hsl(189, 75%, 60%), 0 -4px hsl(189, 75%, 60%), 0 -4px hsl(189, 75%, 60%), 
+                    0 4px hsl(190, 77%, 74%), 4px 4px hsl(190, 77%, 74%), -4px 4px hsl(190, 77%, 74%);
+                  }
+                }
+
+                @at-root #itemsMenu .crafting .sort .selected {
+                  .directionContainer:after {
+                    box-shadow: 
+                      2px 0 hsl(190, 76%, 70%), -2px 0 hsl(190, 76%, 70%), 
+                      0 -4px hsl(190, 77%, 74%), 4px -4px hsl(190, 77%, 74%), -4px -4px hsl(190, 77%, 74%), 
+                      0 4px hsl(189, 75%, 60%), 0 4px hsl(189, 75%, 60%), 0 4px hsl(189, 75%, 60%);
+                  }
+                }
 
                 .removeSelection {
-                  right: 10px;
+                  pointer-events: all;
+                  transform: scale(1);
+
+                  &::before, &::after {
+                    content: "";
+                    position: absolute;
+                    width: 4px;
+                    height: 17px;
+                    top: 1px;
+                    right: 7px;
+                    background: #cde2fe;
+                    border-radius: 13px;
+                  }
+
+                  &::before {
+                    transform: rotate(-45deg);
+                  }
+
+                  &::after {
+                    transform: rotate(45deg);     
+                  }
+                }
+              }
+            }
+
+            @at-root #itemsMenu .crafting .types { // ####################### Types Button #########################
+              position: relative;
+              user-select: none;
+              width: 150px;
+              height: 35px;
+              margin: 7px;
+              font-family: "font3";
+              cursor: pointer;
+              flex-shrink: 0;
+              background: hsl(268, 88%, 40%);
+              box-shadow: inset 0 2px 0 0px hsl(268, 88%, 70%), inset -2px 0px 0 0px hsl(268, 88%, 70%), inset 2px 0px 0 0px hsl(268, 88%, 70%);
+
+              &:hover, &.active {background: hsl(268, 88%, 45%)}
+
+              .value .arrow {color: hsl(268, 88%, 85%)}
+
+              .subMenu {
+                position: absolute;
+                z-index: 2;
+                display: flex;
+                flex-direction: column;
+                top: 100%;
+                width: 100%;
+                background: hsl(268, 88%, 55%);
+                border: 2px solid hsl(268, 88%, 70%);
+                border-top: 0px;
+
+                p {color: hsl(268, 88%, 95%)}
+
+                .typeValue {
+                  &:hover {background: hsl(268, 88%, 60%)}
+                  &:active {background: hsl(268, 88%, 65%)}
+                  &:is(.remove, .add) {
+                    background: hsl(268, 88%, 50%);
+                    &:hover {background: hsl(268, 88%, 46%)}
+                  }
+                }
+              }
+
+              .typeValue {
+                position: relative;
+                width: 100%;
+                height: 30px;
+                display: flex;
+                cursor: pointer;
+                font-weight: 600;
+                padding-top: 5px;
+                padding-left: 2px;
+                transition: padding .2s .1s,background .1s;
+
+                * {pointer-events: none}
+
+                .directionContainer {
+                  position: absolute;
+                  width: 20px;
+                  height: 20px;
+                  left: 1px;
+                  transition: transform .2s;
+                  transform: scale(0) rotate(180deg);
+                }
+
+                &:is(.remove, .add) {
+                  padding-left: 20px;
+                  transition: padding .2s, background .1s;
+
+                  @at-root #itemsMenu .crafting .types .remove {
+                    --color: rgb(255, 72, 72);
+    
+                    .directionContainer {
+                      filter: drop-shadow(2px 2px 0px #9e0000);
+                      display: block;
+    
+                      &:before, &:after {
+                        content: "";
+                        position: absolute;
+                        width: 16px;
+                        height: 4px;
+                        background: rgb(255, 72, 72);
+                        top: 8px;
+                        left: 2px;
+                        transition: width .25s, height .25s, top .25s, left .25s, background .25s;
+                      }
+                    }
+                  }
+                  
+                  @at-root #itemsMenu .crafting .types .add {
+                    --color: rgb(0, 255, 34);
+    
+                    .directionContainer {
+                      filter: drop-shadow(2px 2px 0px green);
+                      display: block;
+                      &:before {
+                        content: "";
+                        position: absolute;
+                        width: 4px;
+                        height: 16px;
+                        top: 2px;
+                        background: #2cff05;
+                        left: 8px;
+                        transition: width .25s, height .25s, top .25s, left .25s, background .25s;
+                      }
+    
+                      &:after {
+                        content: "";
+                        position: absolute;
+                        width: 16px;
+                        height: 4px;
+                        background: #2cff05;
+                        top: 8px;
+                        left: 2px;
+                        transition: width .25s, height .25s, top .25s, left .25s, background .25s;
+                      }
+                    }
+                  }
+
+                  .directionContainer {
+                    transform: scale(1) rotate(0deg);
+                  }
                 }
 
                 p {
-                  color: white;
+                  margin: 0px;
+                  margin-left: 3px;
                 }
-              }
-
-              .arrow {
-                position: absolute;
-                width: 25px;
-                height: 25px;
-                transition: transform .2s;
-                right: 5px;
-                top: 7px;
-                color: #cde2fe;
-
-                @at-root #itemsMenu .crafting .toolBar .active .arrow {
-                  transform: rotate(180deg) translateY(2px);
-                } 
-
-                &::before, &::after {
-                  content: "";
+                
+                .removeSelection {
                   position: absolute;
-                  width: 3px;
-                  height: 10px;
-                  top: 7px;
-                  border-radius: 10px 10px 0 0;
-                  background: currentColor;
-                }
+                  width: 19px;
+                  height: 19px;
+                  right: 4px;
+                  top: 6px;
+                  pointer-events: none;
+                  transform: scale(0) translateX(200%) rotate(90deg);
+                  transition: transform .3s;
   
-                &::before {
-                  left: 8px;
-                  transform: rotate(-45deg);
-                }
+                  &::before, &::after {
+                    content: "";
+                    position: absolute;
+                    width: 4px;
+                    height: 17px;
+                    top: 1px;
+                    right: 7px;
+                    background: hsl(268, 88%, 85%);
+                    border-radius: 13px;
+                  }
   
-                &::after {
-                  right: 8px;
-                  transform: rotate(45deg);
+                  &::before {
+                    transform: rotate(-45deg);
+                  }
+  
+                  &::after {
+                    transform: rotate(45deg);     
+                  }
                 }
               }
-            }
 
-            .subMenu {
-              position: absolute;
-              z-index: 2;
-              display: flex;
-              flex-direction: column;
-              top: 100%;
-              width: 100%;
-              background: #0077b6;
-              border: 2px solid #0096c7;
-              border-top: 0px;
-
-              .sortValue:is(.reverse, .selected):hover {
-                background: hsl(201deg 100% 26%);
-              }
-            }
-
-            .directionContainer {
-              position: absolute;
-              width: 20px;
-              height: 20px;
-              transition: transform .2s .1s;
-              top: 5px;
-
-              &:after {
-                content: "";
-                position: absolute;
-                width: 0px;
-                height: 3px;
-                left: 8px;
-                top: 8px;
-                background: hsl(190, 77%, 70%);
-                transition: box-shadow .25s, width .25s;
-                box-shadow: 
-                  0 0 hsl(190, 77%, 82%), 0 0 hsl(190, 77%, 82%), 
-                  0 -4px hsl(190, 77%, 70%), 0 -4px hsl(190, 77%, 70%), 0 -4px hsl(190, 77%, 70%), 
-                  0 4px hsl(189, 75%, 75%), 0 4px hsl(189, 75%, 75%), 0 4px hsl(189, 75%, 75%);
-              }
-            }
-          }
-
-          .types {
-            user-select: none;
-            position: relative;
-            width: 150px;
-            height: 35px;
-            background: hsl(268, 88%, 40%);
-            font-family: "font3";
-            margin: 7px;
-            cursor: pointer;
-            flex-shrink: 0;
-            box-shadow: inset 0 2px 0 0px hsl(268, 88%, 70%), inset -2px 0px 0 0px hsl(268, 88%, 70%), inset 2px 0px 0 0px hsl(268, 88%, 70%);
-
-            &:hover, &.active {
-              background: hsl(268, 88%, 45%);
-            }
-
-
-            .typeValue {
-              position: relative;
-              width: 100%;
-              display: flex;
-              cursor: pointer;
-              font-weight: 600;
-              padding-top: 5px;
-              padding-left: 2px;
-              transition: padding .2s .1s,background .1s;
-
-              > * {
-                pointer-events: none;
-              }
-
-              p {
-                margin: 0px;
-                margin-left: 3px;
-              }
-
-              img {
-                object-fit: contain;
-                width: 22px;
-                height: 22px;
-                margin-left: 5px;
-                display: none;
-              }
-              
-            }
-
-            .removeSelection {
-              position: absolute;
-              width: 19px;
-              height: 19px;
-              right: 4px;
-              top: 6px;
-              pointer-events: none;
-              transform: scale(0) translateX(200%) rotate(90deg);
-              transition: transform .3s;
-
-              &::before, &::after {
-                content: "";
-                position: absolute;
-                width: 2px;
-                height: 10px;
-                top: 5px;
-                right: 8px;
-              }
-
-              &::before {
-                transform: rotate(-45deg);
-              }
-
-              &::after {
-                transform: rotate(45deg);     
-              }
-            }
-
-            .remove {
-              --color: rgb(255, 72, 72);
-
-              .directionContainer {
-                filter: drop-shadow(2px 2px 0px #9e0000);
-                display: block;
-
-                &:before, &:after {
-                  content: "";
-                  position: absolute;
-                  width: 16px;
-                  height: 4px;
-                  background: rgb(255, 72, 72);
-                  top: 8px;
-                  left: 2px;
-                  transition: width .25s, height .25s, top .25s, left .25s, background .25s;
-                }
-              }
-            }
-            .add {
-              --color: rgb(0, 255, 34);
-
-              .directionContainer {
-                filter: drop-shadow(2px 2px 0px green);
-                display: block;
-                &:before {
-                  content: "";
-                  position: absolute;
-                  width: 4px;
-                  height: 16px;
-                  top: 2px;
-                  background: #2cff05;
-                  left: 8px;
-                  transition: width .25s, height .25s, top .25s, left .25s, background .25s;
-                }
-
-                &:after {
-                  content: "";
-                  position: absolute;
-                  width: 16px;
-                  height: 4px;
-                  background: #2cff05;
-                  top: 8px;
-                  left: 2px;
-                  transition: width .25s, height .25s, top .25s, left .25s, background .25s;
-                }
-              }
-            }
-
-            .remove, .add {
-              padding-left: 20px;
-              transition: padding .2s, background .1s;
-              .directionContainer {
-                transform: scale(1) rotate(0deg);
-              }
-            }
-
-            .remove, .add, .value {
-
-              .removeSelection {
+              :is(.remove, .add, .value) .removeSelection {
                 pointer-events: all;
                 transform: scale(1);
-
-                &::before, &::after {
-                  content: "";
-                  position: absolute;
-                  width: 4px;
-                  height: 17px;
-                  top: 1px;
-                  right: 7px;
-                  background: hsl(268, 88%, 85%);
-                  border-radius: 13px;
-                }
-  
-                &::before {
-                  transform: rotate(-45deg);
-                }
-  
-                &::after {
-                  transform: rotate(45deg);     
-                }
               }
             }
 
-            .subMenu {
-              position: absolute;
-              z-index: 2;
-              display: flex;
-              flex-direction: column;
-              top: 100%;
-              width: 100%;
-              background: hsl(268, 88%, 55%);
-              border: 2px solid hsl(268, 88%, 70%);
-              border-top: 0px;
-
-              p {
-                color: hsl(268, 88%, 95%);
-              }
-
-              .typeValue:hover {
-                background: hsl(268, 88%, 60%);
-              }
-              .typeValue:active {
-                background: hsl(268, 88%, 65%);
-              }
-
-              .typeValue:is(.remove, .add) {
-                background: hsl(268, 88%, 50%);
-
-                &:hover {
-                  background: hsl(268, 88%, 46%);
-                }
-              }
-            }
-
-            .value {
-              pointer-events: none;
+            :is(.sort, .types) .value {
               position: absolute;
               inset: 0px;
-              padding-left: 4px;
               padding-top: 3px;
+              padding-left: 4px;
               font-weight: 600;
+              pointer-events: none;
 
               .removeSelection {
                 top: 6px;
@@ -902,602 +788,570 @@
               }
 
               > p {
-                padding-left: 4px;
-                padding-top: 5px;
+                position: relative;
+                top: 6px;
+                left: 8px;
+                margin: 0px;
+                font-weight: 600;
               }
 
-              // .typeValue {
-                // left: -2px;
-                // width: calc(100% - 10px);
-                // top: 5px;
+              .arrow {
+                position: absolute;
+                width: 25px;
+                height: 25px;
+                right: 5px;
+                top: 7px;
+                transition: transform .2s;
 
-                // .removeSelection {
-                //   right: 3px;
-                //   top: 3px;
-              //   }
-              // }
+                @at-root #itemsMenu .crafting .toolBar .active .arrow {
+                  transform: rotate(180deg) translateY(2px);
+                }
+
+                &::before, &::after {
+                  position: absolute;
+                  content: "";
+                  width: 3px;
+                  height: 10px;
+                  top: 7px;
+                  border-radius: 10px 10px 0 0;
+                  background: currentColor;
+                }
+
+                &::before {
+                  left: 8px;
+                  transform: rotate(-45deg);
+                }
+
+                &::after {
+                  right: 8px;
+                  transform: rotate(45deg);
+                }
+              }
+
+              .sortValue {
+                background: unset;
+
+                p {
+                  margin-top: 6px;
+                  color: white
+                }
+                .removeSelection {right: 6px}
+              }
+              .typeValue p {margin-top: 1px}     
+            }
+            
+            .whatCanCraftContainer {
+              position: relative;
+              width: min(100%, 230px);
+              min-width: 170px;
+              height: 37px;
+              margin: 7px;
+              box-shadow: inset 0 0 0px 2px hsl(333, 93%, 70%);
+              background: hsl(333, 93%, 23%);
+
+              &:hover {
+                background: hsl(333, 93%, 20%);
+              }
+
+              &.active {
+                background: hsl(333, 93%, 20%);
+                box-shadow: inset 2px 0 0 hsl(333, 93%, 70%), inset -2px 0 0 hsl(333, 93%, 70%), inset 0 2px 0 hsl(333, 93%, 70%);
+                .value {
+                  z-index: 0;
+                  visibility: hidden;
+                }
+
+                .whatCanCraft::placeholder {
+                  opacity: .5;
+                  color: hsl(333, 93%, 70%);
+                }
+
+                .subMenu {
+                  border: 2px solid #fa6bab;
+                  border-top: 0px;
+                }
+              }
+
+              .whatCanCraft {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: transparent;
+                border: none;
+                outline: none;
+                font-family: font3;
+                padding-left: 10px;
+                color: white;
+                font-weight: 500;
+                font-size: 16px;
+                cursor: pointer;
+                padding-right: 30px;
+
+                &::placeholder {
+                  color: white;
+                  opacity: 1;
+                  font-weight: 600;
+                  // transition: .1s opacity;
+                }
+              }
+
+              .value {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+                pointer-events: none;
+
+                .row {
+                  height: 100%;
+                  background: hsl(333, 93%, 25%);
+                  box-shadow: inset 0 0 0 2px #fa6bab;
+                  &:hover {
+                    background: hsl(333, 93%, 30%);
+                  }
+                  
+                  img {
+                    max-height: 27px;
+                    max-width: 27px;
+                    margin: 5px;
+                    background: #63032e;
+                    box-shadow: 0px 0px 0 3px #63032e;
+                  }
+
+                  p {
+                    font-size: 16px;
+                    font-weight: 700;
+                    top: 9px;
+                    width: calc(100% - 68px);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  }
+
+                  .remove {
+                    // background: blue;
+                    // pointer-events: all;
+                    height: 19px;
+                    width: 19px;
+                    top: 9px;
+                    right: 7px;
+                    &::before, &::after {
+                      width: 4px;
+                      height: 17px;
+                      top: 1px;
+                      right: 7px;
+                    }
+                  }
+                } 
+              }
+
+              i.search {
+                position: absolute;
+                right: 11px;
+                top: 16px;
+                color: hsl(333, 93%, 85%);
+                pointer-events: none;
+              }
+
+              .subMenu {
+                position: absolute;
+                z-index: 1;
+                width: 100%;
+                top: 100%;
+                overflow-y: scroll;
+                max-height: 170px;
+                background: hsl(333, 93%, 23%);
+                .row.selected {
+                  background: hsl(333, 93%, 35%);
+
+                  p {
+                    width: calc(100% - 46px);
+                  }
+
+                  img {
+                    background: hsl(333, 92%, 25%);
+                    box-shadow: -3px 0 2px 4px hsl(333, 92%, 25%);;
+                  }
+
+                  &:hover {
+                    background: hsl(333, 93%, 38%);
+
+                    img {
+                      background: hsl(333, 92%, 27%);
+                      box-shadow: -3px 0 2px 4px hsl(333, 92%, 27%);
+                    }
+                  }
+                }
+
+                .row:hover img {
+                  background: hsl(333, 92%, 18%);
+                  box-shadow: -3px 0 2px 4px hsl(333, 92%, 18%);
+                }
+
+                scrollbar-color: hsl(333, 93%, 30%) hsl(333, 93%, 15%);
+                scrollbar-width: thin;
+                &::-webkit-scrollbar {
+                  width: 8px;
+                  background: hsl(333, 93%, 15%);
+
+                  &-thumb {
+                    background: hsl(333, 93%, 30%);
+                    &:hover {background: hsl(333, 93%, 37%)}
+                    &:active {background: hsl(333, 93%, 56%)}
+                  }
+                }
+              }
+
+              .row {
+                display: flex;
+                // background: black;
+                position: relative;
+                height: 24px;
+                overflow: hidden;
+                transition: .1s background;
+                cursor: pointer;
+                width: 100%;
+
+                &:hover {
+                  background: hsl(333, 93%, 30%);
+                }
+
+                @at-root :where(#itemsMenu .crafting .whatCanCraftContainer .row > *) {
+                  pointer-events: none;
+                  user-select: none;
+                }
+
+                img {
+                  margin: 2px;
+                  object-fit: contain;
+                  max-width: 20px;
+                  max-height: 20px;
+                  image-rendering: pixelated;
+                  image-rendering: optimizespeed;
+                  width: 1000%;
+                  background: #4a0323;
+                  box-shadow: -3px 0 2px 4px #4a0323;
+                  transition: background .1s, box-shadow .1s;
+                }
+
+                p {
+                  position: relative;
+                  margin: 0;
+                  top: 4px;
+                  font-family: font3;
+                  font-size: 14px;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  width: 100%;
+                  white-space: nowrap;
+                  font-weight: 500;
+                }
+
+                @at-root :where(#itemsMenu .crafting .whatCanCraftContainer .row .remove) {
+                  transform: scale(0) rotate(360deg);
+                  transition: .35s transform cubic-bezier(0.27, 0.74, 0.58, 1);
+                  width: 20px;
+                  height: 20px;
+                  position: absolute;
+                  right: 2px;
+                  top: 2px;
+                  pointer-events: all;
+                  cursor: pointer;
+
+                  &::before, &::after {
+                    content: "";
+                    position: absolute;
+                    width: 4px;
+                    height: 17px;
+                    top: 2px;
+                    right: 8px;
+                    background: hsl(333, 93%, 90%);
+                    border-radius: 13px;
+                  }
+
+                  &::before {
+                    transform: rotate(-45deg);
+                  }
+
+                  &::after {
+                    transform: rotate(45deg);     
+                  }
+                }
+                @at-root :where(#itemsMenu .crafting .whatCanCraftContainer .row.selected .remove) {
+                  transform: scale(1) rotate(0deg);
+                }
+              }
+            }
+          }
+
+          .craftableItems {
+            position: relative;
+            width: 100%;
+            max-height: calc(100% - 50px);
+            overflow-y: auto;
+            display: flex;
+            cursor: pointer;
+            flex-direction: column;
+
+            scrollbar-color: hsl(0, 0%, 40%) hsl(0, 0%, 22%);
+
+            &::-webkit-scrollbar {
+              width: 17px;
+              &-track {
+                background: hsl(0, 0%, 22%);
+                &:hover {background: hsl(0, 0%, 25%)}
+                &:active {background: hsl(0, 0%, 30%)}
+              }
+
+              &-thumb {
+                background: hsl(0, 0%, 40%);
+                &:hover {background: hsl(0, 0%, 48%)}
+                &:active {background: hsl(0, 0%, 58%)}
+              }
+            }
+
+            .craftingItem {
+              position: relative;
+              width: 100%;
+              min-height: 50px;
+              background: #3c3c3c;
+              overflow: hidden;
+              flex-grow: 1;
+              flex-shrink: 0;
 
               .arrow {
                 position: absolute;
                 width: 25px;
                 height: 25px;
                 transition: transform .2s;
-                right: 5px;
-                top: 7px;
-                color: hsl(268, 88%, 85%);
+                right: 10px;
+                top: 10px;
 
-                @at-root #itemsMenu .crafting .toolBar .active .arrow {
-                  transform: rotate(180deg) translateY(2px);
-                } 
-
-                &::before, &::after {
+                &::before {
                   content: "";
                   position: absolute;
-                  width: 3px;
-                  height: 10px;
-                  top: 7px;
+                  width: 5px;
+                  height: 15px;
+                  left: 6px;
+                  top: 5px;
                   border-radius: 10px 10px 0 0;
-                  background: hsl(268, 88%, 85%);
-                }
-  
-                &::before {
-                  left: 8px;
+                  background: #676767;
                   transform: rotate(-45deg);
                 }
-  
+
                 &::after {
-                  right: 8px;
+                  content: "";
+                  position: absolute;
+                  width: 5px;
+                  height: 15px;
+                  right: 6px;
+                  top: 5px;
+                  border-radius: 10px 10px 0 0;
+                  background: #676767;
                   transform: rotate(45deg);
                 }
               }
-            }
 
-            .typeValue {
-              position: relative;
-              display: flex;
-              cursor: pointer;
-              height: 30px;
+              &.selected {
+                background: #2e2e2e;
+                .imageContainer {background: #0f0f0f}
 
-              :where(.directionContainer) {
-                position: absolute;
-                width: 20px;
-                height: 20px;
-                left: 1px;
-                transition: transform .2s;
-                transform: scale(0) rotate(180deg);
-              }
-
-              :where(.removeSelection) {
-                position: absolute;
-                width: 15px;
-                height: 15px;
-                right: 5px;
-                top: 5px;
-                pointer-events: all;
-              }
-
-              * {
-                pointer-events: none;
-              }
-            }
-
-            p {
-              margin: 0px;
-            }
-          }
-          
-
-          .whatCanCraftContainer {
-            position: relative;
-            width: min(100%, 230px);
-            min-width: 170px;
-            height: 37px;
-            margin: 7px;
-            box-shadow: inset 0 0 0px 2px hsl(333, 93%, 70%);
-            background: hsl(333, 93%, 23%);
-
-            &:hover {
-              background: hsl(333, 93%, 20%);
-            }
-
-            &.active {
-              background: hsl(333, 93%, 20%);
-              box-shadow: inset 2px 0 0 hsl(333, 93%, 70%), inset -2px 0 0 hsl(333, 93%, 70%), inset 0 2px 0 hsl(333, 93%, 70%);
-              .value {
-                z-index: 0;
-                visibility: hidden;
-              }
-
-              .whatCanCraft::placeholder {
-                opacity: .5;
-                color: hsl(333, 93%, 70%);
-              }
-
-              .subMenu {
-                border: 2px solid #fa6bab;
-                border-top: 0px;
-              }
-            }
-
-            .whatCanCraft {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              background: transparent;
-              border: none;
-              outline: none;
-              font-family: font3;
-              padding-left: 10px;
-              color: white;
-              font-weight: 500;
-              font-size: 16px;
-              cursor: pointer;
-              padding-right: 30px;
-
-              &::placeholder {
-                color: white;
-                opacity: 1;
-                font-weight: 600;
-                // transition: .1s opacity;
-              }
-            }
-
-            .value {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              z-index: 1;
-              pointer-events: none;
-
-              .row {
-                height: 100%;
-                background: hsl(333, 93%, 25%);
-                box-shadow: inset 0 0 0 2px #fa6bab;
-                &:hover {
-                  background: hsl(333, 93%, 30%);
-                }
-                
-                img {
-                  max-height: 27px;
-                  max-width: 27px;
-                  margin: 5px;
-                  background: #63032e;
-                  box-shadow: 0px 0px 0 3px #63032e;
-                }
-
-                p {
-                  font-size: 16px;
-                  font-weight: 700;
-                  top: 9px;
-                  width: calc(100% - 68px);
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                }
-
-                .remove {
-                  // background: blue;
-                  // pointer-events: all;
-                  height: 19px;
-                  width: 19px;
-                  top: 9px;
-                  right: 7px;
-                  &::before, &::after {
-                    width: 4px;
-                    height: 17px;
-                    top: 1px;
-                    right: 7px;
-                  }
-                }
-              } 
-            }
-
-            i.search {
-              position: absolute;
-              right: 11px;
-              top: 16px;
-              color: hsl(333, 93%, 85%);
-              pointer-events: none;
-            }
-
-            .subMenu {
-              position: absolute;
-              z-index: 1;
-              width: 100%;
-              top: 100%;
-              overflow-y: scroll;
-              max-height: 170px;
-              background: hsl(333, 93%, 23%);
-              .row.selected {
-                background: hsl(333, 93%, 35%);
-
-                p {
-                  width: calc(100% - 46px);
-                }
-
-                img {
-                  background: hsl(333, 92%, 25%);
-                  box-shadow: -3px 0 2px 4px hsl(333, 92%, 25%);;
+                .arrow {
+                  transform: rotate(180deg);
                 }
 
                 &:hover {
-                  background: hsl(333, 93%, 38%);
-
-                  img {
-                    background: hsl(333, 92%, 27%);
-                    box-shadow: -3px 0 2px 4px hsl(333, 92%, 27%);
-                  }
+                  background: #292929;
+                  .imageContainer {background: rgb(15, 15, 15)}
                 }
               }
-
-              .row:hover img {
-                background: hsl(333, 92%, 18%);
-                box-shadow: -3px 0 2px 4px hsl(333, 92%, 18%);
-              }
-
-              scrollbar-color: hsl(333, 93%, 30%) hsl(333, 93%, 15%);
-              scrollbar-width: thin;
-              &::-webkit-scrollbar {
-                width: 8px;
-                background: hsl(333, 93%, 15%);
-
-                &-thumb {
-                  background: hsl(333, 93%, 30%);
-                  &:hover {background: hsl(333, 93%, 37%)}
-                  &:active {background: hsl(333, 93%, 56%)}
-                }
-              }
-            }
-
-            .row {
-              display: flex;
-              // background: black;
-              position: relative;
-              height: 24px;
-              overflow: hidden;
-              transition: .1s background;
-              cursor: pointer;
-              width: 100%;
 
               &:hover {
-                background: hsl(333, 93%, 30%);
+                background: #333333;
+                .imageContainer {background: #131313}
               }
 
-              @at-root :where(#itemsMenu .crafting .whatCanCraftContainer .row > *) {
-                pointer-events: none;
-                user-select: none;
-              }
-
-              img {
-                margin: 2px;
-                object-fit: contain;
-                max-width: 20px;
-                max-height: 20px;
-                image-rendering: pixelated;
-                image-rendering: optimizespeed;
-                width: 1000%;
-                background: #4a0323;
-                box-shadow: -3px 0 2px 4px #4a0323;
-                transition: background .1s, box-shadow .1s;
-              }
-  
-              p {
-                position: relative;
-                margin: 0;
-                top: 4px;
-                font-family: font3;
-                font-size: 14px;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                width: 100%;
-                white-space: nowrap;
-                font-weight: 500;
-              }
-
-              @at-root :where(#itemsMenu .crafting .whatCanCraftContainer .row .remove) {
-                transform: scale(0) rotate(360deg);
-                transition: .35s transform cubic-bezier(0.27, 0.74, 0.58, 1);
-                width: 20px;
-                height: 20px;
+              .imageContainer {
                 position: absolute;
-                right: 2px;
-                top: 2px;
-                pointer-events: all;
-                cursor: pointer;
+                left: 0px;
+                height: 50px;
+                aspect-ratio: 1 / 1;
+                background: #1b1b1b;
+                box-shadow: -8px 0 13px 7px black;
 
-                &::before, &::after {
-                  content: "";
+                img {
                   position: absolute;
-                  width: 4px;
-                  height: 17px;
+                  left: 50%;
+                  top: 50%;
+                  transform: translateX(-50%) translateY(-50%);
+                  max-width: calc(100% - 6px);
+                  max-height: calc(100% - 6px);
+                  object-fit: contain;
+                  width: 1000%;
+                  image-rendering: pixelated;
+                  image-rendering: optimizespeed;
+                  pointer-events: none;
+                  user-select: none;
+                }
+              }
+
+
+              > p {
+                position: absolute;
+                left: 55px;
+                margin: 0;
+                font-family: font3;
+                max-width: calc(100% - 90px);
+                width: max-content;
+
+                &.name {
                   top: 2px;
-                  right: 8px;
-                  background: hsl(333, 93%, 90%);
-                  border-radius: 13px;
+                  font-weight: 600;
+                  font-size: 19px;
+                  text-shadow: 0 0 2px #ffffffba;
                 }
-  
-                &::before {
-                  transform: rotate(-45deg);
+
+                &.tags {
+                  top: 25px;
+                  background: #0000003d;
+                  padding: 1px 3px;
+                  border-radius: 8px;
+                  color: #a7a7a7;
                 }
-  
-                &::after {
-                  transform: rotate(45deg);     
-                }
-              }
-              @at-root :where(#itemsMenu .crafting .whatCanCraftContainer .row.selected .remove) {
-                transform: scale(1) rotate(0deg);
-              }
-            }
-          }
-        }
-
-        .craftableItems {
-          position: relative;
-          width: 100%;
-          max-height: calc(100% - 50px);
-          overflow-y: auto;
-          display: flex;
-          cursor: pointer;
-          flex-direction: column;
-
-          scrollbar-color: hsl(0, 0%, 40%) hsl(0, 0%, 22%);
-
-          &::-webkit-scrollbar {
-            width: 17px;
-            &-track {
-              background: hsl(0, 0%, 22%);
-              &:hover {background: hsl(0, 0%, 25%)}
-              &:active {background: hsl(0, 0%, 30%)}
-            }
-
-            &-thumb {
-              background: hsl(0, 0%, 40%);
-              &:hover {background: hsl(0, 0%, 48%)}
-              &:active {background: hsl(0, 0%, 58%)}
-            }
-          }
-
-          .craftingItem {
-            position: relative;
-            width: 100%;
-            min-height: 50px;
-            background: #3c3c3c;
-            overflow: hidden;
-            flex-grow: 1;
-            flex-shrink: 0;
-
-            .arrow {
-              position: absolute;
-              width: 25px;
-              height: 25px;
-              transition: transform .2s;
-              right: 10px;
-              top: 10px;
-
-              &::before {
-                content: "";
-                position: absolute;
-                width: 5px;
-                height: 15px;
-                left: 6px;
-                top: 5px;
-                border-radius: 10px 10px 0 0;
-                background: #676767;
-                transform: rotate(-45deg);
               }
 
-              &::after {
-                content: "";
-                position: absolute;
-                width: 5px;
-                height: 15px;
-                right: 6px;
-                top: 5px;
-                border-radius: 10px 10px 0 0;
-                background: #676767;
-                transform: rotate(45deg);
-              }
-            }
-
-            &.selected {
-              background: #2e2e2e;
-              .imageContainer {background: #0f0f0f}
-
-              .arrow {
-                transform: rotate(180deg);
-              }
-
-              &:hover {
-                background: #292929;
-                .imageContainer {background: rgb(15, 15, 15)}
-              }
-            }
-
-            &:hover {
-              background: #333333;
-              .imageContainer {background: #131313}
-            }
-
-            .imageContainer {
-              position: absolute;
-              left: 0px;
-              height: 50px;
-              aspect-ratio: 1 / 1;
-              background: #1b1b1b;
-              box-shadow: -8px 0 13px 7px black;
-
-              img {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translateX(-50%) translateY(-50%);
-                max-width: calc(100% - 6px);
-                max-height: calc(100% - 6px);
-                object-fit: contain;
-                width: 1000%;
-                image-rendering: pixelated;
-                image-rendering: optimizespeed;
-                pointer-events: none;
-                user-select: none;
-              }
-            }
-
-
-            > p {
-              position: absolute;
-              left: 55px;
-              margin: 0;
-              font-family: font3;
-              max-width: calc(100% - 90px);
-              width: max-content;
-
-              &.name {
-                top: 2px;
-                font-weight: 600;
-                font-size: 19px;
-                text-shadow: 0 0 2px #ffffffba;
-              }
-
-              &.tags {
-                top: 25px;
-                background: #0000003d;
-                padding: 1px 3px;
-                border-radius: 8px;
-                color: #a7a7a7;
-              }
-            }
-
-            .recipes {
-              transition: max-height .5s;
-              max-height: 0px;
-              position: relative;
-              top: 1px;
-              margin-top: 49px;
-              cursor: default;
-              user-select: none;
-              width: 100%;
-
-              .row {
+              .recipes {
+                transition: max-height .5s;
+                max-height: 0px;
                 position: relative;
+                top: 1px;
+                margin-top: 49px;
+                cursor: default;
+                user-select: none;
                 width: 100%;
-                display: flex;
-                background: #0c0c0c;
-                height: 88px;
-                box-shadow: inset 0 -8px #1f1f1f;
 
-                &:nth-child(even) {
-                  background: #101010;
-                }
-
-                .craftingButton {
+                .row {
                   position: relative;
-                  width: 50px;
-                  height: 50px;
-                  background: gray;
-                }
-
-                .items {
-                  position: relative;
+                  width: 100%;
                   display: flex;
-                  margin-left: 50px;
-                  overflow-y: auto;
-                  scrollbar-width: thin;
-                  scrollbar-color: hsl(0, 0%, 20%) hsl(0, 0%, 12%);
-                  &:hover {scrollbar-color: hsl(0, 0%, 28%) hsl(0, 0%, 15%)}
-                  &:active {scrollbar-color: hsl(0, 0%, 38%) hsl(0, 0%, 20%)}
-                  
-                  &::-webkit-scrollbar {
-                    height: 8px;
+                  background: #0c0c0c;
+                  height: 88px;
+                  box-shadow: inset 0 -8px #1f1f1f;
+
+                  &:nth-child(even) {
+                    background: #101010;
+                  }
+
+                  .craftingButton {
+                    position: relative;
+                    width: 50px;
+                    height: 50px;
+                    background: gray;
+                  }
+
+                  .items {
+                    position: relative;
+                    display: flex;
+                    margin-left: 50px;
+                    overflow-y: auto;
+                    scrollbar-width: thin;
+                    scrollbar-color: hsl(0, 0%, 20%) hsl(0, 0%, 12%);
+                    &:hover {scrollbar-color: hsl(0, 0%, 28%) hsl(0, 0%, 15%)}
+                    &:active {scrollbar-color: hsl(0, 0%, 38%) hsl(0, 0%, 20%)}
                     
-                    &-track {
-                      background: hsl(0, 0%, 12%);
-                      &:hover {background: hsl(0, 0%, 15%)}
-                      &:active {background: hsl(0, 0%, 20%)}
+                    &::-webkit-scrollbar {
+                      height: 8px;
+                      
+                      &-track {
+                        background: hsl(0, 0%, 12%);
+                        &:hover {background: hsl(0, 0%, 15%)}
+                        &:active {background: hsl(0, 0%, 20%)}
+                      }
+
+                      &-thumb {
+                        background: hsl(0, 0%, 20%);
+                        &:hover {background: hsl(0, 0%, 28%)}
+                        &:active {background: hsl(0, 0%, 38%)}
+                      }
+                    }
+                  }
+
+                  .item.cantCraft {
+                    border-color: #380000;
+                    background: #560000;
+
+                    .itemAmount {
+                      background-color: #790000;
+                    }
+                  }
+                  .item, .craftingButton {
+                    position: relative;
+                    --color: #2b2b2b;
+                    width: 70px;
+                    height: 70px;
+                    background: #171717;
+                    margin: 5px;
+                    border: 5px solid var(--color);
+                    transition: border .15s,background .15s;
+                    cursor: pointer;
+                    flex-shrink: 0;
+                    
+                    img {
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translateX(-50%) translateY(-50%);
+                      max-width: calc(100% - 6px);
+                      max-height: calc(100% - 6px);
+                      object-fit: contain;
+                      width: 1000%;
+                      image-rendering: pixelated;
+                      image-rendering: optimizespeed;
+                      pointer-events: none;
+                      user-select: none;
                     }
 
-                    &-thumb {
-                      background: hsl(0, 0%, 20%);
-                      &:hover {background: hsl(0, 0%, 28%)}
-                      &:active {background: hsl(0, 0%, 38%)}
+                    > .itemAmount {
+                      position: absolute;
+                      margin: 0px;
+                      background: #3b3b3b;
+                      font-family: font2;
+                      font-size: 16px;
+                      padding-left: 9px;
+                      padding-right: 4px;
+                      padding-bottom: 0px;
+                      padding-top: 2px;
+                      text-align: right;
+                      clip-path: polygon(calc(0% + 9px) 0%, 100% 0%, 100% 100%, 0% 100%);
+                      letter-spacing: -1px;
+                      text-shadow: 0 0 5px #000;
+                      min-width: 20px;
+                      pointer-events: none;
+                      right: 0px;
+                      bottom: 0px;
                     }
-                  }
-                }
 
-                .item.cantCraft {
-                  border-color: #380000;
-                  background: #560000;
-
-                  .itemAmount {
-                    background-color: #790000;
-                  }
-                }
-                .item, .craftingButton {
-                  position: relative;
-                  --color: #2b2b2b;
-                  width: 70px;
-                  height: 70px;
-                  background: #171717;
-                  margin: 5px;
-                  border: 5px solid var(--color);
-                  transition: border .15s,background .15s;
-                  cursor: pointer;
-                  flex-shrink: 0;
-                  
-                  img {
-                    position: absolute;
-                    left: 50%;
-                    top: 50%;
-                    transform: translateX(-50%) translateY(-50%);
-                    max-width: calc(100% - 6px);
-                    max-height: calc(100% - 6px);
-                    object-fit: contain;
-                    width: 1000%;
-                    image-rendering: pixelated;
-                    image-rendering: optimizespeed;
-                    pointer-events: none;
-                    user-select: none;
-                  }
-
-                  > .itemAmount {
-                    position: absolute;
-                    margin: 0px;
-                    background: #3b3b3b;
-                    font-family: font2;
-                    font-size: 16px;
-                    padding-left: 9px;
-                    padding-right: 4px;
-                    padding-bottom: 0px;
-                    padding-top: 2px;
-                    text-align: right;
-                    clip-path: polygon(calc(0% + 9px) 0%, 100% 0%, 100% 100%, 0% 100%);
-                    letter-spacing: -1px;
-                    text-shadow: 0 0 5px #000;
-                    min-width: 20px;
-                    pointer-events: none;
-                    right: 0px;
-                    bottom: 0px;
-                  }
-
-                  .warning {
-                    position: absolute;
-                    margin: 0px;
-                    right: -5px;
-                    top: -5px;
-                    background: #ff7600;
-                    font-family: "font3";
-                    font-weight: 900;
-                    font-size: 13px;
-                    padding: 0;
-                    height: 17px;
-                    width: 11px;
-                    padding-top: 3px;
-                    padding-right: 3px;
-                    line-height: .8;
-                    text-align: right;
-                    border-radius: 0 0 0 25px;
-                    border-width: 0 0 3px 3px;
-                    text-shadow: 0 0 2px black;
-                    box-shadow: -1px 1px 0 1px #9a4700;
+                    .warning {
+                      position: absolute;
+                      margin: 0px;
+                      right: -5px;
+                      top: -5px;
+                      background: #ff7600;
+                      font-family: "font3";
+                      font-weight: 900;
+                      font-size: 13px;
+                      padding: 0;
+                      height: 17px;
+                      width: 11px;
+                      padding-top: 3px;
+                      padding-right: 3px;
+                      line-height: .8;
+                      text-align: right;
+                      border-radius: 0 0 0 25px;
+                      border-width: 0 0 3px 3px;
+                      text-shadow: 0 0 2px black;
+                      box-shadow: -1px 1px 0 1px #9a4700;
+                    }
                   }
                 }
               }

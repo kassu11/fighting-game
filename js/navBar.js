@@ -21,4 +21,12 @@ document.querySelector("#inventoryButton").addEventListener("click", () => {
 
 
 
-// craftingMenuButton.click();
+craftingMenuButton.click();
+
+function test() {
+  console.time("loop")
+  document.querySelectorAll(".craftingItem").forEach(v => {
+    v.getBoundingClientRect();
+  })
+  console.timeEnd("loop")
+}

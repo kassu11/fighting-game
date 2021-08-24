@@ -1,4 +1,6 @@
-const allCraftableItems = Object.values(items).map((data, i) => new Item({...data, index: i}, player)).filter(item => item.craftingRecipes);
+// const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).map((data, i) => new Item({...data, index: i}, player));
+const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 64
+// const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 4096
 const craftingValues = {
   gridItems: allCraftableItems,
   sortOrder: "",
@@ -195,9 +197,8 @@ sortButton.addEventListener("click", e => {
     }
     
     ["Name", "Damage", "Defence", "Use_time","Tags"].forEach(sortTitle => {
-      const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+img+div.removeSelection`);
+      const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+div.removeSelection`);
       subMenuElement.querySelector("p").textContent = sortTitle.replaceAll("_", " ");
-      subMenuElement.querySelector("img").src = "./images/dropDown" + sortTitle + ".png"
       if(sortTitle == lastName) subMenuElement.classList.add(lastSortState);
       subMenuContainer.append(subMenuElement);
     });
@@ -248,9 +249,8 @@ typesButton.addEventListener("click", e => {
     }
     
     return ["Damage", "Defence", "Healing", "Mana", "Use_time"].forEach(title => {
-      const [subMenuElement] = emmet(`.typeValue.${title}>div.directionContainer+p+img+div.removeSelection`);
+      const [subMenuElement] = emmet(`.typeValue.${title}>div.directionContainer+p+div.removeSelection`);
       subMenuElement.querySelector("p").textContent = title.replaceAll("_", " ");
-      subMenuElement.querySelector("img").src = `./images/dropDown${title}.png`
       if(craftingValues.removeFilter.find(e => e === title)) subMenuElement.classList.add("remove");
       else if(craftingValues.addFilter.find(e => e === title)) subMenuElement.classList.add("add");
       subMenuContainer.append(subMenuElement);
