@@ -13,8 +13,6 @@ const craftingValues = {
 }
 const craftInv = itemsMenu.querySelector(".crafting .craftableItems");
 
-generateCraftingItemsList();
-
 function generateCraftingItemsList(array) {
   if(array) craftingValues.gridItems = array;
   craftInv.textContent = "";

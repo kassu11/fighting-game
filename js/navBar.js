@@ -3,6 +3,7 @@ document.querySelector("#craftingMenuButton").addEventListener("click", e => {
   document.body.classList = "itemsMenu";
   itemsMenuInventoryResize();
   generateItemsOnGrid(player.inventory.slice());
+  generateCraftingItemsList();
 });
 document.querySelector("#levelsMenuButton").addEventListener("click", e => {
   document.body.classList = "levelMenu"
@@ -21,12 +22,4 @@ document.querySelector("#inventoryButton").addEventListener("click", () => {
 
 
 
-craftingMenuButton.click();
-
-function test() {
-  console.time("loop")
-  document.querySelectorAll(".craftingItem").forEach(v => {
-    v.getBoundingClientRect();
-  })
-  console.timeEnd("loop")
-}
+// craftingMenuButton.click();

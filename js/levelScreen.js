@@ -5,9 +5,13 @@ for(const [key, value] of Object.entries(levels)) {
   const div = document.createElement("div");
   const p = document.createElement("p");
   div.classList.add("levelButton")
+  div.id = key;
   p.textContent = key;
   div.append(p);
-  div.style.marginLeft = random(window.innerWidth - 200) + "px";
+  if(value.cords) {
+    div.style.left = value.cords.x + "px";
+    div.style.top =  value.cords.y + "px";
+  } else div.style.left = random(window.innerWidth - 200) + "px";
   levelMenu.querySelector(".levelButtons .container").append(div);
 
   const info = document.createElement("div");
@@ -130,26 +134,56 @@ levelMenu.querySelector(".levelInfoScreen .close").addEventListener("click", () 
   levelMenu.querySelector(".levelInfoScreen").style.display = "none";
 });
 
-
 const levelButtons = levelMenu.querySelector(".levelButtons")
-levelButtons.addEventListener("mousedown", e => {
+levelButtons.addEventListener("mousedown", levelButtonsMouseDown); 
+function levelButtonsMouseDown(downEvent) {
+  const canselClickMovedPixels = 15;
   const container = levelButtons.querySelector(".container");
-  let startX = e.x - +container.style.left.substr(0, container.style.left.length - 2);
-  let startY = e.y - +container.style.top.substr(0, container.style.top.length - 2);
-  console.log("????")
-  if(e.button === 0) {
+  
+  levelButtonsMouseDown.startX = downEvent.x - +container.style.left.substr(0, container.style.left.length - 2);
+  levelButtonsMouseDown.startY = downEvent.y - +container.style.top.substr(0, container.style.top.length - 2);
+
+  /* Delete later */
+  const buttonElem = downEvent.target?.classList.contains("levelButton") ? downEvent.target : downEvent.target.parentElement;
+  const bStartX = downEvent.x;
+  const bStartY = downEvent.y;
+
+  const bLeft = +buttonElem.style.left.substr(0, buttonElem.style.left.length - 2);
+  const bTop = +buttonElem.style.top.substr(0, buttonElem.style.top.length - 2);
+
+  const scale = +container.style.getPropertyValue("--scale") || 1;
+  /* Delete later */
+
+
+  if(downEvent.button === 0) {
     
-    levelButtons.onmousemove = e => {
-      if(e.buttons === 1) {                   // min                    max
-        // container.style.left = Math.min(Math.max(-500, e.x - startX), 500) + "px";
-        // container.style.top = Math.min(Math.max(-500, e.y - startY), 600) + "px";
-        container.style.left = e.x - startX + "px";
-        container.style.top = e.y - startY + "px";
-      } else levelButtons.onmousemove = null;
-      // console.log(e)
+    levelButtons.onmousemove = momeEvent => {
+      if(momeEvent.buttons === 1) {
+        if(buttonElem?.classList.contains("levelButton")) {
+          buttonElem.style.left = (momeEvent.x - bStartX) / scale + bLeft + "px";
+          buttonElem.style.top = (momeEvent.y - bStartY) / scale + bTop + "px";
+          container.style.pointerEvents = "none";
+
+          levels[buttonElem.id].cords.x = Math.round((momeEvent.x - bStartX) / scale + bLeft);
+          levels[buttonElem.id].cords.y = Math.round((momeEvent.y - bStartY) / scale + bTop);
+
+          return;
+        }
+
+        if(!container.style.pointerEvent) {
+          if(Math.abs(downEvent.x - momeEvent.x) + Math.abs(downEvent.y - momeEvent.y) > canselClickMovedPixels) {
+            container.style.pointerEvents = "none";
+          }
+        }
+        container.style.left = momeEvent.x - levelButtonsMouseDown.startX + "px";
+        container.style.top = momeEvent.y - levelButtonsMouseDown.startY + "px";
+      } else {
+        levelButtons.onmousemove = null;
+        container.style.pointerEvents = null;
+      }
     }
   }
-});
+};
 
 levelButtons.addEventListener("wheel", e => {
   const container = levelButtons.querySelector(".container");
@@ -157,17 +191,13 @@ levelButtons.addEventListener("wheel", e => {
   let startY = +container.style.top.substr(0, container.style.top.length - 2);
   const scale = +container.style.getPropertyValue("--scale") || 1;
 
-  // console.log(container.getBoundingClientRect())
-  // console.log(scale)
   const {x, y} = e;
   const {width, height} = container.getBoundingClientRect();
   
-  // console.log(width - startX)
-  
   if(e.deltaY < 0) {
-    container.style.setProperty("--scale", scale * 1.25);
+    container.style.setProperty("--scale", Math.min(scale / .75, 500).toFixed(4));
   } else if(e.deltaY > 0){
-    container.style.setProperty("--scale", Math.max(scale * .75, 1));
+    container.style.setProperty("--scale", Math.max(scale * .75, .01).toFixed(4));
   }
   
   const {width: w2, height: h2} = container.getBoundingClientRect();
@@ -183,4 +213,7 @@ levelButtons.addEventListener("wheel", e => {
   
   container.style.left = x - trueScaledX + "px";
   container.style.top = y - trueScaledY + "px";
+
+  levelButtonsMouseDown.startX = trueScaledX;
+  levelButtonsMouseDown.startY = trueScaledY;
 });

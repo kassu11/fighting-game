@@ -15,29 +15,47 @@
   }
 
   .levelButtons {
-    background: purple;
+    background: #214658;
     position: absolute;
     height: calc(100% + 50px);
     top: -50px;
     width: 100%;
     overflow: hidden;
+    cursor: move;
+    // background-image: url("/images/Landscape-Color.jpg");
 
     .container {
       position: absolute;
+      width: 20000px;
+      aspect-ratio: 16 / 9;
+      // background: red;
       --scale: 1;
       transform: scale(var(--scale));
       transform-origin: left top;
+
+      img {
+        position: absolute;
+        left: 0px;
+        width: 100%;
+        pointer-events: none;
+        user-select: none;
+        // transform: scale(5);
+        image-rendering: pixelated;
+        image-rendering: optimizespeed;
+      }
     }
 
     .levelButton {
-      background: red;
+      background: #ffedaa;
       position: relative;
       width: 100px;
       height: 100px;
-      border: 1px solid black;
-      margin-bottom: 10px;
+      box-shadow: 0 0 0 5px #000;
       user-select: none;
-  
+      cursor: pointer;
+      border-radius: 0% 50% 50% 50%;
+      overflow: hidden;
+
       .info {
         background: green;
         width: 40px;
@@ -153,7 +171,7 @@
           width: 130px;
           overflow: hidden;
           flex-shrink: 0;
-    
+
           > img {
             width: 100%;
             image-rendering: optimizespeed;
@@ -201,14 +219,14 @@
             padding: 3px 5px 8px;
             border-style: dashed;
             &::after {background: #1f1f1f}
-            
+
             @at-root #levelMenu .dropTree .row > .row {margin: 23px 3px 0px}
             @at-root #levelMenu .dropTree .items > .row {
               margin: 6px 3px 0px;
               &::after {display: none}
             }
           }
-          
+
           .items {
             margin: 23px 3px 0px;
             padding: 10px 5px 5px;
@@ -233,12 +251,12 @@
               background: #171717;
               margin: 2px;
               border: 5px solid #2b2b2b;
-          
+
               * {
                 position: absolute;
                 pointer-events: none;
               }
-          
+
               img {
                 left: 50%;
                 top: 50%;
@@ -250,7 +268,7 @@
                 image-rendering: pixelated;
                 image-rendering: optimizespeed;
               }
-          
+
               p {
                 margin: 0px;
                 background: #434343;
@@ -270,7 +288,7 @@
                 color: white;
               }
             }
-      
+
             &::after {
               padding: 0px 4px;
               background: #565656;
