@@ -135,48 +135,51 @@ levelMenu.querySelector(".levelInfoScreen .close").addEventListener("click", () 
 });
 
 const levelButtons = levelMenu.querySelector(".levelButtons")
-levelButtons.addEventListener("mousedown", levelButtonsMouseDown); 
+levelButtons.addEventListener("mousedown", levelButtonsMouseDown);
+const levelMenuDownData = {x: 0, y: 0, startX: 0, startY: 0};
 function levelButtonsMouseDown(downEvent) {
   const canselClickMovedPixels = 15;
   const container = levelButtons.querySelector(".container");
   
-  levelButtonsMouseDown.startX = downEvent.x - +container.style.left.substr(0, container.style.left.length - 2);
-  levelButtonsMouseDown.startY = downEvent.y - +container.style.top.substr(0, container.style.top.length - 2);
+  levelMenuDownData.startX = downEvent.x - +container.style.left.substr(0, container.style.left.length - 2);
+  levelMenuDownData.startY = downEvent.y - +container.style.top.substr(0, container.style.top.length - 2);
 
   /* Delete later */
   const buttonElem = downEvent.target?.classList.contains("levelButton") ? downEvent.target : downEvent.target.parentElement;
-  const bStartX = downEvent.x;
-  const bStartY = downEvent.y;
+  levelMenuDownData.x = downEvent.x;
+  levelMenuDownData.y = downEvent.y;
 
   const bLeft = +buttonElem.style.left.substr(0, buttonElem.style.left.length - 2);
   const bTop = +buttonElem.style.top.substr(0, buttonElem.style.top.length - 2);
 
-  const scale = +container.style.getPropertyValue("--scale") || 1;
   /* Delete later */
-
-
+  
+  
   if(downEvent.button === 0) {
     
-    levelButtons.onmousemove = momeEvent => {
-      if(momeEvent.buttons === 1) {
+    levelButtons.onmousemove = moveEvent => {
+      levelMenuDownData.x = moveEvent.x;
+      levelMenuDownData.y = moveEvent.y;
+      if(moveEvent.buttons === 1) {
         if(buttonElem?.classList.contains("levelButton")) {
-          buttonElem.style.left = (momeEvent.x - bStartX) / scale + bLeft + "px";
-          buttonElem.style.top = (momeEvent.y - bStartY) / scale + bTop + "px";
+          const scale = +container.style.getPropertyValue("--scale") || 1;
+          buttonElem.style.left = (moveEvent.x - downEvent.x) / scale + bLeft + "px";
+          buttonElem.style.top = (moveEvent.y - downEvent.y) / scale + bTop + "px";
           container.style.pointerEvents = "none";
 
-          levels[buttonElem.id].cords.x = Math.round((momeEvent.x - bStartX) / scale + bLeft);
-          levels[buttonElem.id].cords.y = Math.round((momeEvent.y - bStartY) / scale + bTop);
+          levels[buttonElem.id].cords.x = Math.round((moveEvent.x - downEvent.x) / scale + bLeft);
+          levels[buttonElem.id].cords.y = Math.round((moveEvent.y - downEvent.y) / scale + bTop);
 
           return;
         }
 
         if(!container.style.pointerEvent) {
-          if(Math.abs(downEvent.x - momeEvent.x) + Math.abs(downEvent.y - momeEvent.y) > canselClickMovedPixels) {
+          if(Math.abs(downEvent.x - moveEvent.x) + Math.abs(downEvent.y - moveEvent.y) > canselClickMovedPixels) {
             container.style.pointerEvents = "none";
           }
         }
-        container.style.left = momeEvent.x - levelButtonsMouseDown.startX + "px";
-        container.style.top = momeEvent.y - levelButtonsMouseDown.startY + "px";
+        container.style.left = moveEvent.x - levelMenuDownData.startX + "px";
+        container.style.top = moveEvent.y - levelMenuDownData.startY + "px";
       } else {
         levelButtons.onmousemove = null;
         container.style.pointerEvents = null;
@@ -191,7 +194,7 @@ levelButtons.addEventListener("wheel", e => {
   let startY = +container.style.top.substr(0, container.style.top.length - 2);
   const scale = +container.style.getPropertyValue("--scale") || 1;
 
-  const {x, y} = e;
+  const {x, y} = e.buttons === 1 ? levelMenuDownData : e; // Fix little offsync if moving while scrollin (intensely)
   const {width, height} = container.getBoundingClientRect();
   
   if(e.deltaY < 0) {
@@ -214,6 +217,6 @@ levelButtons.addEventListener("wheel", e => {
   container.style.left = x - trueScaledX + "px";
   container.style.top = y - trueScaledY + "px";
 
-  levelButtonsMouseDown.startX = trueScaledX;
-  levelButtonsMouseDown.startY = trueScaledY;
+  levelMenuDownData.startX = trueScaledX;
+  levelMenuDownData.startY = trueScaledY;
 });
