@@ -1,5 +1,5 @@
-// const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).map((data, i) => new Item({...data, index: i}, player));
-const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 64
+const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes?.length).map((data, i) => new Item({...data, index: i}, player));
+// const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 64
 // const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 4096
 const craftingValues = {
   gridItems: allCraftableItems,
@@ -31,8 +31,8 @@ function generateCraftingItemsList(array) {
     })
   } else if(craftingValues.sortOrder.startsWith("Defence")) {
     craftingValues.gridItems.sort((v1, v2) => {
-      const hp1 = v1.hp ?? 0;
-      const hp2 = v2.hp ?? 0;
+      const hp1 = v1.healthBoostValue ?? 0;
+      const hp2 = v2.healthBoostValue ?? 0;
       if(hp1 == hp2) return v1.name > v2.name ? 1 : -1;
       else return hp2 - hp1;
     });
@@ -81,7 +81,7 @@ function filterCraftingItems(array) {
 
     function filterResults(type) {
       if(type == "Damage" && (value.maxMeleDmg || value.minMeleDmg)) return true;
-      if(type == "Defence" && value.hp) return true;
+      if(type == "Defence" && value.healthBoostValue) return true;
       if(type == "Healing" && value.healV) return true;
       if(type == "Mana" && value.mana) return true;
       if(type == "Use_time" && value.useTime) return true;

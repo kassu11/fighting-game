@@ -10,7 +10,8 @@ let player = new Player({
     {...items["suicideStick"]},
     {...items["suicideStick"]},
     {...items["suicideStick"]},
-    {...items["suicideStick"]},
+    {...items["chestplate2"]},
+    {...items["leatherLeggins"]},
     {...items["suicideStick"]},
     {...items["suicideStick"]},
     {...items["suicideStick"]},
@@ -97,9 +98,16 @@ function Player(arr) {
   this.mp = arr.mp;
   this.maxHp = arr.maxHp;
   this.maxHpF = () => {
-    const extra = Object.values(this.armor).map(v => v?.hp ?? 0).reduce((a, b) => a + b ?? 0, 0);
+    const extra = Object.values(this.armor).reduce((a, b) => a + (b?.healthBoostValue ?? 0), 0) || 0;
     return this.maxHp + extra;
   }
+
+  this.calcDefenceValue = () => Object.values(this.armor).reduce((a, b) => a + (b?.defenceValue ?? 0), 0) || 0;
+  this.calcDefencePercentage = () => {
+    const total = Object.values(this.armor).reduce((a, b) => a + (b?.defencePercentage ?? 0), 0) || 0;
+    return (100 - total) / 100;
+  }
+  
   this.maxMp = arr.maxMp;
 
   this.currentSlot = arr.currentSlot;

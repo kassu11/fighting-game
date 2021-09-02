@@ -46,7 +46,7 @@ const items = {
     id: "weak_stick",
     name: "Weak stick",
     tags: ["weapon", "material"],
-    minMeleDmg: 2,
+    // minMeleDmg: 2,
     maxMeleDmg: 4,
     useTime: 1,
     image: "weak_stick.png",
@@ -161,7 +161,7 @@ const items = {
     tags: ["armor", "helmet"],
     image: "helmet.png",
     canEquipTo: "head",
-    hp: 50,
+    healthBoostValue: 50,
     craftingRecipes: [
       {
         items: [
@@ -176,7 +176,7 @@ const items = {
     tags: ["armor", "chestplate"],
     image: "basechest3.png",
     canEquipTo: "chest",
-    hp: 50,
+    healthBoostValue: 50,
     craftingRecipes: [
       {
         items: [
@@ -191,7 +191,7 @@ const items = {
     tags: ["armor", "leggings"],
     image: "baselegs3.png",
     canEquipTo: "legs",
-    hp: 50,
+    healthBoostValue: 50,
     craftingRecipes: [
       {
         items: [
@@ -218,7 +218,25 @@ const items = {
     tags: ["material"],
     image: "iron.png",
     amount: 5
-  }
+  },
+  chestplate2: {
+    id: "chestplate2",
+    name: "Nahka panssari",
+    tags: ["armor", "chestplate"],
+    image: "lether-chest-plate.png",
+    canEquipTo: "chest",
+    defenceValue: 20,
+    healthBoostValue: 50,
+    craftingRecipes: []
+  },
+  leatherLeggins: {
+    id: "leatherLeggins",
+    name: "Nahka pöksyt",
+    tags: ["armor", "leggings"],
+    image: "leather-leggins.png",
+    canEquipTo: "legs",
+    defencePercentage: 75,
+  },
 }
 
 function Item(item, user) {
@@ -234,7 +252,11 @@ function Item(item, user) {
   this.slot = item.slot;
   this.amount = item.amount ?? base.amount;
   this.canEquipTo = base.canEquipTo ?? "hotbar";
-  this.hp = base.hp;
+
+  this.healthBoostValue = base.healthBoostValue;
+  this.defenceValue = base.defenceValue;
+  this.defencePercentage = base.defencePercentage;
+
   this.healV = base.healV;
   this.mana = base.mana;
   this.tags = base.tags?.sort().slice() ?? [];
@@ -255,6 +277,7 @@ Item.prototype.calcDamage = function() {
   const maxMeleDmg = (this.maxMeleDmg ?? this.minMeleDmg ?? 0) * dmgPercentage;
 
   return {
+    intentToHurt: (this.minMeleDmg ?? this.maxMeleDmg) != null,
     meleDmg: Math.max( Math.floor( random(minMeleDmg, maxMeleDmg) ), 0 ),
     minMeleDmg: Math.floor(minMeleDmg),
     maxMeleDmg: Math.floor(maxMeleDmg)
@@ -282,7 +305,9 @@ Item.prototype.hoverText = function() {
   if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>600<b>§`);
   if(this.mana) text.push(`\nMana use: §${this.mana}MP<c>#3a85ff<c><b>700<b>§`);
 
-  if(this.hp) text.push(`\nHealth boost: §${this.hp}HP<c>lime<c><b>700<b>§`);
+  if(this.healthBoostValue) text.push(`\nHealth boost: §${this.healthBoostValue}HP<c>lime<c><b>700<b>§`);
+  if(this.defenceValue) text.push(`\nReduce damage: §${this.defenceValue}<c>#ff5454<c>HP<b>700<b>§`);
+  if(this.defencePercentage) text.push(`\nDefence: §${this.defencePercentage}<c>#ac75ff<c><b>700<b>§`);
 
   if(this.selfEffect?.length > 0) {
     text.push(`\n\n§<cl>selfEffect<cl>Gives the user§`);
@@ -300,5 +325,5 @@ Item.prototype.hoverText = function() {
     }); text.push("§");
   }
 
-  return text.join("");
+  return text.join("") + `\n<cl>itemTags<cl>#${this.tags.join(" #")}§`;
 }

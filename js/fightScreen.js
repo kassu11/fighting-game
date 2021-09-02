@@ -128,13 +128,13 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
   currentLevel.enemyRounds += item.useTime ?? 1;
   
   if(item.needTarget) item.giveEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
-  const dmg = item.calcDamage().meleDmg;
+  const {meleDmg : dmg} = item.calcDamage();
   enemy.hp -= dmg;
   
   item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
   if(item.mana) player.mp -= item.mana;
   if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
-  if(item.needTarget) addPlayerItemUseParticle(target, item.particle, {x: e.x, y: e.y, dmg}); 
+  if(item.needTarget) addPlayerItemUseParticle(target, item, {x: e.x, y: e.y, dmg}); 
   if(item.amount) player.takeItem(player.inventory.findIndex(e => e.slot == item.slot), 1);
 
   updateNextRound();
@@ -155,9 +155,9 @@ function findParentElementWithClass(elem, text) {
   }
 }
 
-function addPlayerItemUseParticle(target, particle, {x, y, dmg}) {
-  if(particle) AddBattleParciles({x, y}, particle);
-  AddBattleParciles({x, y, dmg}, "meleDmg");
+function addPlayerItemUseParticle(target, item, {x, y, dmg}) {
+  if(item.particle) AddBattleParciles({x, y}, item.particle);
+  if(item.calcDamage().intentToHurt) AddBattleParciles({x, y, dmg}, "meleDmg");
   shakeEnemyCard(target);
 }
 
@@ -346,14 +346,17 @@ async function startEnemyTurn() {
       const item = enemy.items[reduceBestItemIndexForEnemy(enemy, results)] ?? new Item(items["wooden_sword"], enemy);
 
       card.classList.add("enemyAttacks");
+      
+      item.selfEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
+      const {meleDmg : dmg, intentToHurt} = item?.calcDamage() ?? {};
+      const PLdefenceValue = player.calcDefenceValue();
+      const PLdefencePercentage = Math.max(player.calcDefencePercentage(), 0);
+      const realDmg = Math.round( Math.max(dmg - PLdefenceValue, 0) * PLdefencePercentage ) ?? 0;
+      player.hp -= realDmg;
 
       await sleep(300);
-
-      item.selfEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
-      const dmg = item?.calcDamage().meleDmg;
-      player.hp -= dmg ?? 0;
       
-      if(dmg) enemyTurnAnimations("attack", card, dmg, item);
+      if(intentToHurt) enemyTurnAnimations("attack", card, realDmg, item);
       if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
       if(item.mana) enemy.mp -= item.mana;
       if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
@@ -427,7 +430,7 @@ function enemyTurnAnimations(type, card, dmg, item) {
       card.style.left = null;
       card.style.top = null;
       if(item.particle) AddBattleParciles({x: particleX, y: particleY}, item.particle);
-      if(dmg) {
+      if(dmg != null && dmg !== NaN) {
         updatePlayerBars();
         AddBattleParciles({x: particleX, y: particleY - 100, dmg}, "enemyMeleDmg");
       }

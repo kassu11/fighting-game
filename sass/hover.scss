@@ -35,6 +35,12 @@
     font-size: 1.25em;
   }
 
+  .itemTags {
+    opacity: .7;
+    font-weight: 100;
+    position: relative;
+  }
+
   .dmg {
     color: #ff3636;
     font-weight: 600;
@@ -92,6 +98,49 @@
     margin-right: 5px;
     margin-left: 5px;
     bottom: 14px;
+  }
+
+  div.equippedHotbar, div.equippedArmor {
+    position: absolute;
+    display: block;
+    bottom: 100%;
+    padding: 2px 8px;
+    left: 0px;
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 0 3px black;
+
+    span {position: relative}
+
+    &::before, &::after {position: absolute}
+    &::before {
+      content: "";
+      padding: 10px;
+      left: -8px;
+      top: -9px;
+      border-radius: 50%;
+    }
+
+    &::after {
+      content: "!";
+      left: -0.5px;
+      top: -10px;
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+    }
+  }
+
+  div.equippedHotbar {
+    background: #009e00;
+    border: 2px solid #007a00;
+    &::before {background: #007a00}
+  }
+
+  div.equippedArmor {
+    background: #0062b3;
+    border: 2px solid #003764;
+    &::before {background: #003764}
   }
 
   div.craftingTooltip {

@@ -22,12 +22,14 @@ function generateItemsOnGrid(items) {
         slotNum.classList.add("slotNum");
         div.classList.add("hotbar")
         div.append(slotNum);
-        itemHover += `\nEquipped: §<c>#00ff1e<c><css>font-weight: 600<css>hotbar ${num}`;
+        // itemHover += `\nEquipped: §<c>#00ff1e<c><css>font-weight: 600<css>hotbar ${num}`;
+        itemHover = `<nct>equippedHotbar<nct>Eguipped: hotbar ${num}<nct>itemData<nct>` + itemHover;
       } else if(armorSlotNames.some(v => item.slot.startsWith(v))) {
         const index = armorSlotNames.findIndex(v => item.slot.startsWith(v));
         div.innerHTML += `<p class="slotNum">${index + 1}</p>`
         div.classList.add("armor");
-        itemHover += `\nEquipped: §<c>#008eff<c><css>font-weight: 600<css>${armorSlotNames[index]}`;
+        // itemHover += `\nEquipped: §<c>#008eff<c><css>font-weight: 600<css>${armorSlotNames[index]}`;
+        itemHover = `<nct>equippedArmor<nct>Eguipped: ${armorSlotNames[index]}<nct>itemData<nct>` + itemHover;
       }
     }
 
@@ -163,7 +165,7 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
       div.innerHTML = `<p class="slotText">Unequip ${item.name ?? ""}</p>`
     } else if(player.armor[slotName].id) {
       div.classList.add("replace");
-      div.innerHTML = `<p class="slotText">Replace ${item.name ?? ""}</p>`
+      div.innerHTML = `<p class="slotText">Replace ${player.armor[slotName].name ?? ""}</p>`
     } else {
       div.classList.add("add");
       div.innerHTML = `<p class="slotText">Add to empty</p>`

@@ -15,7 +15,7 @@ function AddBattleParciles({x, y, dmg} = {}, type) {
     removeElement(div, 2000);
     box.append(div);
   } else if(type == "meleDmg" || type == "enemyMeleDmg" || type == "poison") {
-    if(dmg == null || dmg <= 0) return;
+    if(dmg == null || dmg == NaN) return;
     const min = 100,
           max = 300;
     const p = document.createElement("p");
