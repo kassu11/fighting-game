@@ -1,285 +1,285 @@
 #hoverBox {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  user-select: none;
-  color: white;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	user-select: none;
+	color: white;
 
-  > div {
-    background: rgba(0, 0, 0, 0.89);
-    position: absolute;
-    z-index: 100;
-    pointer-events: none;
-    user-select: none;
+	> div {
+		background: rgba(0, 0, 0, 0.89);
+		position: absolute;
+		z-index: 100;
+		pointer-events: none;
+		user-select: none;
 
-    pre {
-      font-family: font3;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 0px;
-      margin: 0px;
-      padding: 5px 8px 5px 5px;
-    }
-  }
+		pre {
+			font-family: font3;
+			font-size: 16px;
+			font-weight: 500;
+			padding: 0px;
+			margin: 0px;
+			padding: 5px 8px 5px 5px;
+		}
+	}
 }
 
 #hoverBox > div > pre,
 #itemsMenu #itemMenuPopUp .container pre {
-  .itemTitle {
-    font-weight: 800;
-    color: yellow;
-    font-size: 1.25em;
-  }
+	.itemTitle {
+		font-weight: 800;
+		color: yellow;
+		font-size: 1.25em;
+	}
 
-  .itemTags {
-    opacity: .7;
-    font-weight: 100;
-    position: relative;
-  }
+	.itemTags {
+		opacity: .7;
+		font-weight: 100;
+		position: relative;
+	}
 
-  .dmg {
-    color: #ff3636;
-    font-weight: 600;
-    &.old {
-      text-decoration: line-through;
-      font-size: 10px;
-    }
-  }
+	.dmg {
+		color: #ff3636;
+		font-weight: 600;
+		&.old {
+			text-decoration: line-through;
+			font-size: 10px;
+		}
+	}
 
-  .selfEffect {
-    color: #4083ff;
-    font-weight: 700;
-    font-size: 1.1em;
-  }
+	.selfEffect {
+		color: #4083ff;
+		font-weight: 700;
+		font-size: 1.1em;
+	}
 
-  .giveEffect {
-    color: #ffb340;
-    font-weight: 700;
-    font-size: 1.1em;
-  }
+	.giveEffect {
+		color: #ffb340;
+		font-weight: 700;
+		font-size: 1.1em;
+	}
 
-  .effect {
-    background: #4c4c4c;
-    border-radius: 5px;
-    padding-bottom: 1px;
-    font-weight: 700;
-    color: #d6d6d6;
-    text-shadow: 0 0 3px black;
-  }
+	.effect {
+		background: #4c4c4c;
+		border-radius: 5px;
+		padding-bottom: 1px;
+		font-weight: 700;
+		color: #d6d6d6;
+		text-shadow: 0 0 3px black;
+	}
 
-  .effectDuration {
-    background: #463d00;
-    border-radius: 5px;
-    padding-bottom: 1px;
-    font-weight: 700;
-    color: #fff652;
-    line-height: 1.4;
-  }
+	.effectDuration {
+		background: #463d00;
+		border-radius: 5px;
+		padding-bottom: 1px;
+		font-weight: 700;
+		color: #fff652;
+		line-height: 1.4;
+	}
 
-  .badEffect {
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 10px solid rgb(255, 36, 36);
-    position: relative;
-    top: 16px;
-    margin-right: 5px;
-    margin-left: 5px;
-  }
+	.badEffect {
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		border-top: 10px solid rgb(255, 36, 36);
+		position: relative;
+		top: 16px;
+		margin-right: 5px;
+		margin-left: 5px;
+	}
 
-  .goodEffect {
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 10px solid rgb(0, 255, 0);
-    position: relative;
-    margin-right: 5px;
-    margin-left: 5px;
-    bottom: 14px;
-  }
+	.goodEffect {
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		border-bottom: 10px solid rgb(0, 255, 0);
+		position: relative;
+		margin-right: 5px;
+		margin-left: 5px;
+		bottom: 14px;
+	}
 
-  div.equippedHotbar, div.equippedArmor {
-    position: absolute;
-    display: block;
-    bottom: 100%;
-    padding: 2px 8px;
-    left: 0px;
-    color: white;
-    font-weight: 700;
-    text-shadow: 0 0 3px black;
+	div.equippedHotbar, div.equippedArmor {
+		position: absolute;
+		display: block;
+		bottom: 100%;
+		padding: 2px 8px;
+		left: 0px;
+		color: white;
+		font-weight: 700;
+		text-shadow: 0 0 3px black;
 
-    span {position: relative}
+		span {position: relative}
 
-    &::before, &::after {position: absolute}
-    &::before {
-      content: "";
-      padding: 10px;
-      left: -8px;
-      top: -9px;
-      border-radius: 50%;
-    }
+		&::before, &::after {position: absolute}
+		&::before {
+			content: "";
+			padding: 10px;
+			left: -8px;
+			top: -9px;
+			border-radius: 50%;
+		}
 
-    &::after {
-      content: "!";
-      left: -0.5px;
-      top: -10px;
-      font-size: 17px;
-      font-weight: 900;
-      color: #fff;
-    }
-  }
+		&::after {
+			content: "!";
+			left: -0.5px;
+			top: -10px;
+			font-size: 17px;
+			font-weight: 900;
+			color: #fff;
+		}
+	}
 
-  div.equippedHotbar {
-    background: #009e00;
-    border: 2px solid #007a00;
-    &::before {background: #007a00}
-  }
+	div.equippedHotbar {
+		background: #009e00;
+		border: 2px solid #007a00;
+		&::before {background: #007a00}
+	}
 
-  div.equippedArmor {
-    background: #0062b3;
-    border: 2px solid #003764;
-    &::before {background: #003764}
-  }
+	div.equippedArmor {
+		background: #0062b3;
+		border: 2px solid #003764;
+		&::before {background: #003764}
+	}
 
-  div.craftingTooltip {
-    display: block;
-    min-width: 160px;
-    font-size: 13px;
-    margin-top: 20px;
+	div.craftingTooltip {
+		display: block;
+		min-width: 160px;
+		font-size: 13px;
+		margin-top: 20px;
 
-    span {
-      font-weight: 700;
-    }
+		span {
+			font-weight: 700;
+		}
 
-    .hide {
-      opacity: .4;
-    }
-    .hotkey {
-      color: orange;
-      font-size: 10px;
-      text-shadow: 0 0 2px yellow;
-      font-weight: 500;
-    }
+		.hide {
+			opacity: .4;
+		}
+		.hotkey {
+			color: orange;
+			font-size: 10px;
+			text-shadow: 0 0 2px yellow;
+			font-weight: 500;
+		}
 
-    .left {
-      float: left;
-    }
+		.left {
+			float: left;
+		}
 
-    .right {
-      text-align: right;
-      float: right;
-    }
-  }
+		.right {
+			text-align: right;
+			float: right;
+		}
+	}
 }
 
 #hoverBox {
-  div[craftingButton] {
-    background: red;
-    border: 5px solid gold;
+	div[craftingButton] {
+		background: red;
+		border: 5px solid gold;
 
-    pre {
-      font-size: 20px;
-    }
-  }
+		pre {
+			font-size: 20px;
+		}
+	}
 
-  div[cantBeCrafted] {
-    background-color: orange;
-    border: 2px solid rgb(131, 89, 0);
-    pre {
-      font-weight: 900;
-      color: rgba(0, 0, 0, 0.76);
-      padding: 5px 10px;
-      // text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
+	div[cantBeCrafted] {
+		background-color: orange;
+		border: 2px solid rgb(131, 89, 0);
+		pre {
+			font-weight: 900;
+			color: rgba(0, 0, 0, 0.76);
+			padding: 5px 10px;
+			// text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
 
-      :before {
-        content: "!";
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        background: rgb(131, 89, 0);
-        border-radius: 50%;
-        padding-left: 7.5px;
-        line-height: 1.1;
-        left: -10px;
-        top: -10px;
-        font-weight: 900;
-        color: white;
-        font-family: font3;
-        font-size: 17px;
-      }
-    }
-  }
+			:before {
+				content: "!";
+				position: absolute;
+				width: 20px;
+				height: 20px;
+				background: rgb(131, 89, 0);
+				border-radius: 50%;
+				padding-left: 7.5px;
+				line-height: 1.1;
+				left: -10px;
+				top: -10px;
+				font-weight: 900;
+				color: white;
+				font-family: font3;
+				font-size: 17px;
+			}
+		}
+	}
 
-  div[test] {
-    background: transparent;
+	div[test] {
+		background: transparent;
 
-    pre {
-      padding: 0px;
-    }
+		pre {
+			padding: 0px;
+		}
 
-    div.test {
-      // display: block;
-      // position: absolute;
-      background: rgba(0, 0, 0, 0.89);
-      position: relative;
-      padding: 5px 8px 5px 5px;
-      &:not(:last-child) {
-        margin-bottom: 20px;
-      }
-      // left: 0px;
-      // right: 0px;
-      // z-index: -1;
-      // height: 100px;
-    }
+		div.test {
+			// display: block;
+			// position: absolute;
+			background: rgba(0, 0, 0, 0.89);
+			position: relative;
+			padding: 5px 8px 5px 5px;
+			&:not(:last-child) {
+				margin-bottom: 20px;
+			}
+			// left: 0px;
+			// right: 0px;
+			// z-index: -1;
+			// height: 100px;
+		}
 
-    div.testi1 {
-      background-color: rgba(255, 0, 0, 0.637);
-      padding-left: 5px;
-      padding-top: 5px;
-    }
-    div.testi2 {
-      background-color: rgba(9, 255, 0, 0.555);
-      padding-left: 5px;
-      padding-top: 5px;
-    }
-  }
+		div.testi1 {
+			background-color: rgba(255, 0, 0, 0.637);
+			padding-left: 5px;
+			padding-top: 5px;
+		}
+		div.testi2 {
+			background-color: rgba(9, 255, 0, 0.555);
+			padding-left: 5px;
+			padding-top: 5px;
+		}
+	}
 
-  div[recipe] {
-    .notEnough {
-      position: absolute;
-      display: block;
-      background: #560000;
-      border: 2px solid #380000;
-      bottom: 100%;
-      padding: 5px 10px;
-      left: 0px;
-      color: rgb(255, 175, 175);
-      font-weight: 800;
+	div[recipe] {
+		.notEnough {
+			position: absolute;
+			display: block;
+			background: #560000;
+			border: 2px solid #380000;
+			bottom: 100%;
+			padding: 5px 10px;
+			left: 0px;
+			color: rgb(255, 175, 175);
+			font-weight: 800;
 
-      &:before {
-        content: "";
-        position: absolute;
-        padding: 10px;
-        left: -8px;
-        top: -9px;
-        background: #380000;
-        border-radius: 50%;
-      }
-      &:after {
-        content: "!";
-        position: absolute;
-        left: -0.5px;
-        top: -10px;
-        font-size: 17px;
-        font-weight: 900;
-        color: white;
-      }
+			&:before {
+				content: "";
+				position: absolute;
+				padding: 10px;
+				left: -8px;
+				top: -9px;
+				background: #380000;
+				border-radius: 50%;
+			}
+			&:after {
+				content: "!";
+				position: absolute;
+				left: -0.5px;
+				top: -10px;
+				font-size: 17px;
+				font-weight: 900;
+				color: white;
+			}
 
-      &.hidden {
-        display: none;
-      }
-    }
-  }
+			&.hidden {
+				display: none;
+			}
+		}
+	}
 }

@@ -1,185 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/font.css">
-    <link rel="stylesheet" href="css/cssIcons.css">
-    <link rel="stylesheet" href="css/hover.css">
-    <link rel="stylesheet" href="css/particles.css">
-    <link rel="stylesheet" href="css/fightingScreen.css">
-    <link rel="stylesheet" href="css/levelMenu.css">
-    <link rel="stylesheet" href="css/itemsMenu.css">
-    <link rel="stylesheet" href="css/navBar.css">
-    <title>Fighting Game</title>
-  </head>
-  <body class="levelMenu">
-    <div id="hoverBox"></div>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="css/font.css">
+		<link rel="stylesheet" href="css/cssIcons.css">
+		<link rel="stylesheet" href="css/hover.css">
+		<link rel="stylesheet" href="css/particles.css">
+		<link rel="stylesheet" href="css/fightingScreen.css">
+		<link rel="stylesheet" href="css/levelMenu.css">
+		<link rel="stylesheet" href="css/itemsMenu.css">
+		<link rel="stylesheet" href="css/navBar.css">
+		<title>Fighting Game</title>
+	</head>
+	<body class="levelMenu">
+		<div id="hoverBox"></div>
 
-    <div id="navBar">
-      <div id="levelsMenuButton" class="button">
-        <img src="./images/treasure-map.svg">
-      </div>
-      <div id="inventoryButton" class="button">
-        <img src="./images/locked-chest.svg">
-      </div>
-      <div id="craftingMenuButton" class="button">
-        <img src="./images/gear-hammer.svg">
-      </div>
-    </div>
+		<div id="navBar">
+			<div id="levelsMenuButton" class="button">
+				<img src="./images/treasure-map.svg">
+			</div>
+			<div id="inventoryButton" class="button">
+				<img src="./images/locked-chest.svg">
+			</div>
+			<div id="craftingMenuButton" class="button">
+				<img src="./images/gear-hammer.svg">
+			</div>
+		</div>
 
-    <div id="figtingScreen">
-      <div class="effectContainer"></div>
-      <div id="figthEndScreen" class="hidden">
-        <div class="victoryBox">
-          <div class="header">
-            <p>VICTORY</p>
-          </div>
-          <div class="body">
-            <p>Job well done!</p>
-            <div class="victoryDropContainer">
-              <div id="victoryDrop"></div>
-            </div>
-            <div class="backButton">
-              <p>Back</p>
-            </div>
-            <div class="fightButton">
-              <p>Fight</p>
-            </div>
-          </div>
-        </div>
-        <div class="defeatBox">
-          <div class="header">
-            <p>DEFEAT</p>
-          </div>
-          <div class="body">
-            <p>Better luck next time!</p>
-            <div class="backButton">
-              <p>Back</p>
-            </div>
-            <div class="fightButton">
-              <p>Fight</p>
-            </div>
-          </div>
-        </div>
-      </div>
+		<div id="figtingScreen">
+			<div class="effectContainer"></div>
+			<div id="figthEndScreen" class="hidden">
+				<div class="victoryBox">
+					<div class="header">
+						<p>VICTORY</p>
+					</div>
+					<div class="body">
+						<p>Job well done!</p>
+						<div class="victoryDropContainer">
+							<div id="victoryDrop"></div>
+						</div>
+						<div class="backButton">
+							<p>Back</p>
+						</div>
+						<div class="fightButton">
+							<p>Fight</p>
+						</div>
+					</div>
+				</div>
+				<div class="defeatBox">
+					<div class="header">
+						<p>DEFEAT</p>
+					</div>
+					<div class="body">
+						<p>Better luck next time!</p>
+						<div class="backButton">
+							<p>Back</p>
+						</div>
+						<div class="fightButton">
+							<p>Fight</p>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="roundInfoBox">
-        <div class="endFightBox">
-          <p>End Fight</p>
-        </div>
-        <div class="roundBox">
-          <p class="round">Round</p>
-          <p id="roundNumber">1</p>
-        </div>
-        <div class="skipRoundBox">
-          <p>Skip Round</p>
-        </div>
-      </div>
-      <div class="enemyContainer">
-        <div class="enemyBox"></div>
-        <div class="clickZone"></div>
-      </div>
+			<div class="roundInfoBox">
+				<div class="endFightBox">
+					<p>End Fight</p>
+				</div>
+				<div class="roundBox">
+					<p class="round">Round</p>
+					<p id="roundNumber">1</p>
+				</div>
+				<div class="skipRoundBox">
+					<p>Skip Round</p>
+				</div>
+			</div>
+			<div class="enemyContainer">
+				<div class="enemyBox"></div>
+				<div class="clickZone"></div>
+			</div>
 
-      <div class="playerBox">
+			<div class="playerBox">
 
-        <div class="leftContainer">
-          <div class="hpBox">
-            <div class="hpBG1"></div>
-            <div class="hpBG2"></div>
-            <p class="hpText">100/100</p>
-            <p class="infoText">HP</p>
-          </div>
-        </div>
+				<div class="leftContainer">
+					<div class="hpBox">
+						<div class="hpBG1"></div>
+						<div class="hpBG2"></div>
+						<p class="hpText">100/100</p>
+						<p class="infoText">HP</p>
+					</div>
+				</div>
 
-        <div class="centerContainer">
-          <div class="hotbarContainer">
-            <div class="hotbarBox"></div>
-          </div>
-          <div class="effectContainer">
-            <div class="effectBox"></div>
-          </div>
-        </div>
+				<div class="centerContainer">
+					<div class="hotbarContainer">
+						<div class="hotbarBox"></div>
+					</div>
+					<div class="effectContainer">
+						<div class="effectBox"></div>
+					</div>
+				</div>
 
-        <div class="rightContainer">
-          <div class="mpBox">
-            <div class="mpBG1"></div>
-            <div class="mpBG2"></div>
-            <p class="mpText">100/100</p>
-            <p class="infoText">MP</p>
-          </div>
-        </div>
+				<div class="rightContainer">
+					<div class="mpBox">
+						<div class="mpBG1"></div>
+						<div class="mpBG2"></div>
+						<p class="mpText">100/100</p>
+						<p class="infoText">MP</p>
+					</div>
+				</div>
 
-      </div>
-    </div>
+			</div>
+		</div>
 
-    <div id="levelMenu">
-      <div class="levelButtons">
-        <div class="container" style="left: 3959.97px; top: 4190.6px;">
-          <img src="./images/mapBg.png" alt="">
-        </div>
-      </div>
-      <div class="levelInfoScreen" style="display: none;">
-        <div class="infoBox">
-          <div class="title">
-            <p>Level enemy info</p>
-            <div class="close">
-              <i class="gg-close"></i>
-            </div>
-          </div>
-          <div class="enemyRowContainer"></div>
-        </div>
-      </div>
-    </div>
+		<div id="levelMenu">
+			<div class="levelButtons">
+				<div class="container" style="left: 3959.97px; top: 4190.6px;">
+					<img src="./images/mapBg.png" alt="">
+				</div>
+			</div>
+			<div class="levelInfoScreen" style="display: none;">
+				<div class="infoBox">
+					<div class="title">
+						<p>Level enemy info</p>
+						<div class="close">
+							<i class="gg-close"></i>
+						</div>
+					</div>
+					<div class="enemyRowContainer"></div>
+				</div>
+			</div>
+		</div>
 
-    <div id="itemsMenu" class="inv">
-      <div id="itemMenuPopUp">
-        <div class="container"></div>
-      </div>
-      <div class="menuWindow">
-        <div class="inventoryContainer">
-          <div class="inventoryBox"></div>
-        </div>
-        <div class="hotbarAndArmorContainer">
-          <div class="hotbarContainer">
-            <div class="hotbarBox"></div>
-          </div>
-          <div class="armorContainer">
-            <div class="armorBox"></div>
-          </div>
-        </div>
-        <div class="crafting">
-          <div class="craftingContainer">
-            <div class="toolBar">
-              <input type="text" class="searchBar" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-              <div id="clearCraftingSearchBar" class="hidden"></div>
-              <div class="sort" tabindex="-1">
-                <div class="value">
-                  <p>Sort items</p>
-                  <div class="arrow"></div>
-                </div>
-                <div class="subMenu"></div>
-              </div>
-              <div class="types" tabindex="-1">
-                <div class="value">
-                  <p>Filter items</p>
-                  <div class="arrow"></div>
-                </div>
-                <div class="subMenu"></div>
-              </div>
-              <div class="whatCanCraftContainer" tabindex="-1">
-                <div class="value"></div>
-                <input type="text" class="whatCanCraft" placeholder="Search recipe items" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-                <i class="search"></i>
-                <div class="subMenu"></div>
-              </div>
-            </div>
-            <div class="craftableItems"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
+		<div id="itemsMenu" class="inv">
+			<div id="itemMenuPopUp">
+				<div class="container"></div>
+			</div>
+			<div class="menuWindow">
+				<div class="inventoryContainer">
+					<div class="inventoryBox"></div>
+				</div>
+				<div class="hotbarAndArmorContainer">
+					<div class="hotbarContainer">
+						<div class="hotbarBox"></div>
+					</div>
+					<div class="armorContainer">
+						<div class="armorBox"></div>
+					</div>
+				</div>
+				<div class="crafting">
+					<div class="craftingContainer">
+						<div class="toolBar">
+							<input type="text" class="searchBar" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+							<div id="clearCraftingSearchBar" class="hidden"></div>
+							<div class="sort" tabindex="-1">
+								<div class="value">
+									<p>Sort items</p>
+									<div class="arrow"></div>
+								</div>
+								<div class="subMenu"></div>
+							</div>
+							<div class="types" tabindex="-1">
+								<div class="value">
+									<p>Filter items</p>
+									<div class="arrow"></div>
+								</div>
+								<div class="subMenu"></div>
+							</div>
+							<div class="whatCanCraftContainer" tabindex="-1">
+								<div class="value"></div>
+								<input type="text" class="whatCanCraft" placeholder="Search recipe items" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+								<i class="search"></i>
+								<div class="subMenu"></div>
+							</div>
+						</div>
+						<div class="craftableItems"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>
 
 <script src="js/helpFunctions.js"></script>

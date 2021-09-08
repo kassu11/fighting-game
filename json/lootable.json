@@ -1,18 +1,18 @@
 [
-  {
-    "type": "all",
-    "chance": 90,
-    "items": [
-      {"item": {}, "amount": 10},
-      {
-        "type": "one",
-        "chance": 20,
-        "items": [
-          {"item": {}, "amount": 10},
-          {"item": {}, "amount": 10}
-        ]
-      }
-    ]
-  },
-  {"item": {}, "amount": 5}
+	{
+		"type": "all",
+		"chance": 90,
+		"items": [
+			{"item": {}, "amount": 10},
+			{
+				"type": "one",
+				"chance": 20,
+				"items": [
+					{"item": {}, "amount": 10},
+					{"item": {}, "amount": 10}
+				]
+			}
+		]
+	},
+	{"item": {}, "amount": 5}
 ]
