@@ -1,59 +1,59 @@
 const currentLevel = {
-  id: "",
-  enemies: new Map(),
-  roundNum: 1,
-  enemyRounds: 0,
-  drops: []
+	id: "",
+	enemies: new Map(),
+	roundNum: 1,
+	enemyRounds: 0,
+	drops: []
 }
 
 const levels = {
-  "level_1": {
-    "enemies": ["week_slime"],
-    "cords": {
-      "x": 5645,
-      "y": 858
-    }
-  },
-  "level_2": {
-    "enemies": ["red_guy"],
-    "cords": {
-      "x": 5416,
-      "y": 883
-    }
-  },
-  "level_3": {
-    "enemies": ["week_slime", "week_slime", "week_slime"],
-    "cords": {
-      "x": 5282,
-      "y": 985
-    }
-  },
-  "level_4": {
-    "enemies": ["octopus", "red_guy"],
-    "cords": {
-      "x": 5432,
-      "y": 1097
-    }
-  },
-  "level_5": {
-    "enemies": ["week_slime", "fish_dude", "week_slime"],
-    "cords": {
-      "x": 5549,
-      "y": 1158
-    }
-  },
-  "level_6": {
-    "enemies": ["devil", "fish_dude"],
-    "cords": {
-      "x": 5458,
-      "y": 1211
-    }
-  },
-  "level_7": {
-    "enemies": ["tongue_monster", "tongue_monster", "devil"],
-    "cords": {
-      "x": 5334,
-      "y": 1341
-    }
-  }
+	"level_1": {
+		"enemies": ["week_slime"],
+		"cords": {
+			"y": -3982,
+			"x": -3242
+		}
+	},
+	"level_2": {
+		"enemies": ["red_guy"],
+		"cords": {
+			"y": -3819,
+			"x": -3437
+		}
+	},
+	"level_3": {
+		"enemies": ["week_slime", "week_slime", "week_slime"],
+		"cords": {
+			"y": -3655,
+			"x": -3602
+		}
+	},
+	"level_4": {
+		"enemies": ["octopus", "red_guy"],
+		"cords": {
+			"y": -3284,
+			"x": -3536
+		}
+	},
+	"level_5": {
+		"enemies": ["week_slime", "fish_dude", "week_slime"],
+		"cords": {
+			"y": -2903,
+			"x": -3576
+		}
+	},
+	"level_6": {
+		"enemies": ["devil", "fish_dude"],
+		"cords": {
+			"y": -2606,
+			"x": -3713
+		}
+	},
+	"level_7": {
+		"enemies": ["tongue_monster", "tongue_monster", "devil"],
+		"cords": {
+			"y": -2445,
+			"x": -3829
+		}
+	}
 }

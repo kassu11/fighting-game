@@ -26,20 +26,19 @@
 
     .container {
       position: absolute;
-      width: 20000px;
-      aspect-ratio: 16 / 9;
-      // background: red;
       --scale: 1;
+      width: 100px;
+      height: 100px;
       transform: scale(var(--scale));
       transform-origin: left top;
 
       img {
         position: absolute;
         left: 0px;
-        width: 100%;
+        top: 0px;
         pointer-events: none;
         user-select: none;
-        // transform: scale(5);
+        transform: scale(10);
         image-rendering: pixelated;
         image-rendering: optimizespeed;
       }
@@ -47,7 +46,7 @@
 
     .levelButton {
       background: #ffedaa;
-      position: relative;
+      position: absolute;
       width: 100px;
       height: 100px;
       box-shadow: 0 0 0 5px #000;
