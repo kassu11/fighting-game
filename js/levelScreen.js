@@ -220,3 +220,17 @@ levelButtons.addEventListener("wheel", e => {
 	levelMenuDownData.startX = trueScaledX;
 	levelMenuDownData.startY = trueScaledY;
 });
+
+
+function centerLevelMap(x, y) {
+	const sadasd = 5;
+}
+
+
+{
+	const button = document.querySelector(".levelButton");
+	const container = levelMenu.querySelector(".levelButtons .container")
+	console.log(button.getBoundingClientRect())
+	console.log(container.getBoundingClientRect())
+
+}

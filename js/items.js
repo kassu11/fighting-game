@@ -237,6 +237,12 @@ const items = {
 		canEquipTo: "legs",
 		defencePercentage: 75,
 	},
+	filler1: {
+		id: "filler1",
+		selfEffect: [
+			{id: "Weakness", power: 1, duration: 20, effectStatus: "bad"},
+		]
+	},
 }
 
 function Item(item, user) {
@@ -272,9 +278,10 @@ function Item(item, user) {
 
 Item.prototype.calcDamage = function() {
 	const dmgPercentage = this.user?.effects?.reduce((arr, effect) => arr += effect.dmgPercentage || 0, 1) || 1;
+	const dmgReduction = this.user?.effects?.reduce((arr, effect) => arr += effect.reduceDmg || 0, 0) || 0;
 
-	const minMeleDmg = (this.minMeleDmg ?? this.maxMeleDmg ?? 0) * dmgPercentage;
-	const maxMeleDmg = (this.maxMeleDmg ?? this.minMeleDmg ?? 0) * dmgPercentage;
+	const minMeleDmg = Math.max( (this.minMeleDmg ?? this.maxMeleDmg ?? 0) * dmgPercentage - dmgReduction, 0 );
+	const maxMeleDmg = Math.max( (this.maxMeleDmg ?? this.minMeleDmg ?? 0) * dmgPercentage - dmgReduction, 0 );
 
 	return {
 		intentToHurt: (this.minMeleDmg ?? this.maxMeleDmg) != null,
@@ -288,16 +295,23 @@ Item.prototype.hoverText = function() {
 	const text = [`<cl>itemTitle<cl>${this.name}§`];
 	const calcDmg = this.calcDamage();
 
-	if(calcDmg.minMeleDmg) {
+	if(calcDmg.intentToHurt) {
 		const oldDmgText = [];
 		if(this.minMeleDmg) oldDmgText.push(this.minMeleDmg);
 		if(this.maxMeleDmg > oldDmgText) oldDmgText.push(this.maxMeleDmg);
 		const dmgText = [calcDmg.minMeleDmg];
 		if(calcDmg.maxMeleDmg > dmgText) dmgText.push(calcDmg.maxMeleDmg);
 
-		if(oldDmgText.join("") == dmgText.join("")) {
-			text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${dmgText.join("-")}§`);
-		} else text.push(`\nDamage: §<cl>dmg old<cl>${oldDmgText.join("-")}§<cl>dmg<cl> ${dmgText.join("-")}§`);
+		const sameDmg = oldDmgText.join("") == dmgText.join("");
+		const oldClass = calcDmg.maxMeleDmg > oldDmgText.slice(-1) ? "lesser" : "";
+		const newClass = sameDmg ? "hidden" : calcDmg.maxMeleDmg < oldDmgText.slice(-1) ? "lesser" : "";
+
+		text.push(`\nDamage: §<cl>dmg ${oldClass} ${sameDmg ? "" : "line"}<cl>${oldDmgText.join("-")}§<cl>dmg ${newClass}<cl> ${dmgText.join("-")}§`);
+
+
+		// if(oldDmgText.join("") == dmgText.join("")) {
+		// 	text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${dmgText.join("-")}§`);
+		// } else text.push(`\nDamage: §<cl>dmg old<cl>${oldDmgText.join("-")}§<cl>dmg<cl> ${dmgText.join("-")}§`);
 		// } else text.push(`\nDamage: §<cl>dmg<cl>${dmgText.join("-")} §<cl>dmg old<cl>${oldDmgText.join("-")}§`);
 	}
 
@@ -325,5 +339,7 @@ Item.prototype.hoverText = function() {
 		}); text.push("§");
 	}
 
-	return text.join("") + `\n<cl>itemTags<cl>#${this.tags.join(" #")}§`;
+	const tagsText = this.tags?.length ? `\n<cl>itemTags<cl>#${this.tags.join(" #")}§` : "";
+
+	return text.join("") + tagsText;
 }

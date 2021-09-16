@@ -10,50 +10,57 @@ const levels = {
 	"level_1": {
 		"enemies": ["week_slime"],
 		"cords": {
-			"y": -3982,
-			"x": -3242
+			"y": -1868,
+			"x": -1613
 		}
 	},
 	"level_2": {
 		"enemies": ["red_guy"],
 		"cords": {
-			"y": -3819,
-			"x": -3437
+			"y": -1741,
+			"x": -1850
 		}
 	},
 	"level_3": {
 		"enemies": ["week_slime", "week_slime", "week_slime"],
 		"cords": {
-			"y": -3655,
-			"x": -3602
+			"y": -1501,
+			"x": -1887
 		}
 	},
 	"level_4": {
 		"enemies": ["octopus", "red_guy"],
 		"cords": {
-			"y": -3284,
-			"x": -3536
+			"y": -1331,
+			"x": -1719
 		}
 	},
 	"level_5": {
 		"enemies": ["week_slime", "fish_dude", "week_slime"],
 		"cords": {
-			"y": -2903,
-			"x": -3576
+			"y": -1072,
+			"x": -1615
 		}
 	},
 	"level_6": {
 		"enemies": ["devil", "fish_dude"],
 		"cords": {
-			"y": -2606,
-			"x": -3713
+			"y": -849,
+			"x": -1786
 		}
 	},
 	"level_7": {
 		"enemies": ["tongue_monster", "tongue_monster", "devil"],
 		"cords": {
-			"y": -2445,
-			"x": -3829
+			"y": -646,
+			"x": -1968
+		}
+	},
+	"Effect test": {
+		"enemies": ["filler1"],
+		"cords": {
+			"y": -400,
+			"x": -1968
 		}
 	}
 }

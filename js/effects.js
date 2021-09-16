@@ -6,10 +6,19 @@ function Effect(effect) {
 	this.effectStatus = effect.effectStatus ?? "good";
 
 	switch(effect.id) {
-		case "Strength":
+		case "Strength": {
 			this.dmgPercentage = .25 * effect.power;
 			this.img = "./images/dmgBuff.png"
 			break;
+		}
+		case "Weakness": {
+			const valuesArr = [5, 10, 15, 30, 60];
+			if(effect.power <= 0) this.reduceDmg = 3;
+			else if(effect.power <= valuesArr.length) this.reduceDmg = valuesArr[effect.power - 1];
+			else this.reduceDmg = Math.round((effect.power - 3) ** 2 * 10 / 5) * 5;
+			this.img = "./images/miekka1.png";
+			break;
+		}
 		case "Regeneration": {
 			const regenArr = [3, 5, 10, 25, 50];
 			if(effect.power <= 0) this.regenHP = 3;

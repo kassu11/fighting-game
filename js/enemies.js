@@ -133,6 +133,20 @@ const enemies = {
 		],
 		img: "hahmo1.png",
 	},
+	filler1: {
+		id: "filler1",
+		maxHp: 20,
+		maxMp: 10,
+		items: [
+			items["weak_stick"],
+		],
+		effects: [
+			{id: "Poison", power: 2, duration: 4},
+			{id: "Strength", power: 5, duration: 60},
+			{id: "Regeneration", power: 6, duration: 2},
+		],
+		img: "fillerImage1.png",
+	},
 }
 
 function Enemy(enemy) {

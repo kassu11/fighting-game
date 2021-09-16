@@ -44,9 +44,14 @@
 	.dmg {
 		color: #ff3636;
 		font-weight: 600;
-		&.old {
-			text-decoration: line-through;
+		&.lesser {
 			font-size: 10px;
+		}
+		&.line {
+			text-decoration: line-through;
+		}
+		&.hidden {
+			display: none;
 		}
 	}
 
