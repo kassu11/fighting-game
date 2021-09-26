@@ -88,9 +88,52 @@
 			color: rgb(0, 255, 21);
 			text-shadow: 0 0 9px #15ff00d9, 5px 5px #005400, 5px 5px 9px #00ff0d96;
 		}
+
+		.bulletContainer {
+			--distance: 350px;
+			--rotate: 0deg;
+			position: absolute;
+			width: 100px;
+    	height: 100px;
+			transform: rotate(var(--rotate)) translate(calc(var(--distance)), calc(var(--distance)));
+			animation-timing-function: ease-in;
+			animation-duration: 1s;
+			animation-name: moveBullet;
+			animation-fill-mode: forwards;
+			transform-origin: 5px 5px;
+
+			img {
+				position: absolute;
+				max-width: 100%;
+				max-height: 100%;
+				object-fit: contain;
+				width: 1000%;
+				image-rendering: pixelated;
+				image-rendering: optimizespeed;
+			}
+		}
 	}
 }
 
 @keyframes playFrames {
 	100% {background-position: var(--width)}
+}
+
+@keyframes moveBullet {
+	0% {
+		transform: rotate(var(--rotate)) translate(var(--distance), var(--distance));
+	}
+	20%, 50% {
+		transform: rotate(var(--rotate)) translate(0px, 0px);
+		opacity: 1;
+	}
+
+	20% {transform: rotate(var(--rotate)) translate(7px, 15px)}
+	22% {transform: rotate(var(--rotate)) translate(-4px, 0px)}
+	30% {transform: rotate(var(--rotate)) translate(0px, 0px)}
+
+	70%, 100% {
+		opacity: 0;
+		transform: rotate(var(--rotate)) translate(0px, 0px);
+	}
 }

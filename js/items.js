@@ -243,6 +243,24 @@ const items = {
 			{id: "Weakness", power: 1, duration: 20, effectStatus: "bad"},
 		]
 	},
+	bow: {
+		id: "bow",
+		name: "Bow",
+		useAmmoType: "arrow",
+		image: "bow.png",
+		useTime: 1,
+		minRangeDmg: 6,
+		animationDelay: 200
+	},
+	arrow: {
+		id: "arrow",
+		name: "Wooden arrow",
+		ammoType: "arrow",
+		image: "arrow.png",
+		isNotUsable: true, 
+		amount: 10,
+		minRangeDmg: 6,
+	}
 }
 
 function Item(item, user) {
@@ -250,14 +268,20 @@ function Item(item, user) {
 	this.user = user ?? item.user;
 	this.id = item.id;
 	this.name = item.name ?? base.name ?? "";
-	this.minMeleDmg = base.minMeleDmg;
-	this.maxMeleDmg = base.maxMeleDmg;
+	this.minMeleDmg = base.minMeleDmg ?? base.maxMeleDmg;
+	this.maxMeleDmg = base.maxMeleDmg ?? this.minMeleDmg;
+	this.minRangeDmg = base.minRangeDmg ?? base.maxRangeDmg;
+	this.maxRangeDmg = base.maxRangeDmg ?? this.minRangeDmg;
 	this.useTime = base.useTime;
 	this.image = base.image;
 	this.particle = base.particle;
 	this.slot = item.slot;
 	this.amount = item.amount ?? base.amount;
 	this.canEquipTo = base.canEquipTo ?? "hotbar";
+
+	this.useAmmoType = base.useAmmoType;
+	this.ammoType = base.ammoType;
+	this.isNotUsable = base.isNotUsable;
 
 	this.healthBoostValue = base.healthBoostValue;
 	this.defenceValue = base.defenceValue;
@@ -271,6 +295,8 @@ function Item(item, user) {
 	this.craftingRecipes = base.craftingRecipes;
 
 	this.needTarget = base.needTarget ?? true;
+	this.noShake = base.noShake;
+	this.animationDelay = base.animationDelay;
 
 	this.selfEffect = base.selfEffect?.map(effect => new Effect(effect)) ?? [];
 	this.giveEffect = base.giveEffect?.map(effect => new Effect(effect)) ?? [];
@@ -280,14 +306,20 @@ Item.prototype.calcDamage = function() {
 	const dmgPercentage = this.user?.effects?.reduce((arr, effect) => arr += effect.dmgPercentage || 0, 1) || 1;
 	const dmgReduction = this.user?.effects?.reduce((arr, effect) => arr += effect.reduceDmg || 0, 0) || 0;
 
-	const minMeleDmg = Math.max( (this.minMeleDmg ?? this.maxMeleDmg ?? 0) * dmgPercentage - dmgReduction, 0 );
-	const maxMeleDmg = Math.max( (this.maxMeleDmg ?? this.minMeleDmg ?? 0) * dmgPercentage - dmgReduction, 0 );
+	const minMeleDmg = Math.max( (this.minMeleDmg ?? 0) * dmgPercentage - dmgReduction, 0 );
+	const maxMeleDmg = Math.max( (this.maxMeleDmg ?? 0) * dmgPercentage - dmgReduction, 0 );
+
+	const minRangeDmg = Math.max( (this.minRangeDmg ?? 0) * dmgPercentage - dmgReduction, 0 );
+	const maxRangeDmg = Math.max( (this.maxRangeDmg ?? 0) * dmgPercentage - dmgReduction, 0 );
 
 	return {
-		intentToHurt: (this.minMeleDmg ?? this.maxMeleDmg) != null,
+		intentToHurt: (this.minMeleDmg ?? this.minRangeDmg) != null,
 		meleDmg: Math.max( Math.floor( random(minMeleDmg, maxMeleDmg) ), 0 ),
+		rangeDmg: Math.max( Math.floor( random(minRangeDmg, maxRangeDmg) ), 0 ),
 		minMeleDmg: Math.floor(minMeleDmg),
-		maxMeleDmg: Math.floor(maxMeleDmg)
+		maxMeleDmg: Math.floor(maxMeleDmg),
+		minRangeDmg: Math.floor(minRangeDmg),
+		maxRangeDmg: Math.floor(maxRangeDmg)
 	}
 }
 
@@ -295,7 +327,7 @@ Item.prototype.hoverText = function() {
 	const text = [`<cl>itemTitle<cl>${this.name}§`];
 	const calcDmg = this.calcDamage();
 
-	if(calcDmg.intentToHurt) {
+	if(this.minMeleDmg) {
 		const oldDmgText = [];
 		if(this.minMeleDmg) oldDmgText.push(this.minMeleDmg);
 		if(this.maxMeleDmg > oldDmgText) oldDmgText.push(this.maxMeleDmg);
@@ -306,18 +338,27 @@ Item.prototype.hoverText = function() {
 		const oldClass = calcDmg.maxMeleDmg > oldDmgText.slice(-1) ? "lesser" : "";
 		const newClass = sameDmg ? "hidden" : calcDmg.maxMeleDmg < oldDmgText.slice(-1) ? "lesser" : "";
 
-		text.push(`\nDamage: §<cl>dmg ${oldClass} ${sameDmg ? "" : "line"}<cl>${oldDmgText.join("-")}§<cl>dmg ${newClass}<cl> ${dmgText.join("-")}§`);
+		text.push(`\nMele damage: §<cl>dmg ${oldClass} ${sameDmg ? "" : "line"}<cl>${oldDmgText.join("-")}§<cl>dmg ${newClass}<cl> ${dmgText.join("-")}§`);
+	} if(this.minRangeDmg) {
+		const oldDmgText = [];
+		if(this.minRangeDmg) oldDmgText.push(this.minRangeDmg);
+		if(this.maxRangeDmg > oldDmgText) oldDmgText.push(this.maxRangeDmg);
+		const dmgText = [calcDmg.minRangeDmg];
+		if(calcDmg.maxRangeDmg > dmgText) dmgText.push(calcDmg.maxRangeDmg);
 
+		const sameDmg = oldDmgText.join("") == dmgText.join("");
+		const oldClass = calcDmg.maxRangeDmg > oldDmgText.slice(-1) ? "lesser" : "";
+		const newClass = sameDmg ? "hidden" : calcDmg.maxRangeDmg < oldDmgText.slice(-1) ? "lesser" : "";
 
-		// if(oldDmgText.join("") == dmgText.join("")) {
-		// 	text.push(`\nDamage: §<c>#ff3636<c><b>600<b>${dmgText.join("-")}§`);
-		// } else text.push(`\nDamage: §<cl>dmg old<cl>${oldDmgText.join("-")}§<cl>dmg<cl> ${dmgText.join("-")}§`);
-		// } else text.push(`\nDamage: §<cl>dmg<cl>${dmgText.join("-")} §<cl>dmg old<cl>${oldDmgText.join("-")}§`);
+		text.push(`\nRange damage: §<cl>dmg ${oldClass} ${sameDmg ? "" : "line"}<cl>${oldDmgText.join("-")}§<cl>dmg ${newClass}<cl> ${dmgText.join("-")}§`);
 	}
 
 	if(this.useTime) text.push(`\nUse time: §${this.useTime} ${this.useTime > 1 ? "Rounds" : "Round"} <c>yellow<c>§`);
 	if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>600<b>§`);
 	if(this.mana) text.push(`\nMana use: §${this.mana}MP<c>#3a85ff<c><b>700<b>§`);
+
+	if(this.useAmmoType) text.push(`\nUses ammo: §${this.useAmmoType}<c>lime<c>§`);
+	if(this.ammoType) text.push(`\nAmmo type: §${this.ammoType}<c>lime<c>§`);
 
 	if(this.healthBoostValue) text.push(`\nHealth boost: §${this.healthBoostValue}HP<c>lime<c><b>700<b>§`);
 	if(this.defenceValue) text.push(`\nReduce damage: §${this.defenceValue}<c>#ff5454<c>HP<b>700<b>§`);
@@ -342,4 +383,12 @@ Item.prototype.hoverText = function() {
 	const tagsText = this.tags?.length ? `\n<cl>itemTags<cl>#${this.tags.join(" #")}§` : "";
 
 	return text.join("") + tagsText;
+}
+
+Item.prototype.ammoAmount = function() {
+	const ammoType = this.useAmmoType;
+	return Object.values(player.hotbar).reduce((acc, val) => {
+		if(ammoType !== val.ammoType) return acc
+		return acc + val.amount;
+	}, 0);
 }

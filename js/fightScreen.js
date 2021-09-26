@@ -122,20 +122,44 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 		if(currentLevel.enemyRounds >= 1) return;
 	} else if(item.id == null || enemy?.hp == null || currentLevel.enemyRounds >= 1) return;
 	if(item.mana > player.mp || !("id" in item)) return;
+	if(item.isNotUsable || (item.useAmmoType && item.ammoAmount() === 0)) return;
 
 	giveEffectsToPlAndEn();
 	
 	currentLevel.enemyRounds += item.useTime ?? 1;
 	
 	if(item.needTarget) item.giveEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
-	const {meleDmg : dmg} = item.calcDamage();
-	enemy.hp -= dmg;
+	let bulletIndex = -1;
+	let bulletItem = null;
+	if(item.useAmmoType) {
+		for(const hotbarItem of Object.values(player.hotbar)) {
+			if(item.useAmmoType === hotbarItem.ammoType) {
+				bulletIndex = player.inventory.findIndex(e => e === hotbarItem);
+				break;
+			}
+		}
+	}
+
+	let totalDmg = 0;
+	if(bulletIndex !== -1) {
+		const {meleDmg, rangeDmg} = player.inventory[bulletIndex].calcDamage();
+		totalDmg += meleDmg + rangeDmg;
+		bulletItem = player.inventory[bulletIndex];
+		player.takeItem(bulletIndex, 1);
+	}
 	
+	const {meleDmg, rangeDmg} = item.calcDamage();
+	enemy.hp -= totalDmg + meleDmg + rangeDmg;
+
 	item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
 	if(item.mana) player.mp -= item.mana;
 	if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
-	if(item.needTarget) addPlayerItemUseParticle(target, item, {x: e.x, y: e.y, dmg}); 
+	if(item.needTarget) {
+		addPlayerItemUseParticle(target, item, {x: e.x, y: e.y, dmg: totalDmg + meleDmg + rangeDmg, bullet: bulletItem});
+	}
 	if(item.amount) player.takeItem(player.inventory.findIndex(e => e.slot == item.slot), 1);
+
+	if(item.animationDelay) await sleep(item.animationDelay);
 
 	updateNextRound();
 	
@@ -147,6 +171,11 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 	else setTimeout(startEnemyTurn, 1900);
 });
 
+// function calculateFightingDamageForPlayer(item) {
+// 	const values = item?.calcDamage();
+// 	if()
+// }
+
 function findParentElementWithClass(elem, text) {
 	let current = elem;
 	while(true) {
@@ -155,10 +184,13 @@ function findParentElementWithClass(elem, text) {
 	}
 }
 
-function addPlayerItemUseParticle(target, item, {x, y, dmg}) {
-	if(item.particle) AddBattleParciles({x, y}, item.particle);
-	if(item.calcDamage().intentToHurt) AddBattleParciles({x, y, dmg}, "meleDmg");
-	shakeEnemyCard(target);
+async function addPlayerItemUseParticle(target, item, arr) {
+	if(arr.bullet) AddBattleParciles(arr,"", target);
+	if(item.animationDelay) await sleep(item.animationDelay);
+
+	if(item.particle) AddBattleParciles(arr, item.particle);
+	if(item.calcDamage().intentToHurt) AddBattleParciles(arr, "meleDmg", target);
+	if(!item.noShake) shakeEnemyCard(target);
 }
 
 function shakeEnemyCard(card) {
@@ -528,7 +560,8 @@ function updatePlayersHotbar() {
 		const item = player.hotbar[slotName];
 		const imgSrc = "./images/" + item.image;
 		slot.querySelector("img").src = item.image ? imgSrc : "";
-		slot.querySelector(".itemAmount").textContent = item.amount ?? "";
+		if(item.useAmmoType) slot.querySelector(".itemAmount").textContent = item.ammoAmount();
+		else slot.querySelector(".itemAmount").textContent = item.amount ?? "";
 		if(player.currentSlot == slotName) slot.classList.add("selected");
 		else slot.classList.remove("selected");
 	});

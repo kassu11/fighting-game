@@ -1,4 +1,4 @@
-function AddBattleParciles({x, y, dmg} = {}, type) {
+function AddBattleParciles({x, y, dmg, bullet} = {}, type, target) {
 	const box = document.querySelector("#figtingScreen .effectContainer");
 	if(type == "explosion") {
 		const div = document.createElement("div");
@@ -35,5 +35,14 @@ function AddBattleParciles({x, y, dmg} = {}, type) {
 			p.style.transform = `translateX(-50%) rotate(${random(-20, 20)}deg)`;
 		}, 20);
 		removeElement(p, 2000);
+	} else if(bullet) {
+		const [div] = emmet("div.bulletContainer>img");
+		div.querySelector("img").src = "./images/" + bullet.image;
+		div.style.left = x + "px";
+		div.style.top = y + "px";
+		div.style.setProperty("--rotate", `${random(0, 360)}deg`);
+		box.append(div);
+		removeElement(div, 1000)
+		// console.log(bullet)
 	}
 }

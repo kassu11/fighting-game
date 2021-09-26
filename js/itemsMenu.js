@@ -58,7 +58,7 @@ function updateItemsMenuHotbar() {
 		hotbarBox.innerHTML += `<div class="slot">
 			<p class="slotNumber">${i}</p>
 			<img src="${item.image ? "./images/" + item.image : ""}" class="slotImage">
-			<p class="itemAmount">${item.amount ?? ""}</p>
+			<p class="itemAmount">${item.useAmmoType ? item.ammoAmount() : item.amount ?? ""}</p>
 		</div>`
 	}
 
@@ -239,3 +239,4 @@ function itemsMenuInventoryResize() {
 	}
 } itemsMenuInventoryResize();
 
+console.log(itemsMenuArray)

@@ -6,8 +6,8 @@ let player = new Player({
 	inventory: [
 		{...items["weak_stick"], slot: "hotbarSlot1"},
 		{...items["stone_sword"], slot: "hotbarSlot2"},
-		{...items["suicideStick"], slot: "hotbarSlot3"},
-		{...items["filler1"], slot: "hotbarSlot5"},
+		{...items["bow"], slot: "hotbarSlot3"},
+		{...items["arrow"], slot: "hotbarSlot5"},
 		{...items["suicideStick"]},
 		{...items["suicideStick"]},
 		{...items["suicideStick"]},
