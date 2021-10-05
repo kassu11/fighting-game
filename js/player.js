@@ -4,10 +4,10 @@ let player = new Player({
 	maxHp: 25,
 	maxMp: 45,
 	inventory: [
-		{...items["weak_stick"], slot: "hotbarSlot1"},
+		{...items["filler1"], slot: "hotbarSlot1"},
 		{...items["stone_sword"], slot: "hotbarSlot2"},
 		{...items["bow"], slot: "hotbarSlot3"},
-		{...items["arrow"], slot: "hotbarSlot5"},
+		{...items["hp_pot"], slot: "hotbarSlot5"},
 		{...items["suicideStick"]},
 		{...items["suicideStick"]},
 		{...items["suicideStick"]},

@@ -48,7 +48,16 @@
 			font-size: 10px;
 		}
 		&.line {
-			text-decoration: line-through;
+			position: relative;
+			opacity: .7;
+
+			&::after {
+				content: "";
+				position: absolute;
+				inset: 0px;
+				background-color: #ff3636;
+				clip-path: polygon(100% 38%, 100% 54%, 0 65%, 0 49%);
+			}
 		}
 		&.hidden {
 			display: none;

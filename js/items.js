@@ -239,9 +239,11 @@ const items = {
 	},
 	filler1: {
 		id: "filler1",
+		name: "Filler item",
 		selfEffect: [
 			{id: "Weakness", power: 1, duration: 20, effectStatus: "bad"},
-		]
+		],
+		manaHealV: 10
 	},
 	bow: {
 		id: "bow",
@@ -288,6 +290,7 @@ function Item(item, user) {
 	this.defencePercentage = base.defencePercentage;
 
 	this.healV = base.healV;
+	this.manaHealV = base.manaHealV;
 	this.mana = base.mana;
 	this.tags = base.tags?.sort().slice() ?? [];
 	this.index = item.index;
@@ -354,7 +357,8 @@ Item.prototype.hoverText = function() {
 	}
 
 	if(this.useTime) text.push(`\nUse time: §${this.useTime} ${this.useTime > 1 ? "Rounds" : "Round"} <c>yellow<c>§`);
-	if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>600<b>§`);
+	if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>700<b>§`);
+	if(this.manaHealV) text.push(`\nGives mana: §${this.manaHealV}MP<c>#3a85ff<c><b>700<b>§`);
 	if(this.mana) text.push(`\nMana use: §${this.mana}MP<c>#3a85ff<c><b>700<b>§`);
 
 	if(this.useAmmoType) text.push(`\nUses ammo: §${this.useAmmoType}<c>lime<c>§`);

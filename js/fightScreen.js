@@ -19,7 +19,7 @@ function updateHotbarHovers() {
 	updatePlayersHotbar();
 }
 
-// startLevel("level_5"); // <-- poista myöhemmin
+startLevel("Effect test"); // <-- poista myöhemmin
 
 function startLevel(lvlId, time) {
 	player.hp = player.maxHpF();
@@ -154,6 +154,7 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 	item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
 	if(item.mana) player.mp -= item.mana;
 	if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
+	if(item.manaHealV) player.mp = Math.min(player.mp + item.manaHealV, player.maxMp);
 	if(item.needTarget) {
 		addPlayerItemUseParticle(target, item, {x: e.x, y: e.y, dmg: totalDmg + meleDmg + rangeDmg, bullet: bulletItem});
 	}
@@ -171,10 +172,6 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 	else setTimeout(startEnemyTurn, 1900);
 });
 
-// function calculateFightingDamageForPlayer(item) {
-// 	const values = item?.calcDamage();
-// 	if()
-// }
 
 function findParentElementWithClass(elem, text) {
 	let current = elem;
@@ -377,6 +374,10 @@ async function startEnemyTurn() {
 			const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
 			const item = enemy.items[reduceBestItemIndexForEnemy(enemy, results)] ?? new Item(items["wooden_sword"], enemy);
 
+
+			// Tee uudelleen miten ai toimii, bow ei toimi nyt
+			console.log(results);
+
 			card.classList.add("enemyAttacks");
 			
 			item.selfEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
@@ -386,12 +387,15 @@ async function startEnemyTurn() {
 			const realDmg = Math.round( Math.max(dmg - PLdefenceValue, 0) * PLdefencePercentage ) ?? 0;
 			player.hp -= realDmg;
 
+			console.log(item)
+
 			await sleep(300);
 			
 			if(intentToHurt) enemyTurnAnimations("attack", card, realDmg, item);
 			if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
 			if(item.mana) enemy.mp -= item.mana;
 			if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
+			if(item.manaHealV) enemy.mp = Math.min(enemy.mp + item.manaHealV, enemy.maxMp);
 			
 			updateEnemyCard(card);
 			if(item.healV) await sleep(200);

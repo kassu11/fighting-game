@@ -138,14 +138,61 @@ const enemies = {
 		maxHp: 20,
 		maxMp: 10,
 		items: [
-			items["weak_stick"],
+			items["bow"],
+			items["arrow"],
 		],
 		effects: [
-			{id: "Poison", power: 2, duration: 4},
-			{id: "Strength", power: 5, duration: 60},
-			{id: "Regeneration", power: 6, duration: 2},
+			// {id: "Poison", power: 2, duration: 4},
+			// {id: "Strength", power: 5, duration: 60},
+			// {id: "Regeneration", power: 6, duration: 2},
 		],
 		img: "fillerImage1.png",
+		drops: [
+			{
+				"type": "all",
+				"chance": 90,
+				"items": [
+					{"item": items["helmet"], "chance": 50},
+					{
+						"type": "one",
+						"chance": 90,
+						"items": [
+							{"item": items["helmet"], "chance": 50},
+							{
+								"type": "one",
+								"chance": 20,
+								"items": [
+									{"item": items["legs"], "chance": 50},
+									{"item": items["chestplate"], "chance": 50},
+								]
+							}
+						]
+					},
+				]
+			},
+			{
+				"type": "all",
+				"chance": 90,
+				"items": [
+					{"item": items["helmet"], "chance": 50},
+					{
+						"type": "one",
+						"chance": 20,
+						"items": [
+							{"item": items["legs"], "chance": 50},
+							{"item": items["chestplate"], "chance": 50},
+							{"item": items["helmet"], "chance": 50},
+							{"item": items["legs"], "chance": 50},
+							{"item": items["chestplate"], "chance": 50},
+							{"item": items["helmet"], "chance": 50},
+						]
+					}
+				]
+			},
+			{"item": items["legs"], "chance": 50},
+			{"item": items["chestplate"], "chance": 50},
+			{"item": items["helmet"], "chance": 50},
+		]
 	},
 }
 
