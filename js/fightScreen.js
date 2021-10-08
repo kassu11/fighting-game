@@ -19,7 +19,7 @@ function updateHotbarHovers() {
 	updatePlayersHotbar();
 }
 
-startLevel("Effect test"); // <-- poista myöhemmin
+// startLevel("Effect test"); // <-- poista myöhemmin
 
 function startLevel(lvlId, time) {
 	player.hp = player.maxHpF();
@@ -372,22 +372,29 @@ async function startEnemyTurn() {
 		await sleep(350);
 		for(const [card, enemy] of currentLevel.enemies) {
 			const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
-			const item = enemy.items[reduceBestItemIndexForEnemy(enemy, results)] ?? new Item(items["wooden_sword"], enemy);
+			const item = enemy.items[reduceBestItemIndexForEnemy(enemy, results)] ?? new Item(items["weaponcgg36t"], enemy);
+			const bulletItem = item.useAmmoType ? enemy.bullets.find((bullet, index) => {
+				if(bullet.amount && bullet.ammoType === item.useAmmoType) {
+					if(--bullet.amount === 0) enemy.bullets.splice(index, 1);
+					return true;
+				}
+			}) : null;
+			let bulletDmg = 0;
+			if(bulletItem) {
+				const {meleDmg, rangeDmg} = bulletItem.calcDamage();
+				bulletDmg = meleDmg + rangeDmg;
+			}
 
-
-			// Tee uudelleen miten ai toimii, bow ei toimi nyt
-			console.log(results);
+			console.log(item)
 
 			card.classList.add("enemyAttacks");
 			
 			item.selfEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
-			const {meleDmg : dmg, intentToHurt} = item?.calcDamage() ?? {};
+			const {meleDmg : dmg, rangeDmg, intentToHurt} = item?.calcDamage() ?? {};
 			const PLdefenceValue = player.calcDefenceValue();
 			const PLdefencePercentage = Math.max(player.calcDefencePercentage(), 0);
-			const realDmg = Math.round( Math.max(dmg - PLdefenceValue, 0) * PLdefencePercentage ) ?? 0;
+			const realDmg = Math.round( Math.max(dmg + rangeDmg + bulletDmg - PLdefenceValue, 0) * PLdefencePercentage ) ?? 0;
 			player.hp -= realDmg;
-
-			console.log(item)
 
 			await sleep(300);
 			
@@ -519,30 +526,89 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
 		"bestHpNum": 0
 	}
 
-	for(const moves of allMovesArray) {
+	main: for(const moves of allMovesArray) {
 		const nEnemy = new Enemy(enemy);
-		let dmg = 0;
-		let hp = 0;
+		const nPlayer = new LitePlayer(player);
+		const dmg = nPlayer.hp;
+		const hp = nEnemy.hp;
 		for(let move of moves) {
 			const item = nEnemy.items[move] ?? {};
 			if(!item?.id) break;
 			if(item.mana > nEnemy.mp) break;
 
 			nEnemy.mp -= item.mana ?? 0;
+			giveEffectsToPlAndEn(nPlayer, [nEnemy], true);
+			
 			nEnemy.effects = nEnemy.effects?.filter(ef => --ef.duration > 0) || [];
+			nPlayer.effects = nPlayer.effects?.filter(ef => --ef.duration > 0) || [];
 			item.selfEffect?.forEach(ef => nEnemy.effect(ef.id, ef.power, ef.duration));
-			dmg += item.calcDamage().meleDmg;
-			hp += item.healV ?? 0;
+			item.giveEffect?.forEach(ef => nPlayer.effect(ef.id, ef.power, ef.duration));
 
-			if(dmg > bestResults.bestDmgNum) {
-				bestResults.bestDmgMoves = moves;
-				bestResults.bestDmgNum = dmg;
-			} else if(hp > bestResults.bestHpNum) {
-				bestResults.bestHpMoves = moves;
-				bestResults.bestHpNum = hp;
-			}
+			const bulletItem = item.useAmmoType ? nEnemy.bullets.find((bullet, index) => {
+				if(bullet.amount && bullet.ammoType === item.useAmmoType) {
+					if(--bullet.amount === 0) nEnemy.bullets.splice(index, 1);
+					return true;
+				}
+			}) : null;
+
+			let totalDmg = 0;
+			if(bulletItem) {
+				const {meleDmg, rangeDmg} = bulletItem.calcDamage();
+				totalDmg += meleDmg + rangeDmg;
+			} else if(item.useAmmoType) break main;
+			
+			const {meleDmg, rangeDmg} = item.calcDamage();
+			nPlayer.hp -= totalDmg + meleDmg + rangeDmg;
+			nEnemy.hp = Math.min(nEnemy.hp + item.healV, nEnemy.maxHp);
+		}
+
+		if(bestResults.bestDmgMoves.length === 0) {
+			bestResults.bestDmgMoves = moves;
+			bestResults.bestDmgNum = dmg - nPlayer.hp;
+
+			bestResults.bestHpMoves = moves;
+			bestResults.bestHpNum = nEnemy.hp - hp;
+
+			continue;
+		}
+
+		if((dmg - nPlayer.hp) > bestResults.bestDmgNum) {
+			bestResults.bestDmgMoves = moves;
+			bestResults.bestDmgNum = dmg - nPlayer.hp;
+		} else if((nEnemy.hp - hp) > bestResults.bestHpNum) {
+			bestResults.bestHpMoves = moves;
+			bestResults.bestHpNum = nEnemy.hp - hp;
 		}
 	}
+
+	// for(const moves of allMovesArray) {
+	// 	const nEnemy = new Enemy(enemy);
+	// 	let dmg = 0;
+	// 	let hp = 0;
+	// 	for(let move of moves) {
+	// 		const item = nEnemy.items[move] ?? {};
+	// 		if(!item?.id) break;
+	// 		if(item.mana > nEnemy.mp) break;
+
+	// 		nEnemy.mp -= item.mana ?? 0;
+	// 		giveEffectsToPlAndEn(nPlayer, [nEnemy]);
+			
+	// 		nEnemy.effects = nEnemy.effects?.filter(ef => --ef.duration > 0) || [];
+	// 		nPlayer.effects = nPlayer.effects?.filter(ef => --ef.duration > 0) || [];
+	// 		item.selfEffect?.forEach(ef => nEnemy.effect(ef.id, ef.power, ef.duration));
+	// 		item.giveEffect?.forEach(ef => nPlayer.effect(ef.id, ef.power, ef.duration));
+	// 		dmg += item.calcDamage().meleDmg;
+	// 		hp += item.healV ?? 0;
+
+	// 		if(dmg > bestResults.bestDmgNum) {
+	// 			bestResults.bestDmgMoves = moves;
+	// 			bestResults.bestDmgNum = dmg;
+	// 		} else if(hp > bestResults.bestHpNum) {
+	// 			bestResults.bestHpMoves = moves;
+	// 			bestResults.bestHpNum = hp;
+	// 		}
+	// 	}
+	// }
 
 	return bestResults
 }

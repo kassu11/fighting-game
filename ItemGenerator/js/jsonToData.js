@@ -11,7 +11,6 @@ function jsonToData(lootTable = []) {
 
 	function typeAll(arr) {
 		arr.items.forEach(drop => {
-			console.log(drop)
 			if(drop?.type == "all") typeAll(drop);
 			else if(drop?.type == "one") typeOne(drop);
 			else items.push(drop);

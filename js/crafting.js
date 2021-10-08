@@ -157,9 +157,7 @@ function craftingSearch(returnEmpty = false) {
 	else if(mediumSearch.length) generateCraftingItemsList(mediumSearch);
 	else if(easySearch.length) generateCraftingItemsList(easySearch);
 	else {
-		console.log("Search failed");
 		searchBar.classList.add("failed");
-
 		if(returnEmpty) generateCraftingItemsList([]);
 	}
 
@@ -347,7 +345,6 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
 					itemElem.classList.add("cantBeCrafted");
 					itemElem.append(warningElem);
 				} else itemElem.addEventListener("mouseup", e => {
-					// console.log(e.button)
 					if(e.button === 0 && item.craftingRecipes) {
 						itemsMenu.querySelector("input.searchBar").value = item.name + "#" + item.tags.join("#");
 						generateCraftingItemsList([item]);
@@ -608,7 +605,6 @@ function craftWithSearch(e) {
 	else if(mediumSearch.length) generateWhatCanCraftList(mediumSearch);
 	else if(easySearch.length) generateWhatCanCraftList(easySearch);
 	else {
-		console.log("Search failed");
 		// searchBar.classList.add("failed");
 
 		// if(returnEmpty) generateCraftingItemsList([]);

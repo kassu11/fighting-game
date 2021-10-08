@@ -6,7 +6,7 @@ const currentLevel = {
 	drops: []
 }
 
-const levels = {
+const levels2 = {
 	"level_1": {
 		"enemies": ["week_slime"],
 		"cords": {
@@ -59,8 +59,8 @@ const levels = {
 	"Effect test": {
 		"enemies": ["filler1"],
 		"cords": {
-			"y": -400,
-			"x": -1968
+			"y": 0,
+			"x": 0
 		}
 	}
 }

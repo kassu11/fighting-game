@@ -1,79 +1,4 @@
-let player = new Player({
-	hp: 25,
-	mp: 45,
-	maxHp: 25,
-	maxMp: 45,
-	inventory: [
-		// {...items["filler1"], slot: "hotbarSlot1"},
-		// {...items["stone_sword"], slot: "hotbarSlot2"},
-		// {...items["bow"], slot: "hotbarSlot3"},
-		// {...items["hp_pot"], slot: "hotbarSlot5"},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["chestplate2"]},
-		// {...items["leatherLeggins"]},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["dmgBooster"], slot: "hotbarSlot4", amount: 100},
-		// {...items["iron"], amount: 50},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["legs"]},
-		// {...items["legs"]},
-		// {...items["legs"]},
-		// {...items["legs"]},
-		// {...items["legs"]},
-		// {...items["legs"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["weak_stick"]},
-		// {...items["hp_pot"], amount: 69},
-		// {id: "dmgBooster", slot: "hotbarSlot5"},
-	],
-	currentSlot: "slot1",
-	effects: [
-		{id: "Poison", power: 1, duration: 4}
-	],
-	armor: {
-		head: {},
-		chest: {},
-		legs: {},
-	}
-});
-
-
-function Player(arr) {
+function BaseEntity(arr) {
 	this.hp = arr.hp;
 	this.mp = arr.mp;
 	this.maxHp = arr.maxHp;
@@ -89,7 +14,6 @@ function Player(arr) {
 	}
 	
 	this.maxMp = arr.maxMp;
-
 	this.currentSlot = arr.currentSlot;
 
 	this.effects = arr.effects?.map(effect => new Effect(effect)) || [];
@@ -151,5 +75,3 @@ function Player(arr) {
 		this.totalItemCounts[item.id] = Math.max(this.totalItemCounts[item.id] - (amount ?? 1), 0);
 	}
 }
-
-Player.prototype.effect = effect;

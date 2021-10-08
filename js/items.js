@@ -1,4 +1,4 @@
-const items = {
+const items2 = {
 	wooden_sword: {
 		id: "wooden_sword",
 		name: "Wooden sword",

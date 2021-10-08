@@ -1,4 +1,4 @@
-const enemies = {
+const enemies2 = {
 	week_slime: {
 		id: "week_slime",
 		maxHp: 31,
@@ -139,7 +139,7 @@ const enemies = {
 		maxMp: 10,
 		items: [
 			items["bow"],
-			items["arrow"],
+			{...items["arrow"], amount: 1},
 		],
 		effects: [
 			// {id: "Poison", power: 2, duration: 4},
@@ -152,7 +152,7 @@ const enemies = {
 				"type": "all",
 				"chance": 90,
 				"items": [
-					{"item": items["helmet"], "chance": 50},
+					{"item": items["helmet"], "chance": 50, "amount": 100},
 					{
 						"type": "one",
 						"chance": 90,
@@ -197,12 +197,21 @@ const enemies = {
 }
 
 function Enemy(enemy) {
+	console.log(enemy)
 	this.id = enemy.id;
 	this.hp = enemy.hp ?? enemy.maxHp;
 	this.maxHp = enemy.maxHp;
 	this.mp = enemy.mp ?? enemy.maxMp;
 	this.maxMp = enemy.maxMp;
-	this.items = enemy.items?.map(item => new Item(item, this)) || [];
+	this.bullets = enemy.bullets?.map(item => new Item(item, this)) || [];
+	this.items = [];
+	enemy.items?.forEach(item => {
+		if(item.isNotUsable && item.ammoType?.length) {
+			this.bullets.push(new Item(item, this));
+		} else {
+			this.items.push(new Item(item, this));
+		}
+	});
 	this.img = enemy.img;
 	this.imgLeft = enemy.imgLeft;
 	this.imgTop = enemy.imgTop;
@@ -229,7 +238,6 @@ function dropsFromLootTable(lootTable = []) {
 
 	function typeAll(arr) {
 		arr.items.forEach(drop => {
-			console.log(drop)
 			if(drop?.type == "all") typeAll(drop);
 			else if(drop?.type == "one") typeOne(drop);
 			else items.push(drop);

@@ -137,6 +137,7 @@ levelMenu.querySelector(".levelInfoScreen .close").addEventListener("click", () 
 const levelButtons = levelMenu.querySelector(".levelButtons")
 levelButtons.addEventListener("mousedown", levelButtonsMouseDown);
 const levelMenuDownData = {x: 0, y: 0, startX: 0, startY: 0};
+
 function levelButtonsMouseDown(downEvent) {
 	const canselClickMovedPixels = 15;
 	const container = levelButtons.querySelector(".container");
@@ -224,13 +225,4 @@ levelButtons.addEventListener("wheel", e => {
 
 function centerLevelMap(x, y) {
 	const sadasd = 5;
-}
-
-
-{
-	const button = document.querySelector(".levelButton");
-	const container = levelMenu.querySelector(".levelButtons .container")
-	console.log(button.getBoundingClientRect())
-	console.log(container.getBoundingClientRect())
-
 }
