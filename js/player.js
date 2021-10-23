@@ -5,7 +5,7 @@ let player = new Player({
 	maxMp: 45,
 	inventory: [
 		// {...items["filler1"], slot: "hotbarSlot1"},
-		// {...items["stone_sword"], slot: "hotbarSlot2"},
+		// {...items["wooden_sword"], slot: "hotbarSlot2"},
 		// {...items["bow"], slot: "hotbarSlot3"},
 		// {...items["hp_pot"], slot: "hotbarSlot5"},
 		// {...items["suicideStick"]},
@@ -67,6 +67,7 @@ let player = new Player({
 	],
 	armor: {
 		head: {},
+		// chest: {...items["chestplate2"]},
 		chest: {},
 		legs: {},
 	}
@@ -89,6 +90,10 @@ function Player(arr) {
 	}
 	
 	this.maxMp = arr.maxMp;
+	this.maxMpF = () => {
+		const extra = Object.values(this.armor).reduce((a, b) => a + (b?.manaBoostValue ?? 0), 0) || 0;
+		return this.maxMp + extra;
+	}
 
 	this.currentSlot = arr.currentSlot;
 

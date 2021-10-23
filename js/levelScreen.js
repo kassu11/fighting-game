@@ -141,6 +141,7 @@ const levelMenuDownData = {x: 0, y: 0, startX: 0, startY: 0};
 function levelButtonsMouseDown(downEvent) {
 	const canselClickMovedPixels = 15;
 	const container = levelButtons.querySelector(".container");
+	container.style.transition = null;
 	
 	levelMenuDownData.startX = downEvent.x - +container.style.left.substr(0, container.style.left.length - 2);
 	levelMenuDownData.startY = downEvent.y - +container.style.top.substr(0, container.style.top.length - 2);
@@ -161,6 +162,7 @@ function levelButtonsMouseDown(downEvent) {
 		levelButtons.onmousemove = moveEvent => {
 			levelMenuDownData.x = moveEvent.x;
 			levelMenuDownData.y = moveEvent.y;
+			container.style.transition = null;
 			if(moveEvent.buttons === 1) {
 				if(buttonElem?.classList.contains("levelButton")) {
 					const scale = +container.style.getPropertyValue("--scale") || 1;
@@ -194,6 +196,7 @@ levelButtons.addEventListener("wheel", e => {
 	let startX = +container.style.left.substr(0, container.style.left.length - 2);
 	let startY = +container.style.top.substr(0, container.style.top.length - 2);
 	const scale = +container.style.getPropertyValue("--scale") || 1;
+	container.style.transition = null;
 
 	const {x, y} = e.buttons === 1 ? levelMenuDownData : e; // Fix little offsync if moving while scrollin (intensely)
 	const {width, height} = container.getBoundingClientRect();
@@ -222,7 +225,51 @@ levelButtons.addEventListener("wheel", e => {
 	levelMenuDownData.startY = trueScaledY;
 });
 
-
-function centerLevelMap(x, y) {
-	const sadasd = 5;
+const mapResolutionScaling = {
+	lastWidth: Math.round(window.innerWidth / 2) * 2,
+	lastHeight: Math.round(window.innerHeight / 2) * 2,
 }
+window.addEventListener("resize", () => {
+	const newWidth = mapResolutionScaling.lastWidth - Math.round(window.innerWidth / 2) * 2;
+	const newHeight = mapResolutionScaling.lastHeight - Math.round(window.innerHeight / 2) * 2;
+
+	const container = levelButtons.querySelector(".container");
+	const startX = +container.style.left.substr(0, container.style.left.length - 2);
+	const startY = +container.style.top.substr(0, container.style.top.length - 2);
+	container.style.transition = null
+
+	if(newWidth !== 0) {
+		container.style.left = startX - (newWidth / 2) + "px";
+		mapResolutionScaling.lastWidth = Math.round(window.innerWidth / 2) * 2;
+	} if(newHeight !== 0) {
+		container.style.top = startY - (newHeight / 2) + "px";
+		mapResolutionScaling.lastHeight = Math.round(window.innerHeight / 2) * 2;
+	}
+});
+
+function centerLevelMap(id, animation = true) {
+	const button = levelButtons.querySelector(`#${id}`);
+	const data = button?.getBoundingClientRect();
+	const container = levelButtons.querySelector(".container");
+	const containerData = container.getBoundingClientRect();
+
+	if(!button) return;
+	if(animation) container.style.transition = "all .8s";
+
+	const topNavHeight = 50 / 2;
+
+	container.style.left = containerData.left - data.left + window.innerWidth / 2 - data.width / 2 + "px"
+	container.style.top = containerData.top - data.top + window.innerHeight / 2 - data.height / 2 + topNavHeight + "px"
+
+}
+
+centerLevelMap("level_t2aute", false)
+
+window.addEventListener("keydown", e => {
+	if(e.code === "Tab") {
+		e.preventDefault();
+		const buttons = levelButtons.querySelectorAll(".levelButton");
+		centerLevelMap(buttons[random(buttons.length - 1)].id, true);
+	}
+	// console.log(e);
+})

@@ -6,7 +6,7 @@ const currentLevel = {
 	drops: []
 }
 
-const levels2 = {
+if(typeof levels === "undefined") var levels = {
 	"level_1": {
 		"enemies": ["week_slime"],
 		"cords": {

@@ -23,7 +23,7 @@ function updateHotbarHovers() {
 
 function startLevel(lvlId, time) {
 	player.hp = player.maxHpF();
-	player.mp = player.maxMp;
+	player.mp = player.maxMpF();
 	if(!(time > 0)) player.effects = [];
 	figtingScreen.querySelectorAll(".playerBox > div").forEach(container => container.style = null);
 	Array.from(figtingScreen.querySelector("#victoryDrop").children).forEach(e => removeElement(e, 400));
@@ -154,7 +154,7 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 	item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
 	if(item.mana) player.mp -= item.mana;
 	if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
-	if(item.manaHealV) player.mp = Math.min(player.mp + item.manaHealV, player.maxMp);
+	if(item.manaHealV) player.mp = Math.min(player.mp + item.manaHealV, player.maxMpF());
 	if(item.needTarget) {
 		addPlayerItemUseParticle(target, item, {x: e.x, y: e.y, dmg: totalDmg + meleDmg + rangeDmg, bullet: bulletItem});
 	}
@@ -347,12 +347,12 @@ function updateEffectHovers() {
 function updatePlayerBars() {
 	const target = figtingScreen.querySelector(".playerBox");
 	const hpPercentage = Math.max(player.hp / player.maxHpF(), 0) * 100;
-	const mpPercentage = Math.max(player.mp / player.maxMp, 0) * 100;
+	const mpPercentage = Math.max(player.mp / player.maxMpF(), 0) * 100;
 	const hpDirection = +target.querySelector(".hpBG1").style.width.slice(0, -1) - hpPercentage;
 	const mpDirection = +target.querySelector(".mpBG1").style.width.slice(0, -1) - mpPercentage;
 
 	target.querySelector(".hpText").textContent = player.hp + "/" + player.maxHpF();
-	target.querySelector(".mpText").textContent = player.mp + "/" + player.maxMp;
+	target.querySelector(".mpText").textContent = player.mp + "/" + player.maxMpF();
 
 	target.querySelector(".hpBG1").style.width = hpPercentage + "%";
 	target.querySelector(".hpBG2").style.width = hpPercentage + "%";
@@ -372,7 +372,7 @@ async function startEnemyTurn() {
 		await sleep(350);
 		for(const [card, enemy] of currentLevel.enemies) {
 			const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
-			const item = enemy.items[reduceBestItemIndexForEnemy(enemy, results)] ?? new Item(items["weaponcgg36t"], enemy);
+			const item = enemy.items[reduceBestItemIndexForEnemy(enemy, results)] ?? new Item(items["filler"], enemy);
 			const bulletItem = item.useAmmoType ? enemy.bullets.find((bullet, index) => {
 				if(bullet.amount && bullet.ammoType === item.useAmmoType) {
 					if(--bullet.amount === 0) enemy.bullets.splice(index, 1);
@@ -437,7 +437,9 @@ async function startEnemyTurn() {
 function reduceBestItemIndexForEnemy(enemy, allMoves) {
 	const maxPlDmg = Object.values(player.hotbar).reduce((ac, item) => Math.max(ac, item.calcDamage?.().maxMeleDmg ?? 0), 0);
 	if(maxPlDmg >= enemy.hp) {
+		console.log("??")
 		const hpIndex = allMoves.bestHpMoves[0];
+		console.log(allMoves)
 		if(enemy.items[hpIndex]?.healV * currentLevel.enemyRounds + enemy.hp > maxPlDmg) return hpIndex
 	} return allMoves.bestDmgMoves[0];
 }
@@ -531,6 +533,7 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
 		const nPlayer = new LitePlayer(player);
 		const dmg = nPlayer.hp;
 		const hp = nEnemy.hp;
+		const mp = nEnemy.mp;
 		for(let move of moves) {
 			const item = nEnemy.items[move] ?? {};
 			if(!item?.id) break;
@@ -559,7 +562,8 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
 			
 			const {meleDmg, rangeDmg} = item.calcDamage();
 			nPlayer.hp -= totalDmg + meleDmg + rangeDmg;
-			nEnemy.hp = Math.min(nEnemy.hp + item.healV, nEnemy.maxHp);
+			nEnemy.hp = Math.min(nEnemy.hp + (item?.healV ?? 0), nEnemy.maxHp);
+			nEnemy.mp = Math.min(nEnemy.mp + (item?.manaHealV ?? 0), nEnemy.maxMp);
 		}
 
 		if(bestResults.bestDmgMoves.length === 0) {
@@ -571,44 +575,16 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
 
 			continue;
 		}
-
+		
+		// console.log(nEnemy.hp)
 		if((dmg - nPlayer.hp) > bestResults.bestDmgNum) {
 			bestResults.bestDmgMoves = moves;
 			bestResults.bestDmgNum = dmg - nPlayer.hp;
-		} else if((nEnemy.hp - hp) > bestResults.bestHpNum) {
+		} if((nEnemy.hp - hp) > bestResults.bestHpNum) {
 			bestResults.bestHpMoves = moves;
 			bestResults.bestHpNum = nEnemy.hp - hp;
 		}
 	}
-
-	// for(const moves of allMovesArray) {
-	// 	const nEnemy = new Enemy(enemy);
-	// 	let dmg = 0;
-	// 	let hp = 0;
-	// 	for(let move of moves) {
-	// 		const item = nEnemy.items[move] ?? {};
-	// 		if(!item?.id) break;
-	// 		if(item.mana > nEnemy.mp) break;
-
-	// 		nEnemy.mp -= item.mana ?? 0;
-	// 		giveEffectsToPlAndEn(nPlayer, [nEnemy]);
-			
-	// 		nEnemy.effects = nEnemy.effects?.filter(ef => --ef.duration > 0) || [];
-	// 		nPlayer.effects = nPlayer.effects?.filter(ef => --ef.duration > 0) || [];
-	// 		item.selfEffect?.forEach(ef => nEnemy.effect(ef.id, ef.power, ef.duration));
-	// 		item.giveEffect?.forEach(ef => nPlayer.effect(ef.id, ef.power, ef.duration));
-	// 		dmg += item.calcDamage().meleDmg;
-	// 		hp += item.healV ?? 0;
-
-	// 		if(dmg > bestResults.bestDmgNum) {
-	// 			bestResults.bestDmgMoves = moves;
-	// 			bestResults.bestDmgNum = dmg;
-	// 		} else if(hp > bestResults.bestHpNum) {
-	// 			bestResults.bestHpMoves = moves;
-	// 			bestResults.bestHpNum = hp;
-	// 		}
-	// 	}
-	// }
 
 	return bestResults
 }

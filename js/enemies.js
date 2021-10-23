@@ -1,4 +1,4 @@
-const enemies2 = {
+if(typeof enemies === "undefined") var enemies = {
 	week_slime: {
 		id: "week_slime",
 		maxHp: 31,
@@ -136,10 +136,13 @@ const enemies2 = {
 	filler1: {
 		id: "filler1",
 		maxHp: 20,
-		maxMp: 10,
+		maxMp: 15,
 		items: [
 			items["bow"],
 			{...items["arrow"], amount: 1},
+			items["hp_pot"],
+			items["weak_stick"],
+			items["stone_sword"]
 		],
 		effects: [
 			// {id: "Poison", power: 2, duration: 4},
@@ -197,7 +200,6 @@ const enemies2 = {
 }
 
 function Enemy(enemy) {
-	console.log(enemy)
 	this.id = enemy.id;
 	this.hp = enemy.hp ?? enemy.maxHp;
 	this.maxHp = enemy.maxHp;

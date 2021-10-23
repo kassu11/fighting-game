@@ -1,10 +1,9 @@
-const items2 = {
+if(typeof items === "undefined") var items = {
 	wooden_sword: {
 		id: "wooden_sword",
 		name: "Wooden sword",
 		tags: ["weapon", "sword"],
-		minMeleDmg: 10,
-		maxMeleDmg: 20,
+		minMeleDmg: 12,
 		useTime: 2,
 		image: "miekka1.png",
 		craftingRecipes: [
@@ -25,6 +24,7 @@ const items2 = {
 		minMeleDmg: 15,
 		maxMeleDmg: 25,
 		useTime: 1.5,
+		mana: 10,
 		image: "heikkous.png",
 		particle: "explosion2",
 		craftingRecipes: [
@@ -47,7 +47,7 @@ const items2 = {
 		name: "Weak stick",
 		tags: ["weapon", "material"],
 		// minMeleDmg: 2,
-		maxMeleDmg: 4,
+		maxMeleDmg: 1,
 		useTime: 1,
 		image: "weak_stick.png",
 		particle: "explosion",
@@ -62,22 +62,13 @@ const items2 = {
 			},
 			{
 				items: [
-					{
-						item: "helmet",
-						amount: 1
-					},
-					{
-						item: "chestplate",
-						amount: 1
-					},
+					{item: "helmet", amount: 1},
+					{item: "chestplate", amount: 1},
 				]
 			},
 			{
 				items: [
-					{
-						item: "dmgBooster",
-						amount: 2
-					},
+					{item: "dmgBooster", amount: 2},
 				],
 			},
 		]
@@ -227,6 +218,7 @@ const items2 = {
 		canEquipTo: "chest",
 		defenceValue: 20,
 		healthBoostValue: 50,
+		manaBoostValue: 100,
 		craftingRecipes: []
 	},
 	leatherLeggins: {
@@ -265,6 +257,8 @@ const items2 = {
 	}
 }
 
+items["filler"] = {id: "filler", minMeleDmg: 2, useTime: 1};
+
 function Item(item, user) {
 	const base = items[item.id];
 	this.user = user ?? item.user;
@@ -286,6 +280,7 @@ function Item(item, user) {
 	this.isNotUsable = base.isNotUsable;
 
 	this.healthBoostValue = base.healthBoostValue;
+	this.manaBoostValue = base.manaBoostValue;
 	this.defenceValue = base.defenceValue;
 	this.defencePercentage = base.defencePercentage;
 
@@ -324,6 +319,28 @@ Item.prototype.calcDamage = function() {
 		minRangeDmg: Math.floor(minRangeDmg),
 		maxRangeDmg: Math.floor(maxRangeDmg)
 	}
+}
+
+Item.prototype.calcTotalDamage = function() {
+	const dmg = this.calcDamage();
+	if(this.useAmmoType) {
+		const items = this.user.bullets ?? Object.values(this.user.hotbar) ?? [];
+		const bullet = items?.find(item => item.ammoType === this.useAmmoType);
+		if(bullet) {
+			const bulletDmg = bullet.calcDamage();
+			return dmg.meleDmg + dmg.rangeDmg + bulletDmg.meleDmg + bulletDmg.rangeDmg;
+		} 
+	}
+
+	return dmg.meleDmg + dmg.rangeDmg;
+}
+
+Item.prototype.canUse = function() {
+	if(this.isNotUsable) return false;
+	if(this.mana > this.user?.mp) return false;
+	if(this.useAmmoType && this.ammoAmount() === 0) return false;
+	if(this.amount <= 0) return false;
+	return true;
 }
 
 Item.prototype.hoverText = function() {
@@ -365,6 +382,7 @@ Item.prototype.hoverText = function() {
 	if(this.ammoType) text.push(`\nAmmo type: §${this.ammoType}<c>lime<c>§`);
 
 	if(this.healthBoostValue) text.push(`\nHealth boost: §${this.healthBoostValue}HP<c>lime<c><b>700<b>§`);
+	if(this.manaBoostValue) text.push(`\nMana boost: §${this.manaBoostValue}HP<c>#3a85ff<c><b>700<b>§`);
 	if(this.defenceValue) text.push(`\nReduce damage: §${this.defenceValue}<c>#ff5454<c>HP<b>700<b>§`);
 	if(this.defencePercentage) text.push(`\nDefence: §${this.defencePercentage}<c>#ac75ff<c><b>700<b>§`);
 
