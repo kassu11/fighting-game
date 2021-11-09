@@ -91,3 +91,22 @@ function print() {
 	});
 	console.log(text + "\n}");
 }
+
+const element = value => document.createElement(value);
+HTMLElement.prototype.setID = function(value) {
+	this.id = value;
+	return this;
+}
+HTMLElement.prototype.setClass = function(value) {
+	this.classList = value;
+	return this;
+}
+
+HTMLElement.prototype.setSrc = function(value) {
+	this.src = value;
+	return this;
+}
+HTMLElement.prototype.setText = function(value) {
+	this.textContent = value;
+	return this;
+}

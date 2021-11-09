@@ -1,6 +1,7 @@
 const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes?.length).map((data, i) => new Item({...data, index: i}, player));
 // const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 64
 // const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 4096
+
 const craftingValues = {
 	gridItems: allCraftableItems,
 	sortOrder: "",
@@ -9,7 +10,9 @@ const craftingValues = {
 	selectedResipe: "",
 	allOpenRecipes: {},
 	itemNeedsToBeInRecipe: "",
-	lastCrafted: {index: 0, id: "", updates: null}
+	lastCrafted: {index: 0, id: "", updates: null},
+	craftingElementsHeight: [],
+	history: {}
 }
 const craftInv = itemsMenu.querySelector(".crafting .craftableItems");
 
@@ -53,22 +56,24 @@ function generateCraftingItemsList(array) {
 		craftingValues.gridItems.reverse();
 	} if(craftingValues.sortOrder == "") craftingValues.gridItems.sort((v1, v2) => v1.index - v2.index);
 
+	craftingValues.craftingElementsHeight = formatElementLeghtArray([[...new Array(craftingValues.gridItems.length)].map(() => 50)]);
 
+	// craftingValues.gridItems.forEach((value, index) => {
+	// 	const element = craftingItem(index, value);
+	// 	craftInv.append(element);
+	// 	// const [item] = emmet(".craftingItem>.imageContainer>img.icon^p.name+p.tags+div.arrow+div.recipes");
+	// 	// item.querySelector(".icon").src = "./images/" + v.image;
+	// 	// item.querySelector(".name").textContent = v.name;
+	// 	// item.querySelector(".tags").textContent = `#${v.tags.join(" #")}`;
+	// 	// item.setAttribute("index", i);
 
-	craftingValues.gridItems.forEach((v, i) => {
-		const [item] = emmet(".craftingItem>.imageContainer>img.icon^p.name+p.tags+div.arrow+div.recipes");
-		item.querySelector(".icon").src = "./images/" + v.image;
-		item.querySelector(".name").textContent = v.name;
-		item.querySelector(".tags").textContent = `#${v.tags.join(" #")}`;
-		item.setAttribute("index", i);
-		craftInv.append(item);
-		
-		addHover([item, "crafting"], v.hoverText());
-
-	});
+	// 	// addHover([item, "crafting"], v.hoverText());
+	// });
+	drawVisibleCraftingItems();
 }
 
 function filterCraftingItems(array) {
+	if(craftingValues.removeFilter.length == 0 && craftingValues.addFilter.length == 0) return array;
 	return array.filter(value => {
 		for(const filter of craftingValues.removeFilter) {
 			if(filterResults(filter)) return false;
@@ -90,7 +95,7 @@ function filterCraftingItems(array) {
 }
 
 const searchBar = itemsMenu.querySelector(".toolBar input.searchBar");
-searchBar.addEventListener("input", e => craftingSearch());
+searchBar.addEventListener("input", () => craftingSearch());
 
 const clearCraftingSearchBar = itemsMenu.querySelector(".toolBar #clearCraftingSearchBar");
 clearCraftingSearchBar.addEventListener("click", () => {
@@ -119,6 +124,19 @@ function craftingSearch(returnEmpty = false) {
 		} else searchName.push(splitWithTags[i])
 	}
 
+	const historyKey = `${craftingValues.removeFilter.sort().join("")}§${craftingValues.addFilter.sort().join("")}§${searchName.sort().join("")}§${searchTags.sort().join("")}§${craftingValues.itemNeedsToBeInRecipe}`;
+
+	if(craftingValues.history[historyKey]) {
+		if(craftingValues.history[historyKey].length) generateCraftingItemsList(craftingValues.history[historyKey]);
+		else if(returnEmpty) generateCraftingItemsList(craftingValues.history[historyKey]);
+
+		const hoverPopUpItemName = hoverBox.querySelector("div[crafting] .itemTitle")?.textContent;
+		const hoverItemName = craftInv.querySelector(".craftingItem:hover>.name")?.textContent;
+		if(hoverPopUpItemName && !hoverItemName) hoverBox.textContent = "";
+		if(hoverPopUpItemName != hoverItemName) hoverBox.textContent = "";
+		return;
+	}
+
 	const perfectSearch = []; // Name and tags are identical
 	const strictSearch = []; // indexOf whole name and all tags startWith
 	const mediumSearch = []; // indexOf all words from name (not duplicate) and all tags indexOf
@@ -127,8 +145,10 @@ function craftingSearch(returnEmpty = false) {
 	const lookForItems = craftingValues.itemNeedsToBeInRecipe;
 	const filteredVersionOfitems = lookForItems ? filterCraftingItems( allItemsUsedForCrafting[lookForItems] ) : filterCraftingItems( allCraftableItems );
 
-	if(search.length == 0 || search == "#") return generateCraftingItemsList(filteredVersionOfitems);
-	else filteredVersionOfitems.forEach(item => {
+	if(search.length == 0 || search == "#") {
+		craftingValues.history[historyKey] = filteredVersionOfitems;
+		return generateCraftingItemsList(filteredVersionOfitems);
+	} else filteredVersionOfitems.forEach(item => {
 		const itemName = item.name.toLowerCase();
 
 		if(itemName === searchName.join(" ")) {
@@ -151,18 +171,27 @@ function craftingSearch(returnEmpty = false) {
 			if(findTag && findName) return easySearch.push(item);
 		}
 	});
-
-	if(perfectSearch.length) generateCraftingItemsList(perfectSearch);
-	else if(strictSearch.length) generateCraftingItemsList(strictSearch);
-	else if(mediumSearch.length) generateCraftingItemsList(mediumSearch);
-	else if(easySearch.length) generateCraftingItemsList(easySearch);
-	else {
+	
+	if(perfectSearch.length) {
+		craftingValues.history[historyKey] = perfectSearch;
+		generateCraftingItemsList(perfectSearch);
+	}	else if(strictSearch.length) {
+		craftingValues.history[historyKey] = strictSearch;
+		generateCraftingItemsList(strictSearch);
+	}	else if(mediumSearch.length) {
+		craftingValues.history[historyKey] = mediumSearch;
+		generateCraftingItemsList(mediumSearch);
+	}	else if(easySearch.length) {
+		craftingValues.history[historyKey] = easySearch; 
+		generateCraftingItemsList(easySearch);
+	}	else {
 		searchBar.classList.add("failed");
+		craftingValues.history[historyKey] = [];
 		if(returnEmpty) generateCraftingItemsList([]);
 	}
-
+	
 	const hoverPopUpItemName = hoverBox.querySelector("div[crafting] .itemTitle")?.textContent;
-	const hoverItemName = craftInv.querySelector("craftingItem:hover>.name")?.textContent;
+	const hoverItemName = craftInv.querySelector(".craftingItem:hover>.name")?.textContent;
 	if(hoverPopUpItemName && !hoverItemName) hoverBox.textContent = "";
 	if(hoverPopUpItemName != hoverItemName) hoverBox.textContent = "";
 };
@@ -330,7 +359,7 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
 
 	if(!recipesSubmenu.textContent && recipes?.length) {
 		addHover(recipesSubmenu, "");
-		const rows = recipes.map((recipe, y) => {
+		const rows = true ? "lol" : recipes.map((recipe, y) => {
 			const [rowElem] = emmet(".row>.craftingButton>img+p.itemAmount^div.items");
 			const items = recipe.items.map((data, x) => {
 				const item = new Item({id: data.item}, player);
@@ -456,26 +485,31 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
 
 			return rowElem;
 		});
-		
-		recipesSubmenu.append(...rows);
+
+		// recipesSubmenu.append(...rows);
+		appendRecipeElement(recipesSubmenu, item);
 	}
 
+	
 	if(clickedItem.classList.toggle("selected")) {
 		updateNeededItemsForCrafting(itemIndex);
 		const totalHeight = Array.from(recipesSubmenu.children).map(e => e.getBoundingClientRect().height).reduce((a, v) => a + v);
 		recipesSubmenu.style.maxHeight = `${totalHeight}px`;
+		updateElementHeightArray(craftingValues.craftingElementsHeight, itemIndex, 49 + totalHeight);
 		recipes.forEach((row, y) => row.items.forEach((value, x) => {
 			if(!craftingValues.allOpenRecipes[value.item]) craftingValues.allOpenRecipes[value.item] = [];
 			craftingValues.allOpenRecipes[value.item].push({elem: recipesSubmenu.children[y].children[1].children[x], amount: value.amount})
 		}));
 	} else {
 		recipesSubmenu.style.maxHeight = null;
+		updateElementHeightArray(craftingValues.craftingElementsHeight, itemIndex, 50);
+		drawVisibleCraftingItems();
 		recipes.forEach((row, y) => row.items.forEach((value, x) => {
 			const elem = recipesSubmenu.children[y].children[1].children[x];
 			const index = craftingValues.allOpenRecipes[value.item].findIndex(row => row.elem === elem);
 			craftingValues.allOpenRecipes[value.item].splice(index, 1);
 		}));
-	}  
+	}
 });
 
 function getCraftingNeededItemsHistory(index, recipeIndex = null) {
@@ -522,14 +556,13 @@ function getCraftingNeededItemsHistory(index, recipeIndex = null) {
 
 function updateNeededItemsForCrafting(index) {
 	const selectedItem = craftingValues.gridItems[index];
-	const recipeElem = craftInv.children[index].querySelector(".craftingItem>.recipes");
+	const recipeElem = craftInv.querySelector(`.craftingItem[index="${index}"]>.recipes`);
 	selectedItem.craftingRecipes.forEach((row, y) => row.items.forEach((value, x) => {
 		const elem = recipeElem.children[y].children[1].children[x];
 		if(player.totalItemCounts[value.item] >= value.amount) elem.classList.remove("cantCraft");
 		else elem.classList.add("cantCraft");
 	}));
 }
-
 
 
 const allItemsUsedForCrafting = allCraftableItems.reduce((ac, va) => {
@@ -547,7 +580,7 @@ const listOfAllItemsUsedForCrafting = Object.keys(allItemsUsedForCrafting).map(e
 const whatCanCraft = itemsMenu.querySelector(".whatCanCraft");
 whatCanCraft.addEventListener("input", craftWithSearch)
 
-function craftWithSearch(e) {
+function craftWithSearch() {
 	const search = whatCanCraft.value.toLowerCase().replaceAll(/ +/g, " ");
 	const searchName = [];
 	const searchTags = [];
@@ -668,5 +701,216 @@ whatCanCraftButton.addEventListener("mousedown", e => {
 			craftingSearch(true);
 		}
 	}
-
 });
+
+function craftingItem(index, item, open = false) {
+	const craftingItemDiv = element("div").setClass("craftingItem");
+	const imageContainer = element("div").setClass("imageContainer");
+	const img = element("img").setClass("icon").setSrc(`./images/${item.image}`);
+	const name = element("p").setClass("name").setText(item.name);
+	const tags = element("p").setClass("tags").setText(`#${item.tags.join(" #")}`);
+	const arrow = element("div").setClass("arrow");
+	const recipes = element("div").setClass("recipes");
+
+	imageContainer.append(img);
+	craftingItemDiv.append(imageContainer, name, tags, arrow, recipes);
+	craftingItemDiv.setAttribute("index", index);
+
+	if(open) {
+		appendRecipeElement(recipes, item);
+		recipes.style.maxHeight = craftingValues.craftingElementsHeight[0][index] - 49 + "px";
+		craftingItemDiv.classList.add("selected");
+
+		if(recipes.classList.contains("cantCraft")) craftingItemDiv.classList.add("cantCraft");
+	} else if( !canYouCraft(item) ) craftingItemDiv.classList.add("cantCraft");
+
+	addHover([craftingItemDiv, "crafting"], item.hoverText());
+	return craftingItemDiv;
+}
+
+function appendRecipeElement(parent, item) {
+	let cantCraftResipe = true;
+	for(const row of item.craftingRecipes) {
+		const rowElement = element("div").setClass("row");
+		const craftingButton = element("div").setClass("craftingButton");
+		const img = element("img").setSrc(`./images/${item.image}`);
+		const items = element("items").setClass("items");
+
+		if(row.craftingAmount > 2) craftingButton.append(img, element("p").setText(row.craftingAmount).setClass("itemAmount"));
+		else craftingButton.append(img);
+		rowElement.append(craftingButton, items);
+
+		let cantCraftRow = false;
+
+		for(const itemData of row.items) {
+			const nItem = new Item({id: itemData.item}, player);
+			const itemDiv = element("div").setClass("item");
+			const img = element("img").setSrc(`./images/${nItem.image}`);
+			const itemAmount = element("p").setText(itemData.amount).setClass("itemAmount");
+			itemDiv.append(img, itemAmount);
+			items.append(itemDiv);
+
+			if((player.totalItemCounts[itemData.item] || 0) < itemData.amount) {
+				itemDiv.classList.add("cantCraft");
+				cantCraftRow = true;
+			} if(!nItem.craftingRecipes) {
+				const warningElem = element("p").setClass("warning").setText("!");
+				addHover([warningElem, "cantBeCrafted"], "Item can't be crafted");
+				itemDiv.append(warningElem);
+			} else itemDiv.addEventListener("mouseup", e => leftClickRecipeItem(e, item));
+			itemDiv.addEventListener("contextmenu", e => rightClickRecipeItem(e, item));
+
+			recipeItemHover(itemDiv, itemData, nItem);
+		}
+
+		if(cantCraftRow) rowElement.classList.add("cantCraft");
+		else cantCraftResipe = false;
+
+		parent.append(rowElement);
+	}
+
+	if(cantCraftResipe) parent.classList.add("cantCraft");
+}
+
+function canYouCraft(item) {
+	return item?.craftingRecipes?.findIndex(row => {
+		return !row.items?.find(itemData => (player.totalItemCounts[itemData.item] || 0) < itemData.amount);
+	}) !== -1;
+}
+
+function leftClickRecipeItem({button}, item) {
+	if(button === 0 && item.craftingRecipes) {
+		itemsMenu.querySelector("input.searchBar").value = item.name + "#" + item.tags.join("#");
+		generateCraftingItemsList([item]);
+		itemsMenu.querySelector("#clearCraftingSearchBar").classList.remove("hidden");
+		craftInv.querySelector(".craftingItem").click();
+		hoverBox.querySelector("[recipe]").remove();
+	}
+}
+
+function rightClickRecipeItem(e, item) {
+	craftingValues.itemNeedsToBeInRecipe = item.id;
+	generateCraftingItemsList(allItemsUsedForCrafting[item.id]);
+	hoverBox.querySelector("div[recipe]")?.remove?.();
+	whatCanCraftButton.querySelector(".value").innerHTML = `<div class="row selected" itemid="${item.id}">
+		<img src="./images/${item.image}">
+		<p>${item.name}</p>
+		<div class="remove"></div>
+	</div>`;
+	e.preventDefault();
+	return false
+}
+
+function recipeItemHover(elem, recipeRow, item) {
+	const notEnoughText = `<nct><v>(player.totalItemCounts["${recipeRow.item}"] || 0) < ${recipeRow.amount} ? "notEnough" : "notEnough hidden"<v><nct>Not enough items§<nct>itemData<nct>`;
+	const tooltipText = [
+		"<ct>craftingTooltip<ct>", 
+		`[Left click]<cl>left hotkey${item?.craftingRecipes ? "" : " hide"}<cl>`,
+		`§<cl>right hotkey<cl>[Right click]`,
+		`§\nShow recipe${item?.craftingRecipes ? "" : "<cl>hide<cl>"}`,
+		`§<cl>right<cl>Used in`].join("");
+
+	addHover([elem, "recipe"], notEnoughText + item.hoverText() + tooltipText);
+}
+
+craftInv.addEventListener("scroll", drawVisibleCraftingItems);
+
+function formatElementLeghtArray(array) {
+	for(let i = 0; i < 100; i++) {
+		const lastArray = array[array.length - 1];
+		if(lastArray.length < 2) return array;
+		array.push(lastArray.reduce((acc, v, i) => {
+			const result = Math.floor(i / 2);
+			if(acc[result]) acc[result] += v ?? 0
+			else acc[result] = v ?? 0
+			return acc;
+		}, []));
+	}
+}
+
+function updateElementHeightArray(array, index, value) {
+	const arvonEro = value - array[0][index];
+	for(let i = 0; i < array.length; i++) {
+		array[i][index] += arvonEro;
+		index = Math.floor(index / 2);
+	}
+}
+
+function drawVisibleCraftingItems() {
+	const totalHeight = craftingValues.craftingElementsHeight[craftingValues.craftingElementsHeight.length - 1][0];
+	const clientHeight = craftInv.clientHeight || innerHeight;
+	const scrollTop = craftInv.scrollTop;
+
+	const startIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop);
+	let endIndex = -1;
+	const topHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, startIndex);
+
+	let elementsHeight = topHeight - scrollTop;
+	const maxElementIndex = craftingValues.gridItems.length;
+	let scrolledToBottom = false;
+
+	// craftInv.innerHTML = "";
+	const firstElementIndex = parseInt(craftInv.children[0]?.getAttribute("index") ?? 0) == startIndex;
+
+
+	for(let i = startIndex; i <= maxElementIndex; i++) {
+		const height = craftingValues.craftingElementsHeight[0][i];
+		const item = craftingValues.gridItems[i];
+		const elem = craftInv.querySelector(`.craftingItem[index="${i}"]`);
+		if(item == null) {
+			scrolledToBottom = true;
+			break
+		};
+		
+		if(elem == null) {
+			const isOpen = height > 50;
+			const element = craftingItem(i, item, isOpen);
+			craftInv.append(element);
+		} else if(!firstElementIndex) craftInv.append(elem);
+
+		elementsHeight += height;
+		endIndex = i;
+		if(elementsHeight >= clientHeight) break;
+	}
+
+	Array.from(craftInv.children).forEach(e => {
+		const index = parseInt(e.getAttribute("index"));
+		if(index < startIndex || index > endIndex) e.remove();
+	});
+
+	// console.log(startIndex, endIndex, topHeight, clientHeight, scrollTop, elementsHeight, scrolledToBottom);
+
+	if(scrolledToBottom || endIndex == maxElementIndex - 1) craftInv.style.setProperty('--bottom', "0px");
+	else craftInv.style.setProperty('--bottom', totalHeight - topHeight - elementsHeight + "px");
+	
+	craftInv.style.setProperty('--top', topHeight + "px");
+}
+
+function craftingElementIndexByHeight(array, height) {
+	let index = 0;
+	let minNum = 0;
+
+	if(height >= array[array.length - 1]) return array[0].length - 1;
+
+	for(let i = array.length - 2; i >= 0; i--) {
+		const aNum = minNum + array[i][index];
+		const bNum = aNum + array[i][index + 1];
+
+		if(!(aNum > height)) {
+			index++;
+			minNum = aNum;
+		} if(i !== 0) index *= 2;
+	} return index;
+}
+
+function craftingElementTopByIndex(array, searchIndex) { 
+	let extraHeight = 0;
+	let rowIndex = 0;
+	const currentIndexHeight = array[0][searchIndex];
+
+	while(searchIndex > 0) {
+		if(searchIndex % 2 == 0) extraHeight += (array[rowIndex][searchIndex + 1] ?? 0);
+		searchIndex = Math.floor(searchIndex / 2);
+		rowIndex++;
+	} return array[rowIndex][0] - extraHeight - currentIndexHeight;
+}

@@ -298,9 +298,9 @@ function generateEnemy(num) {
 		if(vahvuus == "normal") enemy.maxHp = random(36, 65);
 		if(vahvuus == "boss") 	enemy.maxHp = random(100, 210);
 
-		if(vahvuus == "weak") 	enemy.maxHp = random(10, 45);
-		if(vahvuus == "normal") enemy.maxHp = random(100, 200);
-		if(vahvuus == "boss") 	enemy.maxHp = random(350, 750);
+		if(vahvuus == "weak") 	enemy.maxMp = random(10, 45);
+		if(vahvuus == "normal") enemy.maxMp = random(100, 200);
+		if(vahvuus == "boss") 	enemy.maxMp = random(350, 750);
 
 		const items = [saveWeapon[random(saveWeapon.length - 1)]];
 
@@ -464,7 +464,7 @@ function testIfWeaponIsUsable(enemy, weapon) {
 			return `§'${JSON.stringify(value).replaceAll(`"`, "'").replaceAll(`,`, ", ").replaceAll(`:`, ": ")}'§`;
 		} if(key === "tags") return `§'['${value.join("', '")}']'§`;
 		return value;
-	}, 2).replaceAll(`'`, `"`).replaceAll(`"§"`, "") + ";";
+	}, 2).replaceAll(`'`, `"`).replaceAll(`"§"`, "").replace(/"([^"]+)":/g, '$1:') + ";";
 	document.body.append(pre);
 }
 
@@ -476,7 +476,7 @@ function testIfWeaponIsUsable(enemy, weapon) {
 		if(value?.item && value?.chance) {
 			return `§'${JSON.stringify(value).replaceAll(`"`, "'").replaceAll(`,`, ", ").replaceAll(`:`, ": ")}'§`;
 		} return value;
-	}, 2).replaceAll(`'`, `"`).replaceAll(`"§"`, "") + ";";
+	}, 2).replaceAll(`'`, `"`).replaceAll(`"§"`, "").replace(/"([^"]+)":/g, '$1:') + ";";
 	document.body.append(pre);
 }
 
@@ -486,8 +486,9 @@ function testIfWeaponIsUsable(enemy, weapon) {
 	levels.forEach(v => arr[v.id] = v);
 	pre.textContent = "var levels = " + JSON.stringify(arr, (key, value) => {
 		if(key === "enemies") return `§'['${value.join("', '")}']'§`;
+		if(key === "cords") return `§'${JSON.stringify(value).replaceAll(`"`, "'").replaceAll(`,`, ", ").replaceAll(`:`, ": ")}'§`;
 		return value;
-	}, 2).replaceAll(`'`, `"`).replaceAll(`"§"`, "") + ";";
+	}, 2).replaceAll(`'`, `"`).replaceAll(`"§"`, "").replace(/"([^"]+)":/g, '$1:') + ";";
 	document.body.append(pre);
 }
 
