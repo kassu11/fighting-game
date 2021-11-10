@@ -725,6 +725,7 @@
 			display: flex;
 			cursor: pointer;
 			flex-direction: column;
+			height: 100%;
 			--top: 0px;
 			--bottom: 0px;
 
@@ -734,7 +735,6 @@
 				position: relative;
 				content: "";
 				width: 100%;
-				// background: blue;
 				flex-shrink: 0;
 			}
 
@@ -761,7 +761,6 @@
 				min-height: 50px;
 				background: #3c3c3c;
 				overflow: hidden;
-				flex-grow: 1;
 				flex-shrink: 0;
 
 				&.selected {

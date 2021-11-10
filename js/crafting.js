@@ -852,7 +852,6 @@ function drawVisibleCraftingItems() {
 	// craftInv.innerHTML = "";
 	const firstElementIndex = parseInt(craftInv.children[0]?.getAttribute("index") ?? 0) == startIndex;
 
-
 	for(let i = startIndex; i <= maxElementIndex; i++) {
 		const height = craftingValues.craftingElementsHeight[0][i];
 		const item = craftingValues.gridItems[i];
