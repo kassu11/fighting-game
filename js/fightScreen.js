@@ -220,7 +220,7 @@ function removeDeadEnemy(target, enemy) {
 		const nItem = new Item(drop.item);
 		const amount = convertArrayOfNumbers(drop.amount);
 		const index = itemStackIndex(currentLevel.drops, nItem);
-		if(amount && "amount" in nItem) nItem.amount = amount;
+		if(amount) nItem.amount = amount;
 		if(index == -1) currentLevel.drops.push(nItem);
 		else currentLevel.drops[index].amount += nItem.amount;
 	});
@@ -565,18 +565,7 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
 			nEnemy.hp = Math.min(nEnemy.hp + (item?.healV ?? 0), nEnemy.maxHp);
 			nEnemy.mp = Math.min(nEnemy.mp + (item?.manaHealV ?? 0), nEnemy.maxMp);
 		}
-
-		if(bestResults.bestDmgMoves.length === 0) {
-			bestResults.bestDmgMoves = moves;
-			bestResults.bestDmgNum = dmg - nPlayer.hp;
-
-			bestResults.bestHpMoves = moves;
-			bestResults.bestHpNum = nEnemy.hp - hp;
-
-			continue;
-		}
 		
-		// console.log(nEnemy.hp)
 		if((dmg - nPlayer.hp) > bestResults.bestDmgNum) {
 			bestResults.bestDmgMoves = moves;
 			bestResults.bestDmgNum = dmg - nPlayer.hp;
@@ -668,24 +657,4 @@ function numberGrid(itemsCount = 2, Turns = 3) {
 			else arr.push(copy);
 		} return arr;
 	} return numberGridObject[key] = loop(Array(amount).fill(0), amount - 1);
-}
-
-function statsFromEnemiMoves() { // En oo tehny mitään viel
-	for(const moves of allMovesArray) {
-		const nEnemy = new Enemy(enemy);
-		let dmg = 0;
-		for(let move of moves) {
-			const item = nEnemy.items[move] ?? {};
-			if(!item?.id) break;
-
-			nEnemy.effects = nEnemy.effects?.filter(ef => --ef.duration > 0) || [];
-			item.selfEffect?.forEach(ef => nEnemy.effect(ef.id, ef.power, ef.duration));
-			dmg += item.calcDamage().meleDmg;
-
-			if(dmg > bestResults.bestDmgNum) {
-				bestResults.bestDmgMoves = moves;
-				bestResults.bestDmgNum = dmg;
-			}
-		}
-	}
 }

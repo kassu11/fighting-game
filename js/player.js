@@ -1,111 +1,37 @@
-let player = new Player({
+if(typeof player !== "undefined") var player = new Player(player);
+else var player = new Player({
 	hp: 25,
 	mp: 45,
 	maxHp: 25,
 	maxMp: 45,
 	inventory: [
-		{...items["weapon8nh5bv"], slot: "hotbarSlot1"},
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		items["weapon8nh5bv"],
-		{...items["arrow8gegto"], amount: 100},
-		{...items["consumable223llmj"], amount: 100},
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		items["armor9nv71r"],
-		// {...items["filler1"], slot: "hotbarSlot1"},
-		// {...items["wooden_sword"], slot: "hotbarSlot2"},
-		// {...items["bow"], slot: "hotbarSlot3"},
-		// {...items["hp_pot"], slot: "hotbarSlot5"},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["chestplate2"]},
-		// {...items["leatherLeggins"]},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["suicideStick"]},
-		// {...items["dmgBooster"], slot: "hotbarSlot4", amount: 100},
-		// {...items["iron"], amount: 50},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["helmet"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
-		// {...items["chestplate"]},
+		{...items["filler1"], slot: "hotbarSlot1"},
+		{...items["wooden_sword"], slot: "hotbarSlot2"},
+		{...items["bow"], slot: "hotbarSlot3"},
+		{...items["hp_pot"], slot: "hotbarSlot5"},
+		{...items["suicideStick"]},
+		{...items["suicideStick"]},
+		{...items["suicideStick"]},
+		{...items["chestplate2"]},
+		{...items["leatherLeggins"]},
+		{...items["suicideStick"]},
+		{...items["suicideStick"]},
+		{...items["suicideStick"]},
+		{...items["suicideStick"]},
+		{...items["dmgBooster"], slot: "hotbarSlot4", amount: 100},
+		{...items["iron"], amount: 50},
+		{...items["helmet"]},
+		{...items["helmet"]},
+		{...items["helmet"]},
+		{...items["helmet"]},
+		{...items["helmet"]},
+		{...items["helmet"]},
+		{...items["helmet"]},
+		{...items["helmet"]},
+		{...items["chestplate"]},
+		{...items["chestplate"]},
+		{...items["chestplate"]},
+		{...items["chestplate"]},
 		// {...items["chestplate"]},
 		// {...items["chestplate"]},
 		// {...items["chestplate"]},
@@ -206,14 +132,18 @@ function Player(arr) {
 		return ac;
 	}, {});
 
-	this.giveItem = itemData => {
+	this.giveItem = ({amount, ...itemData}) => {
 		const item = new Item(itemData);
 		const index = itemStackIndex(this.inventory, item);
+		if(!item.amount && amount) {
+			for(let i = 1; i < amount; i++) this.inventory.push(new Item(itemData));
+		} else item.amount = amount;
+
 		if(index == -1) this.inventory.push(item);
 		else this.inventory[index].amount += item.amount;
 
 		this.totalItemCounts[item.id] ??= 0;
-		this.totalItemCounts[item.id] += item.amount ?? 1;
+		this.totalItemCounts[item.id] += amount ?? item.amount ?? 1;
 	}
 
 	this.takeItem = (index, amount = 1) => {
@@ -233,3 +163,17 @@ function Player(arr) {
 }
 
 Player.prototype.effect = effect;
+
+
+
+
+// {
+// 	"lisaaTavaroita": {
+// 		"tavaraID": {
+
+// 		}
+// 	},
+// 	"VähemmänTavaroita": {
+
+// 	}
+// }

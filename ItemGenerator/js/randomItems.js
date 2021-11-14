@@ -70,7 +70,7 @@ function generateWeapon(num) {
 			tags: ["weapon"]
 		}
 	}).map(item => {
-		item.useTime = (random(10, 100) / 10 - .5).toFixed(1);
+		item.useTime = parseFloat( (random(10, 100) / 10 - .5).toFixed(1));
 
 		const vahvuus = random(3) ? "weak" : random(2) ? "normal" : "boss";
 		const tyyppi = random(1) ? "mele" : "range";
@@ -183,7 +183,7 @@ function generateConsumable(num) {
 			tags: ["consumable"]
 		}
 	}).map(item => {
-		item.useTime = (random(10, 100) / 10 - .5).toFixed(1);
+		item.useTime = parseFloat( (random(10, 100) / 10 - .5).toFixed(1) );
 
 		const vahvuus = random(3) ? "weak" : random(2) ? "normal" : "boss";
 		const healV = random(1) === 0;
@@ -264,15 +264,107 @@ function generateCraftingRecipe(arr) {
 	}
 }
 
+function generateWeaponCraftingRecipe(arr) {
+	if(arr.length < 2) return console.error("Give more items");
+	for(let i = 0; i < arr.length; i++) {
+		if(!random(8)) continue;
+
+		const item = arr[i];
+		item.craftingRecipes = [];
+		
+		while(!item.craftingRecipes.length || !random(2)) {
+			const recipe = [];
+			do {
+				let recipeItem = null;
+				do {
+					if(random(15)) recipeItem = materials[random(materials.length - 1)];
+					else recipeItem = weapons[random(weapons.length - 1)];
+				} while(recipeItem == item);
+				const amount = random(10) ? random(1, 10) : random(15, 45);
+				recipe.push({item: recipeItem.id, amount});
+			} while(random(100) < 50);
+			item.craftingRecipes.push({items: recipe, craftingAmount: 1});
+		}
+	}
+}
+function generateAmmoCraftingRecipe(arr) {
+	if(arr.length < 2) return console.error("Give more items");
+	for(let i = 0; i < arr.length; i++) {
+		const item = arr[i];
+		item.craftingRecipes = [];
+		
+		while(!item.craftingRecipes.length || !random(2)) {
+			const recipe = [];
+			do {
+				let recipeItem = null;
+				do {
+					if(random(8)) recipeItem = materials[random(materials.length - 1)];
+					else recipeItem = ammo[random(ammo.length - 1)];
+				} while(recipeItem == item);
+				const amount = random(10) ? random(1, 5) : random(10, 20);
+				recipe.push({item: recipeItem.id, amount});
+			} while(random(100) < 60);
+			item.craftingRecipes.push({items: recipe, craftingAmount: Math.round(random(5, 25) / 5) * 5});
+		}
+	}
+}
+function generateArmorCraftingRecipe(arr) {
+	if(arr.length < 2) return console.error("Give more items");
+	for(let i = 0; i < arr.length; i++) {
+		const item = arr[i];
+		item.craftingRecipes = [];
+		
+		while(!item.craftingRecipes.length || !random(2)) {
+			const recipe = [];
+			do {
+				let recipeItem = null;
+				do {
+					if(random(4)) recipeItem = materials[random(materials.length - 1)];
+					else recipeItem = armor[random(armor.length - 1)];
+				} while(recipeItem == item || (recipeItem.canEquipTo && recipeItem.canEquipTo !== item.canEquipTo));
+				const amount = recipeItem.canEquipTo == null ? random(10) ? random(1, 10) : random(10, 20) : 1;
+				recipe.push({item: recipeItem.id, amount});
+			} while(random(100) < 40);
+			item.craftingRecipes.push({items: recipe, craftingAmount: 1});
+		}
+	}
+}
+function generateConsumableCraftingRecipe(arr) {
+	if(arr.length < 2) return console.error("Give more items");
+	for(let i = 0; i < arr.length; i++) {
+		const item = arr[i];
+		item.craftingRecipes = [];
+		
+		while(!item.craftingRecipes.length || !random(2)) {
+			const recipe = [];
+			do {
+				let recipeItem = null;
+				do {
+					if(random(8)) recipeItem = materials[random(materials.length - 1)];
+					else recipeItem = consumable[random(consumable.length - 1)];
+				} while(recipeItem == item);
+				const amount = random(10) ? random(1, 14) : random(15, 25);
+				recipe.push({item: recipeItem.id, amount});
+			} while(random(100) < 40);
+			item.craftingRecipes.push({items: recipe, craftingAmount: random(1, 5)});
+		}
+	}
+}
+
 const ammo = generateAmmo(40);
 const armor = generateArmor(60);
 const materials = generateMaterials(20);
-const weapons = generateWeapon(150).sort((v1, v2) => v1.mana - v2.mana);;
-const consumable = generateConsumable(50).sort((v1, v2) => v1.mana - v2.mana);;
+const weapons = generateWeapon(150).sort((v1, v2) => v1.mana - v2.mana);
+const consumable = generateConsumable(50).sort((v1, v2) => v1.mana - v2.mana);
 
 const allItems = [...armor, ...materials, ...weapons, ...ammo, ...consumable];
 
-generateCraftingRecipe(allItems);
+generateWeaponCraftingRecipe(weapons);
+generateAmmoCraftingRecipe(ammo);
+generateArmorCraftingRecipe(armor);
+generateConsumableCraftingRecipe(consumable);
+
+const weaponThatCantBeCrafted = weapons.filter(v => v.craftingRecipes?.length === 0);
 
 if(typeof items === "undefined") var items = {};
 
@@ -304,7 +396,7 @@ function generateEnemy(num) {
 
 		const items = [saveWeapon[random(saveWeapon.length - 1)]];
 
-		do { // Give weapons
+		while(random(1) && items.length < 3) { // Give weapons
 			let min = 0;
 			for(let i = 0; i < 10; i++) {
 				const rng = random(min, weapons.length - 1)
@@ -315,9 +407,9 @@ function generateEnemy(num) {
 					break;
 				} else min = rng;
 			}
-		} while(random(1) && items.length < 3);
+		};
 
-		do { // Give consumables
+		while(random(2) == 0 && items.length < 5) { // Give consumables
 			let min = 0;
 			for(let i = 0; i < 10; i++) {
 				const rng = random(min, consumable.length - 1)
@@ -328,7 +420,7 @@ function generateEnemy(num) {
 					break;
 				} else min = rng;
 			}
-		} while(random(1) && items.length < 5);
+		};
 
 		items.filter(item => item.useAmmoType?.length).forEach(({useAmmoType}) => {
 			const arr = ammo.slice();
@@ -388,7 +480,7 @@ function generateDrop2(items = 10, deep = 3, lastType) {
 			"items": [...new Array(random(1, 3))].map((v, _, arr) => generateDrop2(items - arr.length, deep - 1, type))
 		}
 	} else {
-		const item = allItems[random(allItems.length - 1)];
+		const item = random(15) ? materials[random(materials.length - 1)] : weaponThatCantBeCrafted.length ? weaponThatCantBeCrafted[random(weaponThatCantBeCrafted.length - 1)] : weapons[random(weapons.length - 1)];
 		const arr = {
 			"item": `§'items['${item.id}']'§`,
 			"chance": Math.min(random(5, 110), 100)
@@ -413,8 +505,8 @@ function generateLevels(num) {
 			id: `level_${(time + i).toString(32)}`,
 			enemies: [],
 			"cords": {
-				"y": 0,
-				"x": 0
+				"y": -1900,
+				"x": -2000
 			}
 		}
 	}).map(level => {
@@ -445,7 +537,6 @@ function generateLevels(num) {
 			level.cords.y += Math.max(...values) * 5;
 		});
 
-
 		return level;
 	});
 }
@@ -455,7 +546,24 @@ function testIfWeaponIsUsable(enemy, weapon) {
 	return true;
 }
 
-{
+const player = {
+	hp: 25,
+	mp: 45,
+	maxHp: 25,
+	maxMp: 45,
+	inventory: [
+		...[...new Array(materials.length - 1)].map((_, i) => `{...items['${materials[i].id}'], amount: ${random(2, 25)}}`),
+		`{...items['${weapons.find(item => !item.mana && item.minMeleDmg < 6).id}'], slot: 'hotbarSlot1'}`,
+	],
+	currentSlot: "slot1",
+	armor: {
+		head: {},
+		chest: {},
+		legs: {},
+	}
+};
+
+{ // items array
 	const pre = document.createElement("pre");
 	const arr = {};
 	allItems.forEach(v => arr[v.id] = v);
@@ -468,7 +576,7 @@ function testIfWeaponIsUsable(enemy, weapon) {
 	document.body.append(pre);
 }
 
-{
+{ // enemies array
 	const pre = document.createElement("pre");
 	const arr = {};
 	enemies.forEach(v => arr[v.id] = v);
@@ -480,18 +588,27 @@ function testIfWeaponIsUsable(enemy, weapon) {
 	document.body.append(pre);
 }
 
-{
+{ // levels array
 	const pre = document.createElement("pre");
 	const arr = {};
 	levels.forEach(v => arr[v.id] = v);
 	pre.textContent = "var levels = " + JSON.stringify(arr, (key, value) => {
 		if(key === "enemies") return `§'['${value.join("', '")}']'§`;
 		if(key === "cords") return `§'${JSON.stringify(value).replaceAll(`"`, "'").replaceAll(`,`, ", ").replaceAll(`:`, ": ")}'§`;
+		if(key === "id") return undefined;
 		return value;
 	}, 2).replaceAll(`'`, `"`).replaceAll(`"§"`, "").replace(/"([^"]+)":/g, '$1:') + ";";
 	document.body.append(pre);
 }
 
+{ // player array
+	const pre = document.createElement("pre");
+	pre.textContent = "var player = " + JSON.stringify(player, (key, value) => {
+		if(parseInt(key) > -1) return `§'${value}'§`;
+		return value;
+	}, 2).replaceAll(`'`, `"`).replaceAll(`"§"`, "").replace(/"([^"]+)":/g, '$1:') + ";";
+	document.body.append(pre);
+}
 
 
 

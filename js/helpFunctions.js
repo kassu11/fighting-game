@@ -81,12 +81,9 @@ function print() {
 
 	Object.entries(levels).forEach(([key, v], i) => {
 		text += `${i === 0 ? "" : ","}
-	"${key}": {
-		"enemies": ["${v.enemies.join(`", "`)}"],
-		"cords": {
-			"y": ${v.cords?.y ?? 0},
-			"x": ${v.cords?.x ?? 0}
-		}
+	${key}: {
+		enemies: ["${v.enemies.join(`", "`)}"],
+		cords: {y: ${v.cords?.y ?? 0}, x: ${v.cords?.x ?? 0}}
 	}`
 	});
 	console.log(text + "\n}");

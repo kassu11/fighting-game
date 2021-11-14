@@ -757,14 +757,17 @@ function appendRecipeElement(parent, item) {
 				const warningElem = element("p").setClass("warning").setText("!");
 				addHover([warningElem, "cantBeCrafted"], "Item can't be crafted");
 				itemDiv.append(warningElem);
-			} else itemDiv.addEventListener("mouseup", e => leftClickRecipeItem(e, item));
-			itemDiv.addEventListener("contextmenu", e => rightClickRecipeItem(e, item));
+			} else itemDiv.addEventListener("click", () => leftClickRecipeItem(nItem));
+			itemDiv.addEventListener("contextmenu", e => rightClickRecipeItem(e, nItem));
 
 			recipeItemHover(itemDiv, itemData, nItem);
 		}
 
 		if(cantCraftRow) rowElement.classList.add("cantCraft");
-		else cantCraftResipe = false;
+		else {
+			craftingButton.addEventListener("click", () => craftItem(item, row));
+			cantCraftResipe = false;
+		}
 
 		parent.append(rowElement);
 	}
@@ -778,8 +781,8 @@ function canYouCraft(item) {
 	}) !== -1;
 }
 
-function leftClickRecipeItem({button}, item) {
-	if(button === 0 && item.craftingRecipes) {
+function leftClickRecipeItem(item) {
+	if(item.craftingRecipes) {
 		itemsMenu.querySelector("input.searchBar").value = item.name + "#" + item.tags.join("#");
 		generateCraftingItemsList([item]);
 		itemsMenu.querySelector("#clearCraftingSearchBar").classList.remove("hidden");
@@ -801,6 +804,47 @@ function rightClickRecipeItem(e, item) {
 	return false
 }
 
+function craftItem(item, recipe) {
+	const slotItems = [...Object.values(player.hotbar), ...Object.values(player.armor)]
+	const recipeItems = recipe.items.map(row => {
+		const total = slotItems.reduce((acc, item) => {
+			if(item.id === row.item) acc += item.amount;
+			return acc;
+		}, 0);
+
+		return {...row, takeFromSlot: row.amount - (player.totalItemCounts[row.item] - total)};
+	});
+
+	for(let i = 0; i < player.inventory.length; i++) {
+		const item = player.inventory[i];
+		if(recipeItems.length == 0) break;
+		for(let j = 0; j < recipeItems.length; j++) {
+			const recipeRow = recipeItems[j];
+			if(item.id === recipeRow.item) {
+				if(item.slot && recipeRow.takeFromSlot === 0) continue;
+				if(item.amount) {
+					if(item.slot && recipeRow.takeFromSlot > 0) recipeRow.takeFromSlot -= recipeRow.amount;
+					player.takeItem(i, recipeRow.amount)
+					recipeItems.splice(j, 1);
+				} else if(--recipeRow.amount === 0) {
+					recipeItems.splice(j, 1);
+					player.takeItem(i, 1);
+					if(item.slot && recipeRow.takeFromSlot > 0) recipeRow.takeFromSlot -= 1;
+				}
+
+				i--;
+				break;
+			}
+		}
+	}
+	
+	item.amount = recipe.craftingAmount;
+	player.giveItem(item);
+
+	drawVisibleCraftingItems(true)
+	generateItemsOnGrid(player.inventory);
+}
+
 function recipeItemHover(elem, recipeRow, item) {
 	const notEnoughText = `<nct><v>(player.totalItemCounts["${recipeRow.item}"] || 0) < ${recipeRow.amount} ? "notEnough" : "notEnough hidden"<v><nct>Not enough items§<nct>itemData<nct>`;
 	const tooltipText = [
@@ -813,7 +857,7 @@ function recipeItemHover(elem, recipeRow, item) {
 	addHover([elem, "recipe"], notEnoughText + item.hoverText() + tooltipText);
 }
 
-craftInv.addEventListener("scroll", drawVisibleCraftingItems);
+craftInv.addEventListener("scroll", () => drawVisibleCraftingItems());
 
 function formatElementLeghtArray(array) {
 	for(let i = 0; i < 100; i++) {
@@ -836,50 +880,45 @@ function updateElementHeightArray(array, index, value) {
 	}
 }
 
-function drawVisibleCraftingItems() {
+function drawVisibleCraftingItems(fullReDraw = false) {
 	const totalHeight = craftingValues.craftingElementsHeight[craftingValues.craftingElementsHeight.length - 1][0];
 	const clientHeight = craftInv.clientHeight || innerHeight;
 	const scrollTop = craftInv.scrollTop;
 
 	const startIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop);
-	let endIndex = -1;
+	const endIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop + clientHeight - 1);
 	const topHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, startIndex);
+	const elementsHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, endIndex) + craftingValues.craftingElementsHeight[0][endIndex] - topHeight - (scrollTop - topHeight);
 
-	let elementsHeight = topHeight - scrollTop;
-	const maxElementIndex = craftingValues.gridItems.length;
-	let scrolledToBottom = false;
-
-	// craftInv.innerHTML = "";
+	if(fullReDraw == true) craftInv.innerHTML = "";
 	const firstElementIndex = parseInt(craftInv.children[0]?.getAttribute("index") ?? 0) == startIndex;
 
-	for(let i = startIndex; i <= maxElementIndex; i++) {
-		const height = craftingValues.craftingElementsHeight[0][i];
-		const item = craftingValues.gridItems[i];
-		const elem = craftInv.querySelector(`.craftingItem[index="${i}"]`);
-		if(item == null) {
-			scrolledToBottom = true;
-			break
-		};
-		
-		if(elem == null) {
-			const isOpen = height > 50;
-			const element = craftingItem(i, item, isOpen);
-			craftInv.append(element);
-		} else if(!firstElementIndex) craftInv.append(elem);
+	loop: {
+		if(fullReDraw == false) {
+			const lastElementIndex = parseInt(craftInv.children[craftInv.children.length - 1]?.getAttribute("index") ?? 0) == endIndex;
+			if(firstElementIndex && lastElementIndex) break loop;
+		}
 
-		elementsHeight += height;
-		endIndex = i;
-		if(elementsHeight >= clientHeight) break;
+		for(let i = startIndex; i <= endIndex; i++) {
+			const height = craftingValues.craftingElementsHeight[0][i];
+			const item = craftingValues.gridItems[i];
+			const elem = fullReDraw == true ? null : craftInv.querySelector(`.craftingItem[index="${i}"]`);
+			
+			if(elem == null) {
+				const isOpen = height > 50;
+				const element = craftingItem(i, item, isOpen);
+				craftInv.append(element);
+			} else if(!firstElementIndex) craftInv.append(elem);
+		}
 	}
 
-	Array.from(craftInv.children).forEach(e => {
+
+	if(fullReDraw == false) Array.from(craftInv.children).forEach(e => {
 		const index = parseInt(e.getAttribute("index"));
 		if(index < startIndex || index > endIndex) e.remove();
 	});
 
-	// console.log(startIndex, endIndex, topHeight, clientHeight, scrollTop, elementsHeight, scrolledToBottom);
-
-	if(scrolledToBottom || endIndex == maxElementIndex - 1) craftInv.style.setProperty('--bottom', "0px");
+	if(endIndex == craftingValues.gridItems.length - 1) craftInv.style.setProperty('--bottom', "0px");
 	else craftInv.style.setProperty('--bottom', totalHeight - topHeight - elementsHeight + "px");
 	
 	craftInv.style.setProperty('--top', topHeight + "px");

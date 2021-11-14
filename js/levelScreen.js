@@ -46,7 +46,7 @@ function getEnemyDropTreeElements(enemy) {
 		const slotsDiv = document.createElement("div");
 		if(drop?.type == "all") typeAll(drop, slotsDiv);
 		else if(drop?.type == "one") typeOne(drop, slotsDiv);
-		else if(drop.amount?.length > 2) addAmount(drop, slotsDiv);
+		else if(drop.amount?.length > 2) addAmountInsideOne(drop, slotsDiv, drop.chance);
 		else addItem(drop, slotsDiv);
 	
 		function typeAll(arr, elem, per) {
@@ -63,17 +63,16 @@ function getEnemyDropTreeElements(enemy) {
 		}
 	
 		function typeOne(arr, elem, per) {
-			const combinedChances = arr.items.map(item => item.chance ?? 0).reduce((acc, v) => [...acc, (acc[acc.length - 1] || 0) + v], []);
-			const totalChance = Math.max(...combinedChances);
+			const totalChance = arr.items.map(item => item.chance ?? 0).reduce((acc, v) => acc + v, 0);
 			const [oneElem] = emmet(".row");
 			oneElem.setAttribute("percentage", per ?? arr.chance ?? "");
 			addHover(oneElem, `One of the following items \nwill drop §<c>${getPercentageColor(per ?? arr.chance)}<c><b>700<b>${per ?? arr.chance}% §of the time`);
 			elem.append(oneElem);
 			arr.items.forEach(drop => {
-				if(drop?.type == "all") typeAll(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
-				else if(drop?.type == "one") typeOne(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
-				else if(drop.amount?.length > 2) addAmountInsideOne(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
-				else addItem(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
+				if(drop?.type == "all") typeAll(drop, oneElem, Math.round(drop.chance / totalChance * 100));
+				else if(drop?.type == "one") typeOne(drop, oneElem, Math.round(drop.chance / totalChance * 100));
+				else if(drop.amount?.length > 2) addAmountInsideOne(drop, oneElem, Math.round(drop.chance / totalChance * 100));
+				else addItem(drop, oneElem, Math.round(drop.chance / totalChance * 100));
 			});
 		}
 
@@ -114,7 +113,8 @@ function getEnemyDropTreeElements(enemy) {
 			const [amountElem] = emmet(".items>.amount");
 			const nItem = new Item(arr.item);
 			amountElem.setAttribute("percentage", per ?? arr.chance ?? "");
-			addHover(amountElem, nItem.hoverText() ?? "");
+			addHover(amountElem, `This item will drop §<c>${getPercentageColor(per ?? arr.chance)}<c><b>700<b>${per ?? arr.chance}% §of the time\nwith one of the following amounts`);
+			addHover(amountElem.querySelector(".amount"), nItem.hoverText() ?? "");
 			elem.append(amountElem);
 			arr.amount.slice().sort((e, v) => e - v).forEach(amount => {
 				const [slot] = emmet(".slot>img+p");
