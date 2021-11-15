@@ -52,24 +52,18 @@ function generateCraftingItemsList(array) {
 			if(time1 == time2) return v1.name > v2.name ? 1 : -1;
 			else return time2 - time1;
 		})
+	} else if(craftingValues.sortOrder.startsWith("Craftable")) {
+		craftingValues.gridItems.sort((v1, v2) => {
+			return canYouCraft(v2) - canYouCraft(v1);
+		})
 	} if(array && craftingValues.sortOrder.indexOf("reverse") !== -1) {
 		craftingValues.gridItems.reverse();
 	} if(craftingValues.sortOrder == "") craftingValues.gridItems.sort((v1, v2) => v1.index - v2.index);
 
 	craftingValues.craftingElementsHeight = formatElementLeghtArray([[...new Array(craftingValues.gridItems.length)].map(() => 50)]);
 
-	// craftingValues.gridItems.forEach((value, index) => {
-	// 	const element = craftingItem(index, value);
-	// 	craftInv.append(element);
-	// 	// const [item] = emmet(".craftingItem>.imageContainer>img.icon^p.name+p.tags+div.arrow+div.recipes");
-	// 	// item.querySelector(".icon").src = "./images/" + v.image;
-	// 	// item.querySelector(".name").textContent = v.name;
-	// 	// item.querySelector(".tags").textContent = `#${v.tags.join(" #")}`;
-	// 	// item.setAttribute("index", i);
-
-	// 	// addHover([item, "crafting"], v.hoverText());
-	// });
-	drawVisibleCraftingItems();
+	drawVisibleCraftingItems(true);
+	craftInv.scrollTop = 0;
 }
 
 function filterCraftingItems(array) {
@@ -203,16 +197,6 @@ sortButton.addEventListener("click", e => {
 
 	window.onclick = closeCraftingDropdownMenus;
 	
-	// function hideSortSubMenu() {
-	//   typesButton.querySelector(".subMenu").textContent = "";
-	//   typesButton.classList.remove("active");
-	//   if(!itemsMenu.querySelector(".toolBar .sort:focus-within")) {
-	//     sortButton.classList.remove("active");
-	//     subMenuContainer.textContent = "";
-	//     window.onclick = null;
-	//   }
-	// }
-
 	if(e.target == sortButton) {
 		const lastSortElem = sortButton.querySelector(".value .sortValue");
 		const [,lastName, lastSortState] = lastSortElem?.classList ?? [];
@@ -221,7 +205,7 @@ sortButton.addEventListener("click", e => {
 			return subMenuContainer.textContent = "";
 		}
 		
-		["Name", "Damage", "Defence", "Use_time","Tags"].forEach(sortTitle => {
+		["Name", "Damage", "Defence", "Use_time", "Tags", "Craftable"].forEach(sortTitle => {
 			const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+div.removeSelection`);
 			subMenuElement.querySelector("p").textContent = sortTitle.replaceAll("_", " ");
 			if(sortTitle == lastName) subMenuElement.classList.add(lastSortState);
@@ -243,7 +227,8 @@ sortButton.addEventListener("click", e => {
 		const sortSelection = e.target?.classList[1];
 		if(!sortSelection) return;
 		if(craftingValues.sortOrder.indexOf(sortSelection) !== -1) {
-			craftingValues.sortOrder = sortSelection + " reverse";
+			if(craftingValues.sortOrder.endsWith("reverse")) craftingValues.sortOrder = sortSelection;
+			else craftingValues.sortOrder = sortSelection + " reverse";
 			e.target.classList.toggle("selected");
 			e.target.classList.toggle("reverse");
 		} else {
@@ -251,7 +236,8 @@ sortButton.addEventListener("click", e => {
 			e.target.classList.add("selected");
 		}
 
-		generateCraftingItemsList();
+		if(sortSelection !== "Craftable") generateCraftingItemsList();
+		else generateCraftingItemsList(craftingValues.gridItems);
 		sortButton.querySelectorAll(`.sortValue:not(.${sortSelection})`).forEach(elem => elem.classList.remove("reverse", "selected"));
 
 		const selectedCopy = e.target?.cloneNode(true);
@@ -728,13 +714,47 @@ function craftingItem(index, item, open = false) {
 	return craftingItemDiv;
 }
 
+// updateCraftingItem(0, craftingValues.gridItems[0]);
+
+function updateCraftingItem(index, item) {
+	const craftingItemDiv = craftInv.querySelector(`div[index="${index}"].craftingItem`);
+	const open = craftingItemDiv.classList.contains("selected");
+
+	if(open) {
+		craftingItemDiv.classList.add("selected");
+		let cantCraftResipe = true;
+		for(const [key, row] of Object.entries(item.craftingRecipes)) {
+			const rowElement = craftingItemDiv.querySelector(".recipes").children[key];
+			const items = rowElement.querySelector(".items");
+			const craftingButton = rowElement.querySelector(".craftingButton");
+			let cantCraftRow = false;
+			
+			for(const [key, itemData] of Object.entries(row.items)) {
+				const itemDiv = items.children[key];
+				const nItem = new Item({id: itemData.item}, player);
+				if(itemDiv.classList.toggle("cantCraft", (player.totalItemCounts[itemData.item] || 0) < itemData.amount)) {
+					cantCraftRow = true;
+				} recipeItemHover(itemDiv, itemData, nItem);
+			}
+	
+			if(rowElement.classList.toggle("cantCraft", cantCraftRow)) craftingButton.onclick = null;
+			else {
+				craftingButton.onclick = () => craftItem(item, row);
+				cantCraftResipe = false;
+			}
+		}
+	
+		craftingItemDiv.classList.toggle("cantCraft", cantCraftResipe);
+	} else craftingItemDiv.classList.toggle("cantCraft", !canYouCraft(item));
+}
+
 function appendRecipeElement(parent, item) {
 	let cantCraftResipe = true;
 	for(const row of item.craftingRecipes) {
 		const rowElement = element("div").setClass("row");
 		const craftingButton = element("div").setClass("craftingButton");
 		const img = element("img").setSrc(`./images/${item.image}`);
-		const items = element("items").setClass("items");
+		const items = element("div").setClass("items");
 
 		if(row.craftingAmount > 2) craftingButton.append(img, element("p").setText(row.craftingAmount).setClass("itemAmount"));
 		else craftingButton.append(img);
@@ -757,15 +777,15 @@ function appendRecipeElement(parent, item) {
 				const warningElem = element("p").setClass("warning").setText("!");
 				addHover([warningElem, "cantBeCrafted"], "Item can't be crafted");
 				itemDiv.append(warningElem);
-			} else itemDiv.addEventListener("click", () => leftClickRecipeItem(nItem));
-			itemDiv.addEventListener("contextmenu", e => rightClickRecipeItem(e, nItem));
+			} else itemDiv.onclick = () => leftClickRecipeItem(nItem);
+			itemDiv.oncontextmenu = e => rightClickRecipeItem(e, nItem);
 
 			recipeItemHover(itemDiv, itemData, nItem);
 		}
 
 		if(cantCraftRow) rowElement.classList.add("cantCraft");
 		else {
-			craftingButton.addEventListener("click", () => craftItem(item, row));
+			craftingButton.onclick = () => craftItem(item, row);
 			cantCraftResipe = false;
 		}
 
@@ -841,7 +861,7 @@ function craftItem(item, recipe) {
 	item.amount = recipe.craftingAmount;
 	player.giveItem(item);
 
-	drawVisibleCraftingItems(true)
+	updateVisibleCraftingItems();
 	generateItemsOnGrid(player.inventory);
 }
 
@@ -884,7 +904,7 @@ function drawVisibleCraftingItems(fullReDraw = false) {
 	const totalHeight = craftingValues.craftingElementsHeight[craftingValues.craftingElementsHeight.length - 1][0];
 	const clientHeight = craftInv.clientHeight || innerHeight;
 	const scrollTop = craftInv.scrollTop;
-
+	
 	const startIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop);
 	const endIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop + clientHeight - 1);
 	const topHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, startIndex);
@@ -910,18 +930,69 @@ function drawVisibleCraftingItems(fullReDraw = false) {
 				craftInv.append(element);
 			} else if(!firstElementIndex) craftInv.append(elem);
 		}
+
+		if(fullReDraw == false) Array.from(craftInv.children).forEach(e => {
+			const index = parseInt(e.getAttribute("index"));
+			if(index < startIndex || index > endIndex) e.remove();
+		});
+	}
+
+	if(endIndex == craftingValues.gridItems.length - 1) craftInv.style.setProperty('--bottom', "0px");
+	else craftInv.style.setProperty('--bottom', totalHeight - topHeight - elementsHeight - (scrollTop - topHeight) + "px");
+	
+	craftInv.style.setProperty('--top', topHeight + "px");
+}
+
+function updateVisibleCraftingItems() {
+	const craftingChilds = craftInv.children;
+	const startIndex = parseInt(craftingChilds[0]?.getAttribute("index") ?? 0);
+
+	for(let i = 0; i < craftingChilds.length; i++) {
+		const item = craftingValues.gridItems[startIndex + i];
+		updateCraftingItem(startIndex + i, item);
 	}
 
 
-	if(fullReDraw == false) Array.from(craftInv.children).forEach(e => {
-		const index = parseInt(e.getAttribute("index"));
-		if(index < startIndex || index > endIndex) e.remove();
-	});
+	// const totalHeight = craftingValues.craftingElementsHeight[craftingValues.craftingElementsHeight.length - 1][0];
+	// const clientHeight = craftInv.clientHeight || innerHeight;
+	// const scrollTop = craftInv.scrollTop;
 
-	if(endIndex == craftingValues.gridItems.length - 1) craftInv.style.setProperty('--bottom', "0px");
-	else craftInv.style.setProperty('--bottom', totalHeight - topHeight - elementsHeight + "px");
+	// const startIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop);
+	// const endIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop + clientHeight - 1);
+	// const topHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, startIndex);
+	// const elementsHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, endIndex) + craftingValues.craftingElementsHeight[0][endIndex] - topHeight - (scrollTop - topHeight);
+
+	// if(fullReDraw == true) craftInv.innerHTML = "";
+	// const firstElementIndex = parseInt(craftInv.children[0]?.getAttribute("index") ?? 0) == startIndex;
+
+	// loop: {
+	// 	if(fullReDraw == false) {
+	// 		const lastElementIndex = parseInt(craftInv.children[craftInv.children.length - 1]?.getAttribute("index") ?? 0) == endIndex;
+	// 		if(firstElementIndex && lastElementIndex) break loop;
+	// 	}
+
+	// 	for(let i = startIndex; i <= endIndex; i++) {
+	// 		const height = craftingValues.craftingElementsHeight[0][i];
+	// 		const item = craftingValues.gridItems[i];
+	// 		const elem = fullReDraw == true ? null : craftInv.querySelector(`.craftingItem[index="${i}"]`);
+			
+	// 		if(elem == null) {
+	// 			const isOpen = height > 50;
+	// 			const element = craftingItem(i, item, isOpen);
+	// 			craftInv.append(element);
+	// 		} else if(!firstElementIndex) craftInv.append(elem);
+	// 	}
+
+	// 	if(fullReDraw == false) Array.from(craftInv.children).forEach(e => {
+	// 		const index = parseInt(e.getAttribute("index"));
+	// 		if(index < startIndex || index > endIndex) e.remove();
+	// 	});
+	// }
+
+	// if(endIndex == craftingValues.gridItems.length - 1) craftInv.style.setProperty('--bottom', "0px");
+	// else craftInv.style.setProperty('--bottom', totalHeight - topHeight - elementsHeight + "px");
 	
-	craftInv.style.setProperty('--top', topHeight + "px");
+	// craftInv.style.setProperty('--top', topHeight + "px");
 }
 
 function craftingElementIndexByHeight(array, height) {

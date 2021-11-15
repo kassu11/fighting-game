@@ -15,6 +15,7 @@
 			height: 50px;
 			background: #1f1f1f;
 			display: flex;
+			overflow-x: clip;
 
 			.searchBar {
 				position: relative;
@@ -762,6 +763,7 @@
 				background: #3c3c3c;
 				overflow: hidden;
 				flex-shrink: 0;
+				transition: background .2s;
 
 				&.selected {
 					background: #2e2e2e;
