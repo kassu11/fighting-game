@@ -81,6 +81,7 @@
 			pointer-events: all;
 			max-height: 100%;
 			max-width: 100%;
+			min-width: 330px;
 			overflow: hidden;
 			display: flex;
 			flex-direction: column;
@@ -98,7 +99,7 @@
 					color: white;
 					font-family: font1;
 					font-size: 25px;
-					width: 100%;
+					width: calc(100% - 50px);
 					text-align: center;
 					top: 0px;
 					margin: 0px;

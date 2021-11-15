@@ -38,28 +38,30 @@ function Effect(effect) {
 	}
 }
 
-function giveEffectsToPlAndEn() {
-	player.effects.forEach(effect => {
-		if(effect.regenHP) player.hp = Math.min(player.maxHpF(), player.hp + effect.regenHP);
-		if(effect.poisonHP) player.hp -= effect.poisonHP;
+function giveEffectsToPlAndEn(pl = player, en = currentLevel.enemies, lite = false) {
+	pl.effects.forEach(effect => {
+		if(effect.regenHP) pl.hp = Math.min(pl.maxHpF(), pl.hp + effect.regenHP);
+		if(effect.poisonHP) pl.hp -= effect.poisonHP;
 	});
 
-	currentLevel.enemies.forEach((enemy, card) => {
+	en.forEach((enemy, card) => {
 		enemy.effects.forEach(effect => {
 			if(effect.regenHP) enemy.hp = Math.min(enemy.maxHp, enemy.hp + effect.regenHP);
 			if(effect.poisonHP) {
 				enemy.hp -= effect.poisonHP;
-				const padding = 10;
-				const {width, left, top, height} = card.getBoundingClientRect();
-				const x = random(left + padding, left + width - padding);
-				const y = random(top + padding, top + height - padding);
-				AddBattleParciles({x, y, dmg: effect.poisonHP}, "poison");
-				shakeEnemyCard(card)
-			}
+				if(!lite) {
+					const padding = 10;
+					const {width, left, top, height} = card.getBoundingClientRect();
+					const x = random(left + padding, left + width - padding);
+					const y = random(top + padding, top + height - padding);
+					AddBattleParciles({x, y, dmg: effect.poisonHP}, "poison");
+					shakeEnemyCard(card)
+				}
+			} if(lite) return;
 			updateEnemyCard(card);
 		});
 	});
-
+	if(lite) return;
 	updatePlayerBars();
 }
 

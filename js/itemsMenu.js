@@ -238,5 +238,3 @@ function itemsMenuInventoryResize() {
 		invContainer.style.width = Math.max(screenOffset - item - screenOffset % itemSize, 0) + "px";
 	}
 } itemsMenuInventoryResize();
-
-console.log(itemsMenuArray)

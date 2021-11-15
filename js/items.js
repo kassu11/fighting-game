@@ -1,10 +1,9 @@
-const items = {
+if(typeof items === "undefined") var items = {
 	wooden_sword: {
 		id: "wooden_sword",
 		name: "Wooden sword",
 		tags: ["weapon", "sword"],
-		minMeleDmg: 10,
-		maxMeleDmg: 20,
+		minMeleDmg: 12,
 		useTime: 2,
 		image: "miekka1.png",
 		craftingRecipes: [
@@ -25,6 +24,7 @@ const items = {
 		minMeleDmg: 15,
 		maxMeleDmg: 25,
 		useTime: 1.5,
+		mana: 10,
 		image: "heikkous.png",
 		particle: "explosion2",
 		craftingRecipes: [
@@ -47,7 +47,7 @@ const items = {
 		name: "Weak stick",
 		tags: ["weapon", "material"],
 		// minMeleDmg: 2,
-		maxMeleDmg: 4,
+		maxMeleDmg: 1,
 		useTime: 1,
 		image: "weak_stick.png",
 		particle: "explosion",
@@ -62,22 +62,13 @@ const items = {
 			},
 			{
 				items: [
-					{
-						item: "helmet",
-						amount: 1
-					},
-					{
-						item: "chestplate",
-						amount: 1
-					},
+					{item: "helmet", amount: 1},
+					{item: "chestplate", amount: 1},
 				]
 			},
 			{
 				items: [
-					{
-						item: "dmgBooster",
-						amount: 2
-					},
+					{item: "dmgBooster", amount: 2},
 				],
 			},
 		]
@@ -227,6 +218,7 @@ const items = {
 		canEquipTo: "chest",
 		defenceValue: 20,
 		healthBoostValue: 50,
+		manaBoostValue: 100,
 		craftingRecipes: []
 	},
 	leatherLeggins: {
@@ -239,9 +231,11 @@ const items = {
 	},
 	filler1: {
 		id: "filler1",
+		name: "Filler item",
 		selfEffect: [
 			{id: "Weakness", power: 1, duration: 20, effectStatus: "bad"},
-		]
+		],
+		manaHealV: 10
 	},
 	bow: {
 		id: "bow",
@@ -262,6 +256,8 @@ const items = {
 		minRangeDmg: 6,
 	}
 }
+
+items["filler"] = {id: "filler", minMeleDmg: 2, useTime: 1};
 
 function Item(item, user) {
 	const base = items[item.id];
@@ -284,10 +280,12 @@ function Item(item, user) {
 	this.isNotUsable = base.isNotUsable;
 
 	this.healthBoostValue = base.healthBoostValue;
+	this.manaBoostValue = base.manaBoostValue;
 	this.defenceValue = base.defenceValue;
 	this.defencePercentage = base.defencePercentage;
 
 	this.healV = base.healV;
+	this.manaHealV = base.manaHealV;
 	this.mana = base.mana;
 	this.tags = base.tags?.sort().slice() ?? [];
 	this.index = item.index;
@@ -323,6 +321,28 @@ Item.prototype.calcDamage = function() {
 	}
 }
 
+Item.prototype.calcTotalDamage = function() {
+	const dmg = this.calcDamage();
+	if(this.useAmmoType) {
+		const items = this.user.bullets ?? Object.values(this.user.hotbar) ?? [];
+		const bullet = items?.find(item => item.ammoType === this.useAmmoType);
+		if(bullet) {
+			const bulletDmg = bullet.calcDamage();
+			return dmg.meleDmg + dmg.rangeDmg + bulletDmg.meleDmg + bulletDmg.rangeDmg;
+		} 
+	}
+
+	return dmg.meleDmg + dmg.rangeDmg;
+}
+
+Item.prototype.canUse = function() {
+	if(this.isNotUsable) return false;
+	if(this.mana > this.user?.mp) return false;
+	if(this.useAmmoType && this.ammoAmount() === 0) return false;
+	if(this.amount <= 0) return false;
+	return true;
+}
+
 Item.prototype.hoverText = function() {
 	const text = [`<cl>itemTitle<cl>${this.name}§`];
 	const calcDmg = this.calcDamage();
@@ -354,13 +374,15 @@ Item.prototype.hoverText = function() {
 	}
 
 	if(this.useTime) text.push(`\nUse time: §${this.useTime} ${this.useTime > 1 ? "Rounds" : "Round"} <c>yellow<c>§`);
-	if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>600<b>§`);
+	if(this.healV) text.push(`\nHeals user: §${this.healV}HP<c>red<c><b>700<b>§`);
+	if(this.manaHealV) text.push(`\nGives mana: §${this.manaHealV}MP<c>#3a85ff<c><b>700<b>§`);
 	if(this.mana) text.push(`\nMana use: §${this.mana}MP<c>#3a85ff<c><b>700<b>§`);
 
 	if(this.useAmmoType) text.push(`\nUses ammo: §${this.useAmmoType}<c>lime<c>§`);
 	if(this.ammoType) text.push(`\nAmmo type: §${this.ammoType}<c>lime<c>§`);
 
 	if(this.healthBoostValue) text.push(`\nHealth boost: §${this.healthBoostValue}HP<c>lime<c><b>700<b>§`);
+	if(this.manaBoostValue) text.push(`\nMana boost: §${this.manaBoostValue}HP<c>#3a85ff<c><b>700<b>§`);
 	if(this.defenceValue) text.push(`\nReduce damage: §${this.defenceValue}<c>#ff5454<c>HP<b>700<b>§`);
 	if(this.defencePercentage) text.push(`\nDefence: §${this.defencePercentage}<c>#ac75ff<c><b>700<b>§`);
 

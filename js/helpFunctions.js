@@ -81,13 +81,29 @@ function print() {
 
 	Object.entries(levels).forEach(([key, v], i) => {
 		text += `${i === 0 ? "" : ","}
-	"${key}": {
-		"enemies": ["${v.enemies.join(`", "`)}"],
-		"cords": {
-			"y": ${v.cords?.y ?? 0},
-			"x": ${v.cords?.x ?? 0}
-		}
+	${key}: {
+		enemies: ["${v.enemies.join(`", "`)}"],
+		cords: {y: ${v.cords?.y ?? 0}, x: ${v.cords?.x ?? 0}}
 	}`
 	});
 	console.log(text + "\n}");
+}
+
+const element = value => document.createElement(value);
+HTMLElement.prototype.setID = function(value) {
+	this.id = value;
+	return this;
+}
+HTMLElement.prototype.setClass = function(value) {
+	this.classList = value;
+	return this;
+}
+
+HTMLElement.prototype.setSrc = function(value) {
+	this.src = value;
+	return this;
+}
+HTMLElement.prototype.setText = function(value) {
+	this.textContent = value;
+	return this;
 }

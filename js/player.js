@@ -1,13 +1,14 @@
-let player = new Player({
+if(typeof player !== "undefined") var player = new Player(player);
+else var player = new Player({
 	hp: 25,
 	mp: 45,
 	maxHp: 25,
 	maxMp: 45,
 	inventory: [
-		{...items["weak_stick"], slot: "hotbarSlot1"},
-		{...items["stone_sword"], slot: "hotbarSlot2"},
+		{...items["filler1"], slot: "hotbarSlot1"},
+		{...items["wooden_sword"], slot: "hotbarSlot2"},
 		{...items["bow"], slot: "hotbarSlot3"},
-		{...items["arrow"], slot: "hotbarSlot5"},
+		{...items["hp_pot"], slot: "hotbarSlot5"},
 		{...items["suicideStick"]},
 		{...items["suicideStick"]},
 		{...items["suicideStick"]},
@@ -31,34 +32,34 @@ let player = new Player({
 		{...items["chestplate"]},
 		{...items["chestplate"]},
 		{...items["chestplate"]},
-		{...items["chestplate"]},
-		{...items["chestplate"]},
-		{...items["chestplate"]},
-		{...items["chestplate"]},
-		{...items["chestplate"]},
-		{...items["legs"]},
-		{...items["legs"]},
-		{...items["legs"]},
-		{...items["legs"]},
-		{...items["legs"]},
-		{...items["legs"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["weak_stick"]},
-		{...items["hp_pot"], amount: 69},
+		// {...items["chestplate"]},
+		// {...items["chestplate"]},
+		// {...items["chestplate"]},
+		// {...items["chestplate"]},
+		// {...items["chestplate"]},
+		// {...items["legs"]},
+		// {...items["legs"]},
+		// {...items["legs"]},
+		// {...items["legs"]},
+		// {...items["legs"]},
+		// {...items["legs"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["weak_stick"]},
+		// {...items["hp_pot"], amount: 69},
 		// {id: "dmgBooster", slot: "hotbarSlot5"},
 	],
 	currentSlot: "slot1",
@@ -67,6 +68,7 @@ let player = new Player({
 	],
 	armor: {
 		head: {},
+		// chest: {...items["chestplate2"]},
 		chest: {},
 		legs: {},
 	}
@@ -89,6 +91,10 @@ function Player(arr) {
 	}
 	
 	this.maxMp = arr.maxMp;
+	this.maxMpF = () => {
+		const extra = Object.values(this.armor).reduce((a, b) => a + (b?.manaBoostValue ?? 0), 0) || 0;
+		return this.maxMp + extra;
+	}
 
 	this.currentSlot = arr.currentSlot;
 
@@ -126,14 +132,18 @@ function Player(arr) {
 		return ac;
 	}, {});
 
-	this.giveItem = itemData => {
+	this.giveItem = ({amount, ...itemData}) => {
 		const item = new Item(itemData);
 		const index = itemStackIndex(this.inventory, item);
+		if(!item.amount && amount) {
+			for(let i = 1; i < amount; i++) this.inventory.push(new Item(itemData));
+		} else item.amount = amount;
+
 		if(index == -1) this.inventory.push(item);
 		else this.inventory[index].amount += item.amount;
 
 		this.totalItemCounts[item.id] ??= 0;
-		this.totalItemCounts[item.id] += item.amount ?? 1;
+		this.totalItemCounts[item.id] += amount ?? item.amount ?? 1;
 	}
 
 	this.takeItem = (index, amount = 1) => {
@@ -153,3 +163,17 @@ function Player(arr) {
 }
 
 Player.prototype.effect = effect;
+
+
+
+
+// {
+// 	"lisaaTavaroita": {
+// 		"tavaraID": {
+
+// 		}
+// 	},
+// 	"VähemmänTavaroita": {
+
+// 	}
+// }

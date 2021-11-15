@@ -46,7 +46,7 @@ function getEnemyDropTreeElements(enemy) {
 		const slotsDiv = document.createElement("div");
 		if(drop?.type == "all") typeAll(drop, slotsDiv);
 		else if(drop?.type == "one") typeOne(drop, slotsDiv);
-		else if(drop.amount?.length > 2) addAmount(drop, slotsDiv);
+		else if(drop.amount?.length > 2) addAmountInsideOne(drop, slotsDiv, drop.chance);
 		else addItem(drop, slotsDiv);
 	
 		function typeAll(arr, elem, per) {
@@ -63,17 +63,16 @@ function getEnemyDropTreeElements(enemy) {
 		}
 	
 		function typeOne(arr, elem, per) {
-			const combinedChances = arr.items.map(item => item.chance ?? 0).reduce((acc, v) => [...acc, (acc[acc.length - 1] || 0) + v], []);
-			const totalChance = Math.max(...combinedChances);
+			const totalChance = arr.items.map(item => item.chance ?? 0).reduce((acc, v) => acc + v, 0);
 			const [oneElem] = emmet(".row");
 			oneElem.setAttribute("percentage", per ?? arr.chance ?? "");
 			addHover(oneElem, `One of the following items \nwill drop §<c>${getPercentageColor(per ?? arr.chance)}<c><b>700<b>${per ?? arr.chance}% §of the time`);
 			elem.append(oneElem);
 			arr.items.forEach(drop => {
-				if(drop?.type == "all") typeAll(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
-				else if(drop?.type == "one") typeOne(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
-				else if(drop.amount?.length > 2) addAmountInsideOne(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
-				else addItem(drop, oneElem, Math.floor(drop.chance / totalChance * 100));
+				if(drop?.type == "all") typeAll(drop, oneElem, Math.round(drop.chance / totalChance * 100));
+				else if(drop?.type == "one") typeOne(drop, oneElem, Math.round(drop.chance / totalChance * 100));
+				else if(drop.amount?.length > 2) addAmountInsideOne(drop, oneElem, Math.round(drop.chance / totalChance * 100));
+				else addItem(drop, oneElem, Math.round(drop.chance / totalChance * 100));
 			});
 		}
 
@@ -114,7 +113,8 @@ function getEnemyDropTreeElements(enemy) {
 			const [amountElem] = emmet(".items>.amount");
 			const nItem = new Item(arr.item);
 			amountElem.setAttribute("percentage", per ?? arr.chance ?? "");
-			addHover(amountElem, nItem.hoverText() ?? "");
+			addHover(amountElem, `This item will drop §<c>${getPercentageColor(per ?? arr.chance)}<c><b>700<b>${per ?? arr.chance}% §of the time\nwith one of the following amounts`);
+			addHover(amountElem.querySelector(".amount"), nItem.hoverText() ?? "");
 			elem.append(amountElem);
 			arr.amount.slice().sort((e, v) => e - v).forEach(amount => {
 				const [slot] = emmet(".slot>img+p");
@@ -137,9 +137,11 @@ levelMenu.querySelector(".levelInfoScreen .close").addEventListener("click", () 
 const levelButtons = levelMenu.querySelector(".levelButtons")
 levelButtons.addEventListener("mousedown", levelButtonsMouseDown);
 const levelMenuDownData = {x: 0, y: 0, startX: 0, startY: 0};
+
 function levelButtonsMouseDown(downEvent) {
 	const canselClickMovedPixels = 15;
 	const container = levelButtons.querySelector(".container");
+	container.style.transition = null;
 	
 	levelMenuDownData.startX = downEvent.x - +container.style.left.substr(0, container.style.left.length - 2);
 	levelMenuDownData.startY = downEvent.y - +container.style.top.substr(0, container.style.top.length - 2);
@@ -160,6 +162,7 @@ function levelButtonsMouseDown(downEvent) {
 		levelButtons.onmousemove = moveEvent => {
 			levelMenuDownData.x = moveEvent.x;
 			levelMenuDownData.y = moveEvent.y;
+			container.style.transition = null;
 			if(moveEvent.buttons === 1) {
 				if(buttonElem?.classList.contains("levelButton")) {
 					const scale = +container.style.getPropertyValue("--scale") || 1;
@@ -193,6 +196,7 @@ levelButtons.addEventListener("wheel", e => {
 	let startX = +container.style.left.substr(0, container.style.left.length - 2);
 	let startY = +container.style.top.substr(0, container.style.top.length - 2);
 	const scale = +container.style.getPropertyValue("--scale") || 1;
+	container.style.transition = null;
 
 	const {x, y} = e.buttons === 1 ? levelMenuDownData : e; // Fix little offsync if moving while scrollin (intensely)
 	const {width, height} = container.getBoundingClientRect();
@@ -221,16 +225,51 @@ levelButtons.addEventListener("wheel", e => {
 	levelMenuDownData.startY = trueScaledY;
 });
 
+const mapResolutionScaling = {
+	lastWidth: Math.round(window.innerWidth / 2) * 2,
+	lastHeight: Math.round(window.innerHeight / 2) * 2,
+}
+window.addEventListener("resize", () => {
+	const newWidth = mapResolutionScaling.lastWidth - Math.round(window.innerWidth / 2) * 2;
+	const newHeight = mapResolutionScaling.lastHeight - Math.round(window.innerHeight / 2) * 2;
 
-function centerLevelMap(x, y) {
-	const sadasd = 5;
+	const container = levelButtons.querySelector(".container");
+	const startX = +container.style.left.substr(0, container.style.left.length - 2);
+	const startY = +container.style.top.substr(0, container.style.top.length - 2);
+	container.style.transition = null
+
+	if(newWidth !== 0) {
+		container.style.left = startX - (newWidth / 2) + "px";
+		mapResolutionScaling.lastWidth = Math.round(window.innerWidth / 2) * 2;
+	} if(newHeight !== 0) {
+		container.style.top = startY - (newHeight / 2) + "px";
+		mapResolutionScaling.lastHeight = Math.round(window.innerHeight / 2) * 2;
+	}
+});
+
+function centerLevelMap(id, animation = true) {
+	const button = levelButtons.querySelector(`#${id}`);
+	const data = button?.getBoundingClientRect();
+	const container = levelButtons.querySelector(".container");
+	const containerData = container.getBoundingClientRect();
+
+	if(!button) return;
+	if(animation) container.style.transition = "all .8s";
+
+	const topNavHeight = 50 / 2;
+
+	container.style.left = containerData.left - data.left + window.innerWidth / 2 - data.width / 2 + "px"
+	container.style.top = containerData.top - data.top + window.innerHeight / 2 - data.height / 2 + topNavHeight + "px"
+
 }
 
+centerLevelMap("level_t2aute", false)
 
-{
-	const button = document.querySelector(".levelButton");
-	const container = levelMenu.querySelector(".levelButtons .container")
-	console.log(button.getBoundingClientRect())
-	console.log(container.getBoundingClientRect())
-
-}
+window.addEventListener("keydown", e => {
+	if(e.code === "Tab") {
+		e.preventDefault();
+		const buttons = levelButtons.querySelectorAll(".levelButton");
+		centerLevelMap(buttons[random(buttons.length - 1)].id, true);
+	}
+	// console.log(e);
+})

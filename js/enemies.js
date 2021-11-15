@@ -1,4 +1,4 @@
-const enemies = {
+if(typeof enemies === "undefined") var enemies = {
 	week_slime: {
 		id: "week_slime",
 		maxHp: 31,
@@ -136,16 +136,66 @@ const enemies = {
 	filler1: {
 		id: "filler1",
 		maxHp: 20,
-		maxMp: 10,
+		maxMp: 15,
 		items: [
+			items["bow"],
+			{...items["arrow"], amount: 1},
+			items["hp_pot"],
 			items["weak_stick"],
+			items["stone_sword"]
 		],
 		effects: [
-			{id: "Poison", power: 2, duration: 4},
-			{id: "Strength", power: 5, duration: 60},
-			{id: "Regeneration", power: 6, duration: 2},
+			// {id: "Poison", power: 2, duration: 4},
+			// {id: "Strength", power: 5, duration: 60},
+			// {id: "Regeneration", power: 6, duration: 2},
 		],
 		img: "fillerImage1.png",
+		drops: [
+			{
+				"type": "all",
+				"chance": 90,
+				"items": [
+					{"item": items["helmet"], "chance": 50, "amount": 100},
+					{
+						"type": "one",
+						"chance": 90,
+						"items": [
+							{"item": items["helmet"], "chance": 50},
+							{
+								"type": "one",
+								"chance": 20,
+								"items": [
+									{"item": items["legs"], "chance": 50},
+									{"item": items["chestplate"], "chance": 50},
+								]
+							}
+						]
+					},
+				]
+			},
+			{
+				"type": "all",
+				"chance": 90,
+				"items": [
+					{"item": items["helmet"], "chance": 50},
+					{
+						"type": "one",
+						"chance": 20,
+						"items": [
+							{"item": items["legs"], "chance": 50},
+							{"item": items["chestplate"], "chance": 50},
+							{"item": items["helmet"], "chance": 50},
+							{"item": items["legs"], "chance": 50},
+							{"item": items["chestplate"], "chance": 50},
+							{"item": items["helmet"], "chance": 50},
+						]
+					}
+				]
+			},
+			{"item": items["legs"], "chance": 50},
+			{"item": items["chestplate"], "chance": 50},
+			{"item": items["helmet"], "chance": 50},
+		]
 	},
 }
 
@@ -155,7 +205,15 @@ function Enemy(enemy) {
 	this.maxHp = enemy.maxHp;
 	this.mp = enemy.mp ?? enemy.maxMp;
 	this.maxMp = enemy.maxMp;
-	this.items = enemy.items?.map(item => new Item(item, this)) || [];
+	this.bullets = enemy.bullets?.map(item => new Item(item, this)) || [];
+	this.items = [];
+	enemy.items?.forEach(item => {
+		if(item.isNotUsable && item.ammoType?.length) {
+			this.bullets.push(new Item(item, this));
+		} else {
+			this.items.push(new Item(item, this));
+		}
+	});
 	this.img = enemy.img;
 	this.imgLeft = enemy.imgLeft;
 	this.imgTop = enemy.imgTop;
@@ -182,7 +240,6 @@ function dropsFromLootTable(lootTable = []) {
 
 	function typeAll(arr) {
 		arr.items.forEach(drop => {
-			console.log(drop)
 			if(drop?.type == "all") typeAll(drop);
 			else if(drop?.type == "one") typeOne(drop);
 			else items.push(drop);
