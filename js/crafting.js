@@ -8,7 +8,6 @@ const craftingValues = {
 	removeFilter: [],
 	addFilter: [],
 	selectedResipe: "",
-	allOpenRecipes: {},
 	itemNeedsToBeInRecipe: "",
 	lastCrafted: {index: 0, id: "", updates: null},
 	craftingElementsHeight: [],
@@ -19,7 +18,6 @@ const craftInv = itemsMenu.querySelector(".crafting .craftableItems");
 function generateCraftingItemsList(array) {
 	if(array) craftingValues.gridItems = array;
 	craftInv.textContent = "";
-	craftingValues.allOpenRecipes = {}
 
 	if(!array && craftingValues.sortOrder.indexOf("reverse") !== -1) {
 		craftingValues.gridItems.reverse();
@@ -345,210 +343,20 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
 
 	if(!recipesSubmenu.textContent && recipes?.length) {
 		addHover(recipesSubmenu, "");
-		const rows = true ? "lol" : recipes.map((recipe, y) => {
-			const [rowElem] = emmet(".row>.craftingButton>img+p.itemAmount^div.items");
-			const items = recipe.items.map((data, x) => {
-				const item = new Item({id: data.item}, player);
-				const [itemElem] = emmet(".item>img+p.itemAmount");
-				const img = itemElem.querySelector("img");
-				const amount = itemElem.querySelector("p");
-
-				if(!item.craftingRecipes) {
-					const [warningElem] = emmet("p.warning");
-					warningElem.textContent = "!";
-					addHover([warningElem, "cantBeCrafted"], "Item can't be crafted");
-					itemElem.classList.add("cantBeCrafted");
-					itemElem.append(warningElem);
-				} else itemElem.addEventListener("mouseup", e => {
-					if(e.button === 0 && item.craftingRecipes) {
-						itemsMenu.querySelector("input.searchBar").value = item.name + "#" + item.tags.join("#");
-						generateCraftingItemsList([item]);
-						itemsMenu.querySelector("#clearCraftingSearchBar").classList.remove("hidden");
-						craftInv.querySelector(".craftingItem").click();
-						hoverBox.querySelector("[recipe]").remove();
-					}
-				});
-
-				itemElem.addEventListener("contextmenu", e => {
-					craftingValues.itemNeedsToBeInRecipe = item.id;
-					// craftingSearch();
-					generateCraftingItemsList(allItemsUsedForCrafting[item.id]);
-					hoverBox.querySelector("div[recipe]")?.remove?.();
-					whatCanCraftButton.querySelector(".value").innerHTML = `<div class="row selected" itemid="${item.id}">
-						<img src="./images/${item.image}">
-						<p>${item.name}</p>
-						<div class="remove"></div>
-					</div>`;
-					e.preventDefault();
-					return false
-				});
-				
-				amount.textContent = data.amount;
-				img.src = "./images/" + item.image;
-
-				const notEnoughText  = `<nct><v>craftInv.children[${itemIndex}].querySelector(".row:nth-child(${y + 1}) .item:nth-child(${x + 1})")?.classList.contains("cantCraft") ? "notEnough" : "notEnough hidden"<v><nct>Not enough items§<nct>itemData<nct>`
-				const tooltipText = [
-					"<ct>craftingTooltip<ct>", 
-					`[Left click]<cl>left hotkey${item.craftingRecipes ? "" : " hide"}<cl>`,
-					`§<cl>right hotkey<cl>[Right click]`,
-					`§\nShow recipe${item.craftingRecipes ? "" : "<cl>hide<cl>"}`,
-					`§<cl>right<cl>Used in`].join("");
-
-				addHover([itemElem, "recipe"], notEnoughText + item.hoverText() + tooltipText);
-				
-				return itemElem;
-			});
-
-			rowElem.querySelector(".craftingButton>img").src = "./images/" + item.image;
-			if(recipe.craftingAmount > 1) rowElem.querySelector(".craftingButton>p").textContent = recipe.craftingAmount;
-			else rowElem.querySelector(".craftingButton>p").remove();
-
-			rowElem.querySelector(".items").append(...items);
-
-			addHover([rowElem.querySelector(".craftingButton"), "craftingButton"], "Craft item")
-			rowElem.querySelector(".craftingButton").addEventListener("click", () => craftItem(item.id) );
-			function craftItem(craftableItem) {
-				const resursesNotNeeded = recipe.items.map(data => ({...data})).filter(recipeData => {
-					const {amount} = new Item({id: recipeData.item});
-					if(amount == undefined) {
-						const allItems = player.inventory.filter(item => item.id === recipeData.item);
-						recipeData.totalAmount = allItems.length;
-						return allItems.length < recipeData.amount;
-					} else {
-						const foundItem = player.inventory.find((item, i) => item.id === recipeData.item) ?? {amount: 0};
-						recipeData.totalAmount = foundItem.amount;
-						return foundItem.amount < recipeData.amount;
-					}
-				});
-
-				if(resursesNotNeeded.length == 0) {
-					const giveItemData = recipe.craftingAmount ? {id: craftableItem, amount: recipe.craftingAmount} : {id: craftableItem};
-					
-					if(craftingValues.lastCrafted.id === "" || craftingValues.lastCrafted.id !== giveItemData.id) {
-						craftingValues.lastCrafted.id = giveItemData.id + y;
-						craftingValues.lastCrafted.index = 0;
-						craftingValues.lastCrafted.updates = getCraftingNeededItemsHistory(itemIndex, y);
-					} craftingValues.lastCrafted.index++;
-
-					craftingValues.lastCrafted.updates[craftingValues.lastCrafted.index]?.forEach(e => {
-						e.elem?.classList?.toggle("cantCraft", !e.canCraft);
-					});
-
-					player.giveItem( new Item( giveItemData ) );
-					recipe.items.forEach(recipeData => {
-						const {amount} = new Item({id: recipeData.item});
-						if(amount == undefined) {
-							let howManyInActiveSlots = 0;
-							const allItems = player.inventory.filter(item => {
-								if(item.id === recipeData.item) {
-									if(item.slot) howManyInActiveSlots++;
-									return true;
-								}
-							});
-							let howManyRemoved = 0;
-							for(let i = 0; i < player.inventory.length; i++) {
-								if(player.inventory[i].id !== recipeData.item) continue;
-								if(player.inventory[i].slot) {
-									if(allItems.length - howManyInActiveSlots >= recipeData.amount) continue;
-									howManyInActiveSlots--;
-								};
-								
-								player.takeItem(i);
-								howManyRemoved++;
-								if(howManyRemoved == recipeData.amount) break;
-								i--;
-							}
-							
-						} else {
-							const foundItemIndex = player.inventory.findIndex(item => item.id === recipeData.item);
-							player.takeItem(foundItemIndex, recipeData.amount);
-						}
-					});
-
-					generateItemsOnGrid(player.inventory.slice())
-				}
-			};
-
-			return rowElem;
-		});
-
-		// recipesSubmenu.append(...rows);
 		appendRecipeElement(recipesSubmenu, item);
 	}
-
 	
 	if(clickedItem.classList.toggle("selected")) {
-		updateNeededItemsForCrafting(itemIndex);
 		const totalHeight = Array.from(recipesSubmenu.children).map(e => e.getBoundingClientRect().height).reduce((a, v) => a + v);
 		recipesSubmenu.style.maxHeight = `${totalHeight}px`;
 		updateElementHeightArray(craftingValues.craftingElementsHeight, itemIndex, 49 + totalHeight);
-		recipes.forEach((row, y) => row.items.forEach((value, x) => {
-			if(!craftingValues.allOpenRecipes[value.item]) craftingValues.allOpenRecipes[value.item] = [];
-			craftingValues.allOpenRecipes[value.item].push({elem: recipesSubmenu.children[y].children[1].children[x], amount: value.amount})
-		}));
 	} else {
 		recipesSubmenu.style.maxHeight = null;
 		updateElementHeightArray(craftingValues.craftingElementsHeight, itemIndex, 50);
 		drawVisibleCraftingItems();
-		recipes.forEach((row, y) => row.items.forEach((value, x) => {
-			const elem = recipesSubmenu.children[y].children[1].children[x];
-			const index = craftingValues.allOpenRecipes[value.item].findIndex(row => row.elem === elem);
-			craftingValues.allOpenRecipes[value.item].splice(index, 1);
-		}));
 	}
 });
 
-function getCraftingNeededItemsHistory(index, recipeIndex = null) {
-	if(recipeIndex === null) return console.error("MISSING recipeIndex");
-	const selectedItem = craftingValues.gridItems[index];
-	const selectedRecipe = selectedItem.craftingRecipes[recipeIndex];
-	const allNeededItems = selectedRecipe.items.reduce((ac, {item}) => {
-		ac[item] = player.totalItemCounts[item] ?? 0;
-		return ac;
-	}, {});
-
-	let amountOfCraftableItemInventory = player.totalItemCounts[selectedItem.id] ?? 0;
-	const extraArray = [];
-
-	for(const [key, value] of Object.entries(allNeededItems)) {
-		if(!craftingValues.allOpenRecipes[key]) continue;
-		const amountForCrafting = selectedRecipe.items.find(e => e.item === key).amount;
-		craftingValues.allOpenRecipes[key].forEach(v => {
-			const rowIndex = Math.floor((value - v.amount) / amountForCrafting) + 1;
-			if(!extraArray[rowIndex]) extraArray[rowIndex] = [];
-			extraArray[rowIndex].push({elem: v.elem, canCraft: false});
-		});
-	}
-
-	const selectedRecipeAmount = selectedRecipe.amount ?? 1;
-	main: for(let i = 1; i < 1000; i++) {
-		for(const key of Object.keys(allNeededItems)) {
-			allNeededItems[key] -= selectedRecipe.items.find(e => e.item === key).amount ?? 1;
-			if(allNeededItems[key] < 0) break main;
-		}
-
-		craftingValues.allOpenRecipes[selectedItem.id]?.forEach(v => {
-			if(amountOfCraftableItemInventory < v.amount && amountOfCraftableItemInventory + selectedRecipeAmount >= v.amount) {
-				extraArray[i] ??= [];
-				extraArray[i].push({elem: v.elem, canCraft: true});
-			}
-		});
-
-		amountOfCraftableItemInventory += selectedRecipeAmount;
-	}
- 
-	return extraArray
-}
-
-function updateNeededItemsForCrafting(index) {
-	const selectedItem = craftingValues.gridItems[index];
-	const recipeElem = craftInv.querySelector(`.craftingItem[index="${index}"]>.recipes`);
-	selectedItem.craftingRecipes.forEach((row, y) => row.items.forEach((value, x) => {
-		const elem = recipeElem.children[y].children[1].children[x];
-		if(player.totalItemCounts[value.item] >= value.amount) elem.classList.remove("cantCraft");
-		else elem.classList.add("cantCraft");
-	}));
-}
 
 
 const allItemsUsedForCrafting = allCraftableItems.reduce((ac, va) => {
@@ -573,11 +381,6 @@ function craftWithSearch() {
 
 	const splitWithTags = search.split(/(#)| /g);
 
-	// searchBar.classList.remove("failed");
-	// if(search.length) {
-	//   clearCraftingSearchBar.classList.remove("hidden");
-	// } else clearCraftingSearchBar.classList.add("hidden");
-
 	for(let i = 0; i < splitWithTags.length; i++) {
 		if(!splitWithTags[i] || splitWithTags[i] == " ") continue;
 		if(splitWithTags[i] == "#") {
@@ -591,7 +394,6 @@ function craftWithSearch() {
 	const mediumSearch = []; // indexOf all words from name (not duplicate) and all tags indexOf
 	const easySearch = [];   // indexOf any word and any tag
 
-	// const lookForItems = craftingValues.itemNeedsToBeInRecipe;
 	const filteredVersionOfitems = listOfAllItemsUsedForCrafting;
 
 	if(search.length == 0 || search == "#") return generateWhatCanCraftList(filteredVersionOfitems);
@@ -623,18 +425,6 @@ function craftWithSearch() {
 	else if(strictSearch.length) generateWhatCanCraftList(strictSearch);
 	else if(mediumSearch.length) generateWhatCanCraftList(mediumSearch);
 	else if(easySearch.length) generateWhatCanCraftList(easySearch);
-	else {
-		// searchBar.classList.add("failed");
-
-		// if(returnEmpty) generateCraftingItemsList([]);
-	}
-
-	// const hoverPopUpItemName = hoverBox.querySelector("div[crafting] .itemTitle")?.textContent;
-	// const hoverItemName = craftInv.querySelector("craftingItem:hover>.name")?.textContent;
-	// if(hoverPopUpItemName && !hoverItemName) hoverBox.textContent = "";
-	// if(hoverPopUpItemName != hoverItemName) hoverBox.textContent = "";
-
-	// generateWhatCanCraftList()
 };
 
 const whatCanCraftButton = itemsMenu.querySelector(".whatCanCraftContainer");
@@ -713,8 +503,6 @@ function craftingItem(index, item, open = false) {
 	addHover([craftingItemDiv, "crafting"], item.hoverText());
 	return craftingItemDiv;
 }
-
-// updateCraftingItem(0, craftingValues.gridItems[0]);
 
 function updateCraftingItem(index, item) {
 	const craftingItemDiv = craftInv.querySelector(`div[index="${index}"].craftingItem`);
@@ -911,24 +699,31 @@ function drawVisibleCraftingItems(fullReDraw = false) {
 	const elementsHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, endIndex) + craftingValues.craftingElementsHeight[0][endIndex] - topHeight - (scrollTop - topHeight);
 
 	if(fullReDraw == true) craftInv.innerHTML = "";
-	const firstElementIndex = parseInt(craftInv.children[0]?.getAttribute("index") ?? 0) == startIndex;
+	const firstElementIndex = parseInt(craftInv.children[0]?.getAttribute("index") ?? craftingValues.craftingElementsHeight.length);
+	const lastElementIndex = parseInt(craftInv.children[craftInv.children.length - 1]?.getAttribute("index") ?? -1);
 
+	
 	loop: {
-		if(fullReDraw == false) {
-			const lastElementIndex = parseInt(craftInv.children[craftInv.children.length - 1]?.getAttribute("index") ?? 0) == endIndex;
-			if(firstElementIndex && lastElementIndex) break loop;
-		}
-
-		for(let i = startIndex; i <= endIndex; i++) {
-			const height = craftingValues.craftingElementsHeight[0][i];
-			const item = craftingValues.gridItems[i];
-			const elem = fullReDraw == true ? null : craftInv.querySelector(`.craftingItem[index="${i}"]`);
-			
-			if(elem == null) {
+		if(firstElementIndex == startIndex && lastElementIndex == endIndex && fullReDraw == false) break loop;
+		
+		if(lastElementIndex < endIndex) {
+			for(let i = Math.max(lastElementIndex + 1, startIndex); i <= endIndex; i++) {
+				const height = craftingValues.craftingElementsHeight[0][i];
+				const item = craftingValues.gridItems[i];
+				
 				const isOpen = height > 50;
 				const element = craftingItem(i, item, isOpen);
 				craftInv.append(element);
-			} else if(!firstElementIndex) craftInv.append(elem);
+			}
+		} else if(firstElementIndex > startIndex) {
+			for(let i = Math.min(firstElementIndex - 1, endIndex); i >= startIndex; i--) {
+				const height = craftingValues.craftingElementsHeight[0][i];
+				const item = craftingValues.gridItems[i];
+				
+				const isOpen = height > 50;
+				const element = craftingItem(i, item, isOpen);
+				craftInv.prepend(element);
+			}
 		}
 
 		if(fullReDraw == false) Array.from(craftInv.children).forEach(e => {
@@ -951,48 +746,6 @@ function updateVisibleCraftingItems() {
 		const item = craftingValues.gridItems[startIndex + i];
 		updateCraftingItem(startIndex + i, item);
 	}
-
-
-	// const totalHeight = craftingValues.craftingElementsHeight[craftingValues.craftingElementsHeight.length - 1][0];
-	// const clientHeight = craftInv.clientHeight || innerHeight;
-	// const scrollTop = craftInv.scrollTop;
-
-	// const startIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop);
-	// const endIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop + clientHeight - 1);
-	// const topHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, startIndex);
-	// const elementsHeight = craftingElementTopByIndex(craftingValues.craftingElementsHeight, endIndex) + craftingValues.craftingElementsHeight[0][endIndex] - topHeight - (scrollTop - topHeight);
-
-	// if(fullReDraw == true) craftInv.innerHTML = "";
-	// const firstElementIndex = parseInt(craftInv.children[0]?.getAttribute("index") ?? 0) == startIndex;
-
-	// loop: {
-	// 	if(fullReDraw == false) {
-	// 		const lastElementIndex = parseInt(craftInv.children[craftInv.children.length - 1]?.getAttribute("index") ?? 0) == endIndex;
-	// 		if(firstElementIndex && lastElementIndex) break loop;
-	// 	}
-
-	// 	for(let i = startIndex; i <= endIndex; i++) {
-	// 		const height = craftingValues.craftingElementsHeight[0][i];
-	// 		const item = craftingValues.gridItems[i];
-	// 		const elem = fullReDraw == true ? null : craftInv.querySelector(`.craftingItem[index="${i}"]`);
-			
-	// 		if(elem == null) {
-	// 			const isOpen = height > 50;
-	// 			const element = craftingItem(i, item, isOpen);
-	// 			craftInv.append(element);
-	// 		} else if(!firstElementIndex) craftInv.append(elem);
-	// 	}
-
-	// 	if(fullReDraw == false) Array.from(craftInv.children).forEach(e => {
-	// 		const index = parseInt(e.getAttribute("index"));
-	// 		if(index < startIndex || index > endIndex) e.remove();
-	// 	});
-	// }
-
-	// if(endIndex == craftingValues.gridItems.length - 1) craftInv.style.setProperty('--bottom', "0px");
-	// else craftInv.style.setProperty('--bottom', totalHeight - topHeight - elementsHeight + "px");
-	
-	// craftInv.style.setProperty('--top', topHeight + "px");
 }
 
 function craftingElementIndexByHeight(array, height) {
