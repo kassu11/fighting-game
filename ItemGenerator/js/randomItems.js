@@ -2,11 +2,11 @@
 function generateArmor(num) {
 	return [...new Array(num)].map((_, i) => {
 		const time = Math.round(new Date().getTime() / random(10000));
-		const [[img, eq, tag]] = [ 
+		const [img, eq, tag] = [
 			["baselegs3.png", "legs", "leggings"],  
 			["basechest3.png", "chest", "chestplate"], 
 			["helmet.png", "head", "helmet"]
-		]
+		][random(2)];
 		return {
 			id: `armor${(time + i).toString(32)}`,
 			name: `Armor ${(time + i).toString(32)}`,
