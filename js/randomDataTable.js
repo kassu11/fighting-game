@@ -1219,6 +1219,7 @@ var items = {
     ]
   },
   material72l0ik: {
+    canEquipTo: "",
     id: "material72l0ik",
     name: "Material 72l0ik",
     image: "iron.png",
@@ -1227,6 +1228,7 @@ var items = {
   },
   material5ustja: {
     id: "material5ustja",
+    canEquipTo: "",
     name: "Material 5ustja",
     image: "iron.png",
     amount: 2,
@@ -1234,6 +1236,7 @@ var items = {
   },
   materialfjntoc: {
     id: "materialfjntoc",
+    canEquipTo: "",
     name: "Material fjntoc",
     image: "iron.png",
     amount: 2,
@@ -1241,6 +1244,7 @@ var items = {
   },
   material35dodl5: {
     id: "material35dodl5",
+    canEquipTo: "",
     name: "Material 35dodl5",
     image: "iron.png",
     amount: 2,
@@ -1248,6 +1252,7 @@ var items = {
   },
   material6lsje3: {
     id: "material6lsje3",
+    canEquipTo: "",
     name: "Material 6lsje3",
     image: "iron.png",
     amount: 2,
@@ -1255,6 +1260,7 @@ var items = {
   },
   material5obmsk: {
     id: "material5obmsk",
+    canEquipTo: "",
     name: "Material 5obmsk",
     image: "iron.png",
     amount: 2,
@@ -1262,6 +1268,7 @@ var items = {
   },
   materialjva4kb: {
     id: "materialjva4kb",
+    canEquipTo: "",
     name: "Material jva4kb",
     image: "iron.png",
     amount: 2,
@@ -1269,6 +1276,7 @@ var items = {
   },
   materialae0l2d: {
     id: "materialae0l2d",
+    canEquipTo: "",
     name: "Material ae0l2d",
     image: "iron.png",
     amount: 2,
@@ -1276,6 +1284,7 @@ var items = {
   },
   material1eak7qf: {
     id: "material1eak7qf",
+    canEquipTo: "",
     name: "Material 1eak7qf",
     image: "iron.png",
     amount: 2,
@@ -1283,6 +1292,7 @@ var items = {
   },
   materialc3lukc: {
     id: "materialc3lukc",
+    canEquipTo: "",
     name: "Material c3lukc",
     image: "iron.png",
     amount: 2,
@@ -1290,6 +1300,7 @@ var items = {
   },
   material6drcir: {
     id: "material6drcir",
+    canEquipTo: "",
     name: "Material 6drcir",
     image: "iron.png",
     amount: 2,
@@ -1297,6 +1308,7 @@ var items = {
   },
   materialaj7sc1: {
     id: "materialaj7sc1",
+    canEquipTo: "",
     name: "Material aj7sc1",
     image: "iron.png",
     amount: 2,
@@ -1304,6 +1316,7 @@ var items = {
   },
   materialh63gkm: {
     id: "materialh63gkm",
+    canEquipTo: "",
     name: "Material h63gkm",
     image: "iron.png",
     amount: 2,
@@ -1311,6 +1324,7 @@ var items = {
   },
   materiall1gha2: {
     id: "materiall1gha2",
+    canEquipTo: "",
     name: "Material l1gha2",
     image: "iron.png",
     amount: 2,
@@ -1318,6 +1332,7 @@ var items = {
   },
   material5im29g: {
     id: "material5im29g",
+    canEquipTo: "",
     name: "Material 5im29g",
     image: "iron.png",
     amount: 2,
@@ -1325,6 +1340,7 @@ var items = {
   },
   materialbfm2lm: {
     id: "materialbfm2lm",
+    canEquipTo: "",
     name: "Material bfm2lm",
     image: "iron.png",
     amount: 2,
@@ -1332,6 +1348,7 @@ var items = {
   },
   material6kn9lo: {
     id: "material6kn9lo",
+    canEquipTo: "",
     name: "Material 6kn9lo",
     image: "iron.png",
     amount: 2,
@@ -1339,6 +1356,7 @@ var items = {
   },
   material6ojvdd: {
     id: "material6ojvdd",
+    canEquipTo: "",
     name: "Material 6ojvdd",
     image: "iron.png",
     amount: 2,
@@ -1346,6 +1364,7 @@ var items = {
   },
   material62bv0j: {
     id: "material62bv0j",
+    canEquipTo: "",
     name: "Material 62bv0j",
     image: "iron.png",
     amount: 2,
@@ -1353,6 +1372,7 @@ var items = {
   },
   materialrhhboj: {
     id: "materialrhhboj",
+    canEquipTo: "",
     name: "Material rhhboj",
     image: "iron.png",
     amount: 2,

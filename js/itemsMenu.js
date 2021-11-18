@@ -23,13 +23,13 @@ function generateItemsOnGrid(items) {
 				div.classList.add("hotbar")
 				div.append(slotNum);
 				// itemHover += `\nEquipped: §<c>#00ff1e<c><css>font-weight: 600<css>hotbar ${num}`;
-				itemHover = `<nct>equippedHotbar<nct>Eguipped: hotbar ${num}<nct>itemData<nct>` + itemHover;
+				itemHover = `<nct>equippedHotbar<nct>Equipped: hotbar ${num}<nct>itemData<nct>` + itemHover;
 			} else if(armorSlotNames.some(v => item.slot.startsWith(v))) {
 				const index = armorSlotNames.findIndex(v => item.slot.startsWith(v));
 				div.innerHTML += `<p class="slotNum">${index + 1}</p>`
 				div.classList.add("armor");
 				// itemHover += `\nEquipped: §<c>#008eff<c><css>font-weight: 600<css>${armorSlotNames[index]}`;
-				itemHover = `<nct>equippedArmor<nct>Eguipped: ${armorSlotNames[index]}<nct>itemData<nct>` + itemHover;
+				itemHover = `<nct>equippedArmor<nct>Equipped: ${armorSlotNames[index]}<nct>itemData<nct>` + itemHover;
 			}
 		}
 
@@ -101,13 +101,13 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 	container.innerHTML = `
 	<div class="itemInfo"></div>
 	<div class="equipBox">
-		<p>NAME HERE</p>
+		<p></p>
 	</div>`
 
 	container.querySelector(".itemInfo").append(customTextSyntax(hoverText));
 
 	if(item.canEquipTo == "hotbar") {
-		container.querySelector("p").textContent = "Equip to hotbar:";
+		container.querySelector(".equipBox p").textContent = "Equip to hotbar:";
 		for(let i = 1; i <= Object.keys(player.hotbar).length; i++) {
 			const hotbarItem = player.hotbar["slot" + i] ?? {};
 			const num = item.slot?.startsWith("hotbarSlot") ? +item.slot.substr(10) : -1;
@@ -156,7 +156,7 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 		}
 	} else if(["head", "legs", "chest"].indexOf(item.canEquipTo) != -1) {
 		const slotName = item.canEquipTo;
-		container.querySelector("p").textContent = `Equip to ${slotName}:`;
+		container.querySelector(".equipBox p").textContent = `Equip to ${slotName}:`;
 		const div = document.createElement("div");
 		div.classList.add("equipHotbar");
 

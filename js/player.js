@@ -79,6 +79,7 @@ function Player(arr) {
 	this.hp = arr.hp;
 	this.mp = arr.mp;
 	this.maxHp = arr.maxHp;
+	this.debug = true;
 	this.maxHpF = () => {
 		const extra = Object.values(this.armor).reduce((a, b) => a + (b?.healthBoostValue ?? 0), 0) || 0;
 		return this.maxHp + extra;

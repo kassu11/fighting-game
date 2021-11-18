@@ -372,7 +372,8 @@ async function startEnemyTurn() {
 		await sleep(350);
 		for(const [card, enemy] of currentLevel.enemies) {
 			const results = countAllEnemyMoves(currentLevel.enemyRounds, enemy);
-			const item = enemy.items[reduceBestItemIndexForEnemy(enemy, results)] ?? new Item(items["filler"], enemy);
+			const itemIndex = reduceBestItemIndexForEnemy(enemy, results)
+			const item = enemy.items[itemIndex] ?? new Item(items["filler"], enemy);
 			const bulletItem = item.useAmmoType ? enemy.bullets.find((bullet, index) => {
 				if(bullet.amount && bullet.ammoType === item.useAmmoType) {
 					if(--bullet.amount === 0) enemy.bullets.splice(index, 1);
@@ -399,7 +400,7 @@ async function startEnemyTurn() {
 			await sleep(300);
 			
 			if(intentToHurt) enemyTurnAnimations("attack", card, realDmg, item);
-			if(item.amount && --item.amount <= 0) enemy.items.splice(results.bestDmgMoves[0], 1);
+			if(item.amount && --item.amount <= 0) enemy.items.splice(itemIndex, 1);
 			if(item.mana) enemy.mp -= item.mana;
 			if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
 			if(item.manaHealV) enemy.mp = Math.min(enemy.mp + item.manaHealV, enemy.maxMp);

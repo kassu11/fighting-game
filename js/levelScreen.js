@@ -153,39 +153,58 @@ function levelButtonsMouseDown(downEvent) {
 
 	const bLeft = +buttonElem.style.left.substr(0, buttonElem.style.left.length - 2);
 	const bTop = +buttonElem.style.top.substr(0, buttonElem.style.top.length - 2);
-
 	/* Delete later */
 	
 	
 	if(downEvent.button === 0) {
-		
-		levelButtons.onmousemove = moveEvent => {
-			levelMenuDownData.x = moveEvent.x;
-			levelMenuDownData.y = moveEvent.y;
-			container.style.transition = null;
-			if(moveEvent.buttons === 1) {
-				if(buttonElem?.classList.contains("levelButton")) {
+
+		if(player.debug && buttonElem?.classList.contains("levelButton")) {
+			levelButtons.onmousemove = moveEvent => {
+				levelMenuDownData.x = moveEvent.x;
+				levelMenuDownData.y = moveEvent.y;
+				container.style.transition = null;
+				if(moveEvent.buttons === 1) {
 					const scale = +container.style.getPropertyValue("--scale") || 1;
 					buttonElem.style.left = (moveEvent.x - downEvent.x) / scale + bLeft + "px";
 					buttonElem.style.top = (moveEvent.y - downEvent.y) / scale + bTop + "px";
 					container.style.pointerEvents = "none";
-
+	
 					levels[buttonElem.id].cords.x = Math.round((moveEvent.x - downEvent.x) / scale + bLeft);
-					levels[buttonElem.id].cords.y = Math.round((moveEvent.y - downEvent.y) / scale + bTop);
-
-					return;
+					levels[buttonElem.id].cords.y = Math.round((moveEvent.y - downEvent.y) / scale + bTop);		
+				} else {
+					levelButtons.onmousemove = null;
+					container.style.pointerEvents = null;
 				}
-
-				if(!container.style.pointerEvent) {
-					if(Math.abs(downEvent.x - moveEvent.x) + Math.abs(downEvent.y - moveEvent.y) > canselClickMovedPixels) {
-						container.style.pointerEvents = "none";
+			}
+		} else {
+			levelButtons.onmousemove = moveEvent => {
+				levelMenuDownData.x = moveEvent.x;
+				levelMenuDownData.y = moveEvent.y;
+				container.style.transition = null;
+				if(moveEvent.buttons === 1) {
+					// if(buttonElem?.classList.contains("levelButton")) {
+					// 	const scale = +container.style.getPropertyValue("--scale") || 1;
+					// 	buttonElem.style.left = (moveEvent.x - downEvent.x) / scale + bLeft + "px";
+					// 	buttonElem.style.top = (moveEvent.y - downEvent.y) / scale + bTop + "px";
+					// 	container.style.pointerEvents = "none";
+	
+					// 	levels[buttonElem.id].cords.x = Math.round((moveEvent.x - downEvent.x) / scale + bLeft);
+					// 	levels[buttonElem.id].cords.y = Math.round((moveEvent.y - downEvent.y) / scale + bTop);
+	
+					// 	return;
+					// }
+	
+					if(!container.style.pointerEvent) {
+						if(Math.abs(downEvent.x - moveEvent.x) + Math.abs(downEvent.y - moveEvent.y) > canselClickMovedPixels) {
+							container.style.pointerEvents = "none";
+						}
 					}
+					container.style.left = moveEvent.x - levelMenuDownData.startX + "px";
+					container.style.top = moveEvent.y - levelMenuDownData.startY + "px";
+				} else {
+					levelButtons.onmousemove = null;
+					container.style.pointerEvents = null;
 				}
-				container.style.left = moveEvent.x - levelMenuDownData.startX + "px";
-				container.style.top = moveEvent.y - levelMenuDownData.startY + "px";
-			} else {
-				levelButtons.onmousemove = null;
-				container.style.pointerEvents = null;
 			}
 		}
 	}

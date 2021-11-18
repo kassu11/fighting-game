@@ -156,36 +156,6 @@
 		border: 2px solid #003764;
 		&::before {background: #003764}
 	}
-
-	div.craftingTooltip {
-		display: block;
-		min-width: 160px;
-		font-size: 13px;
-		margin-top: 20px;
-
-		span {
-			font-weight: 700;
-		}
-
-		.hide {
-			opacity: .4;
-		}
-		.hotkey {
-			color: orange;
-			font-size: 10px;
-			text-shadow: 0 0 2px yellow;
-			font-weight: 500;
-		}
-
-		.left {
-			float: left;
-		}
-
-		.right {
-			text-align: right;
-			float: right;
-		}
-	}
 }
 
 #hoverBox {
@@ -205,7 +175,6 @@
 			font-weight: 900;
 			color: rgba(0, 0, 0, 0.92);
 			padding: 5px 10px;
-			// text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white, 0 0 3px white;
 
 			:before {
 				content: "!";
@@ -226,41 +195,7 @@
 		}
 	}
 
-	div[test] {
-		background: transparent;
-
-		pre {
-			padding: 0px;
-		}
-
-		div.test {
-			// display: block;
-			// position: absolute;
-			background: rgba(0, 0, 0, 0.89);
-			position: relative;
-			padding: 5px 8px 5px 5px;
-			&:not(:last-child) {
-				margin-bottom: 20px;
-			}
-			// left: 0px;
-			// right: 0px;
-			// z-index: -1;
-			// height: 100px;
-		}
-
-		div.testi1 {
-			background-color: rgba(255, 0, 0, 0.637);
-			padding-left: 5px;
-			padding-top: 5px;
-		}
-		div.testi2 {
-			background-color: rgba(9, 255, 0, 0.555);
-			padding-left: 5px;
-			padding-top: 5px;
-		}
-	}
-
-	div[recipe] {
+	div[crafting] {
 		.notEnough {
 			position: absolute;
 			display: block;
@@ -293,6 +228,32 @@
 
 			&.hidden {
 				display: none;
+			}
+		}
+
+		.craftingTooltip {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			min-width: 160px;
+			font-size: 13px;
+			margin-top: 15px;
+	
+			span {
+				font-weight: 700;
+				margin-top: 2px;
+			}
+	
+			.hide {opacity: .4}
+			.hotkey {
+				color: orange;
+				font-size: 10px;
+				text-shadow: 0 0 2px yellow;
+				font-weight: 500;
+			}
+	
+			.right {
+				text-align: right;
+				float: right;
 			}
 		}
 	}
