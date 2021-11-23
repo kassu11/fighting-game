@@ -1,7 +1,7 @@
 const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes?.length).map((data, i) => new Item({...data, index: i}, player));
 // const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 64
 // const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 4096
-
+let lastOpenedCraftingRecipe = {height: 0, key: null}; // clears value after transition is over
 const craftingValues = {
 	gridItems: allCraftableItems,
 	sortOrder: "",
@@ -348,6 +348,13 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
 		const totalHeight = Array.from(recipesSubmenu.children).map(e => e.getBoundingClientRect().height).reduce((a, v) => a + v);
 		recipesSubmenu.style.maxHeight = `${totalHeight}px`;
 		updateElementHeightArray(craftingValues.craftingElementsHeight, itemIndex, 49 + totalHeight);
+		// Jos avaat receptin ja scrollaat alas, kesken avaamis transitionin, näet vähän mustaa, tää fixaa sen :D
+		Object.assign(lastOpenedCraftingRecipe, {height: totalHeight + 49, key: recipesSubmenu});
+		setTimeout(() => {
+			if(lastOpenedCraftingRecipe.key == recipesSubmenu) {
+				Object.assign(lastOpenedCraftingRecipe, {height: 0, key: null});
+			}
+		}, 500);
 	} else {
 		recipesSubmenu.style.maxHeight = null;
 		updateElementHeightArray(craftingValues.craftingElementsHeight, itemIndex, 50);
@@ -689,7 +696,7 @@ function updateElementHeightArray(array, index, value) {
 function drawVisibleCraftingItems(fullReDraw = false) {
 	if(craftingValues.gridItems.length === 0) return;
 	const totalHeight = craftingValues.craftingElementsHeight[craftingValues.craftingElementsHeight.length - 1][0];
-	const clientHeight = craftInv.clientHeight || innerHeight;
+	const clientHeight = (craftInv.clientHeight || innerHeight) + lastOpenedCraftingRecipe.height;
 	const scrollTop = craftInv.scrollTop;
 	
 	const startIndex = craftingElementIndexByHeight(craftingValues.craftingElementsHeight, scrollTop);
