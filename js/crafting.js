@@ -11,7 +11,6 @@ const craftingValues = {
 	itemNeedsToBeInRecipe: "",
 	lastCrafted: {index: 0, id: "", updates: null},
 	craftingElementsHeight: [],
-	history: {}
 }
 const craftInv = itemsMenu.querySelector(".crafting .craftableItems");
 
@@ -19,44 +18,78 @@ function generateCraftingItemsList(array) {
 	if(array) craftingValues.gridItems = array;
 	craftInv.textContent = "";
 
-	if(!array && craftingValues.sortOrder.indexOf("reverse") !== -1) {
-		craftingValues.gridItems.reverse();
-	} else if(craftingValues.sortOrder.startsWith("Name")) {
-		craftingValues.gridItems.sort((v1, v2) => v1.name > v2.name ? 1 : -1)
+	const sortA = craftingValues.sortOrder.indexOf("reverse") !== -1 ? -1 : 1;
+	const sortB = sortA * -1;
+
+	if(craftingValues.sortOrder == "") craftingValues.gridItems.sort((v1, v2) => v1.index - v2.index);
+	else if(craftingValues.sortOrder.startsWith("Name")) {
+		craftingValues.gridItems.sort((v1, v2) => v1.name > v2.name ? sortA : sortB)
 	} else if(craftingValues.sortOrder.startsWith("Damage")) {
 		craftingValues.gridItems.sort((v1, v2) => {
-			const dm1 = v1.calcDamage().maxMeleDmg ?? 0;
-			const dm2 = v2.calcDamage().maxMeleDmg ?? 0;
+			const data1 = v1.calcDamage();
+			const data2 = v2.calcDamage();
+			const dm1 = (data1.maxMeleDmg + data1.maxRangeDmg) || -1;
+			const dm2 = (data2.maxMeleDmg + data2.maxRangeDmg) || -1;
 			if(dm1 == dm2) return v1.name > v2.name ? 1 : -1;
-			else return dm2 - dm1
+			if(dm1 == -1 || dm2 == -1) return dm1 < dm2 ? 1 : -1;
+			return dm2 > dm1 ? sortA : sortB;
 		})
 	} else if(craftingValues.sortOrder.startsWith("Defence")) {
 		craftingValues.gridItems.sort((v1, v2) => {
-			const hp1 = v1.healthBoostValue ?? 0;
-			const hp2 = v2.healthBoostValue ?? 0;
-			if(hp1 == hp2) return v1.name > v2.name ? 1 : -1;
-			else return hp2 - hp1;
+			const data1 = v1.defencePercentage ?? -1;
+			const data2 = v2.defencePercentage ?? -1;
+			if(data1 == data2) return v1.name > v2.name ? 1 : -1;
+			if(data1 == -1 || data2 == -1) return data1 < data2 ? 1 : -1;
+			return data1 < data2 ? sortA : sortB;
+		});
+	} else if(craftingValues.sortOrder.startsWith("Health_boost")) {
+		craftingValues.gridItems.sort((v1, v2) => {
+			const data1 = v1.healthBoostValue ?? -1;
+			const data2 = v2.healthBoostValue ?? -1;
+			if(data1 == data2) return v1.name > v2.name ? 1 : -1;
+			if(data1 == -1 || data2 == -1) return data1 < data2 ? 1 : -1;
+			return data1 < data2 ? sortA : sortB;
+		});
+	} else if(craftingValues.sortOrder.startsWith("Mana_boost")) {
+		craftingValues.gridItems.sort((v1, v2) => {
+			const data1 = v1.manaBoostValue ?? -1;
+			const data2 = v2.manaBoostValue ?? -1;
+			if(data1 == data2) return v1.name > v2.name ? 1 : -1;
+			if(data1 == -1 || data2 == -1) return data1 < data2 ? 1 : -1;
+			return data1 < data2 ? sortA : sortB;
+		});
+	} else if(craftingValues.sortOrder.startsWith("Reduce_dmg")) {
+		craftingValues.gridItems.sort((v1, v2) => {
+			const data1 = v1.defenceValue ?? -1;
+			const data2 = v2.defenceValue ?? -1;
+			if(data1 == data2) return v1.name > v2.name ? 1 : -1;
+			if(data1 == -1 || data2 == -1) return data1 < data2 ? 1 : -1;
+			return data1 < data2 ? sortA : sortB;
 		});
 	} else if(craftingValues.sortOrder.startsWith("Tags")) {
 		craftingValues.gridItems.sort((v1, v2) => {
 			const tag1 = v1.tags.join("");
 			const tag2 = v2.tags.join("");
 			if(tag1 == tag2) return v1.name > v2.name ? 1 : -1;
-			else return tag1 > tag2 ? 1 : -1;
+			return tag1 > tag2 ? sortA : sortB;
 		});
 	} else if(craftingValues.sortOrder.startsWith("Use_time")) {
 		craftingValues.gridItems.sort((v1, v2) => {
-			const [time1, time2] = [v1.useTime ?? 0, v2.useTime ?? 0];
+			const time1 = v1.useTime ?? -1;
+			const time2 = v2.useTime ?? -1;
 			if(time1 == time2) return v1.name > v2.name ? 1 : -1;
-			else return time2 - time1;
-		})
+			if(time1 == -1 || time2 == -1) return time1 < time2 ? 1 : -1;
+			return time1 < time2 ? sortA : sortB;
+		});
 	} else if(craftingValues.sortOrder.startsWith("Craftable")) {
 		craftingValues.gridItems.sort((v1, v2) => {
-			return canYouCraft(v2) - canYouCraft(v1);
-		})
-	} if(array && craftingValues.sortOrder.indexOf("reverse") !== -1) {
-		craftingValues.gridItems.reverse();
-	} if(craftingValues.sortOrder == "") craftingValues.gridItems.sort((v1, v2) => v1.index - v2.index);
+			const craftable1 = ManyTimesCanCraft(v1);
+			const craftable2 = ManyTimesCanCraft(v2);
+			if(craftable1 == craftable2) return v1.name > v2.name ? 1 : -1;
+			if(craftable1 == 0 || craftable2 == 0) return craftable1 < craftable2 ? 1 : -1;
+			return craftable1 < craftable2 ? sortA : sortB;
+		});
+	}
 
 	craftingValues.craftingElementsHeight = formatElementLeghtArray([[...new Array(craftingValues.gridItems.length)].map(() => 50)]);
 
@@ -77,8 +110,11 @@ function filterCraftingItems(array) {
 		return true;
 
 		function filterResults(type) {
-			if(type == "Damage" && (value.maxMeleDmg || value.minMeleDmg)) return true;
-			if(type == "Defence" && value.healthBoostValue) return true;
+			if(type == "Damage" && (value.maxMeleDmg || value.maxRangeDmg)) return true;
+			if(type == "Defence" && value.defencePercentage) return true;
+			if(type == "Health_boost" && value.healthBoostValue) return true;
+			if(type == "Mana_boost" && value.manaBoostValue) return true;
+			if(type == "Reduce_dmg" && value.defenceValue) return true;
 			if(type == "Healing" && value.healV) return true;
 			if(type == "Mana" && value.mana) return true;
 			if(type == "Use_time" && value.useTime) return true;
@@ -87,7 +123,7 @@ function filterCraftingItems(array) {
 }
 
 const searchBar = itemsMenu.querySelector(".toolBar input.searchBar");
-searchBar.addEventListener("input", () => craftingSearch());
+searchBar.addEventListener("input", () => craftingSearch(true));
 
 const clearCraftingSearchBar = itemsMenu.querySelector(".toolBar #clearCraftingSearchBar");
 clearCraftingSearchBar.addEventListener("click", () => {
@@ -116,68 +152,28 @@ function craftingSearch(returnEmpty = false) {
 		} else searchName.push(splitWithTags[i])
 	}
 
-	const historyKey = `${craftingValues.removeFilter.sort().join("")}§${craftingValues.addFilter.sort().join("")}§${searchName.sort().join("")}§${searchTags.sort().join("")}§${craftingValues.itemNeedsToBeInRecipe}`;
+	const strictSearch = [];
 
-	if(craftingValues.history[historyKey]) {
-		if(craftingValues.history[historyKey].length) generateCraftingItemsList(craftingValues.history[historyKey]);
-		else if(returnEmpty) generateCraftingItemsList(craftingValues.history[historyKey]);
-		else searchBar.classList.add("failed");
-	} else {
-		const perfectSearch = []; // Name and tags are identical
-		const strictSearch = []; // indexOf whole name and all tags startWith
-		const mediumSearch = []; // indexOf all words from name (not duplicate) and all tags indexOf
-		const easySearch = [];   // indexOf any word and any tag
+	const lookForItems = craftingValues.itemNeedsToBeInRecipe;
+	const filteredVersionOfitems = lookForItems ? filterCraftingItems( allItemsUsedForCrafting[lookForItems] ) : filterCraftingItems( allCraftableItems );
 	
-		const lookForItems = craftingValues.itemNeedsToBeInRecipe;
-		const filteredVersionOfitems = lookForItems ? filterCraftingItems( allItemsUsedForCrafting[lookForItems] ) : filterCraftingItems( allCraftableItems );
-	
-		if(search.length == 0 || search == "#") {
-			craftingValues.history[historyKey] = filteredVersionOfitems;
-			return generateCraftingItemsList(filteredVersionOfitems);
-		} else filteredVersionOfitems.forEach(item => {
-			const itemName = item.name.toLowerCase();
-	
-			if(itemName === searchName.join(" ")) {
-				const tagNotFound = item.tags.find(itag => !searchTags.find(tag => itag.startsWith(tag)));
-				if(!tagNotFound) return perfectSearch.push(item);
-			} if(perfectSearch.length === 0 && itemName.indexOf(searchName.join(" ")) !== -1) { // Strict
-				const tagNotFound = !searchTags.find(tag => item.tags.find(itag => itag.startsWith(tag)) == null);
-				if(tagNotFound || searchTags.length == 0) return strictSearch.push(item);
-			} if(strictSearch.length == 0) { // Medium
-				let newItemName = itemName;
-				const tagNotFound = searchTags.find(tag => item.tags.find(itag => itag.indexOf(tag) !== -1) == null);
-				const nameNotFound = searchName.find(name => {
-					const length = newItemName.length;
-					newItemName = newItemName.replace(name, "");
-					return newItemName.length === length;
-				}); if(!(nameNotFound || tagNotFound)) return mediumSearch.push(item);
-			} if(mediumSearch.length == 0) { // Easy
-				const findName = searchName.length == 0 ? true : searchName.find(name => itemName.indexOf(name) !== -1);
-				const findTag = searchTags.length == 0 ? true : searchTags.find(tag => item.tags.find(itag => itag.indexOf(tag) !== -1));
-				if(findTag && findName) return easySearch.push(item);
-			}
-		});
-		
-		if(perfectSearch.length) {
-			craftingValues.history[historyKey] = perfectSearch;
-			generateCraftingItemsList(perfectSearch);
-		}	else if(strictSearch.length) {
-			craftingValues.history[historyKey] = strictSearch;
-			generateCraftingItemsList(strictSearch);
-		}	else if(mediumSearch.length) {
-			craftingValues.history[historyKey] = mediumSearch;
-			generateCraftingItemsList(mediumSearch);
-		}	else if(easySearch.length) {
-			craftingValues.history[historyKey] = easySearch; 
-			generateCraftingItemsList(easySearch);
-		}	else {
-			searchBar.classList.add("failed");
-			craftingValues.history[historyKey] = [];
-			if(returnEmpty) generateCraftingItemsList([]);
+	if(search.length == 0 || search == "#") {
+		return generateCraftingItemsList(filteredVersionOfitems);
+	} else filteredVersionOfitems.forEach(item => {
+		const itemName = item.name.toLowerCase();
+
+		if(itemName.indexOf(searchName.join(" ")) !== -1) {
+			const tagNotFound = !searchTags.find(tag => item.tags.find(itag => itag.startsWith(tag)) == null);
+			if(tagNotFound || searchTags.length == 0) return strictSearch.push(item);
 		}
-	}
-
+	});
 	
+	if(strictSearch.length) generateCraftingItemsList(strictSearch);
+	else {
+		searchBar.classList.add("failed");
+		if(returnEmpty) generateCraftingItemsList([]);
+	}
+		
 	const refressFaled = craftInv.querySelector(".craftingItem:hover>.name");
 	if(refressFaled) return;
 	const hoverIsCraftingRecipeItemRow = hoverBox.querySelector("div[crafting] .itemTitle");
@@ -201,7 +197,7 @@ sortButton.addEventListener("click", e => {
 			return subMenuContainer.textContent = "";
 		}
 		
-		["Name", "Damage", "Defence", "Use_time", "Tags", "Craftable"].forEach(sortTitle => {
+		["Name", "Damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg", "Use_time", "Tags", "Craftable"].forEach(sortTitle => {
 			const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+div.removeSelection`);
 			subMenuElement.querySelector("p").textContent = sortTitle.replaceAll("_", " ");
 			if(sortTitle == lastName) subMenuElement.classList.add(lastSortState);
@@ -254,8 +250,8 @@ typesButton.addEventListener("click", e => {
 			typesButton.classList.remove("active");
 			return subMenuContainer.textContent = "";
 		}
-		
-		return ["Damage", "Defence", "Healing", "Mana", "Use_time"].forEach(title => {
+
+		return ["Damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg", "Healing", "Mana", "Use_time"].forEach(title => {
 			const [subMenuElement] = emmet(`.typeValue.${title}>div.directionContainer+p+div.removeSelection`);
 			subMenuElement.querySelector("p").textContent = title.replaceAll("_", " ");
 			if(craftingValues.removeFilter.find(e => e === title)) subMenuElement.classList.add("remove");
@@ -594,13 +590,27 @@ function canYouCraft(item) {
 	}) !== -1;
 }
 
+function ManyTimesCanCraft(item) {
+	let rowMax = 0;
+	main: for(const row of item.craftingRecipes) {
+		let num = null;
+		for(const itemData of row.items) {
+			const amount = Math.floor((player.totalItemCounts[itemData.item] || 0) / itemData.amount);
+			if(amount == 0) continue main;
+			if(amount < num || num == null) num = amount;
+		} 
+		
+		if(num > rowMax) rowMax = num;
+	} return rowMax;
+}
+
 function leftClickRecipeItem(item) {
 	if(item.craftingRecipes) {
 		itemsMenu.querySelector("input.searchBar").value = item.name + "#" + item.tags.join("#");
 		generateCraftingItemsList([item]);
 		itemsMenu.querySelector("#clearCraftingSearchBar").classList.remove("hidden");
-		craftInv.querySelector(".craftingItem").click();
-		hoverBox.querySelector("[recipe]").remove();
+		craftInv.querySelector(".craftingItem")?.click();
+		hoverBox.querySelector("[recipe]")?.remove();
 	}
 }
 

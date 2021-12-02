@@ -4,6 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="css/font.css">
+		<link rel="stylesheet" href="css/mainMenu.css">
 		<link rel="stylesheet" href="css/cssIcons.css">
 		<link rel="stylesheet" href="css/hover.css">
 		<link rel="stylesheet" href="css/particles.css">
@@ -14,7 +15,7 @@
 		<link rel="stylesheet" href="css/navBar.css">
 		<title>Fighting Game</title>
 	</head>
-	<body class="levelMenu">
+	<body class="mainMenu">
 		<div id="hoverBox"></div>
 
 		<div id="navBar">
@@ -180,11 +181,23 @@
 				</div>
 			</div>
 		</div>
+
+		<div id="mainMenu">
+			<div class="savesBox">
+				<h1>New game</h1>
+				<div class="newGameButton"></div>
+				<h2>Last auto save</h2>
+				<div class="autoSaveContainer"></div>
+				<h2>Other saves</h2>
+				<div class="savesFileContainer"></div>
+			</div>
+		</div>
 	</body>
 </html>
 
 <script src="js/randomDataTable.js"></script>
 <script src="js/helpFunctions.js"></script>
+<script src="js/renderMainMenu.js"></script>
 <script src="js/effects.js"></script>
 <script src="js/hover.js"></script>
 <script src="js/particles.js"></script>
@@ -199,3 +212,4 @@
 <script src="js/crafting.js"></script>
 <script src="js/navBar.js"></script>
 <script src="js/test.js"></script>
+<script src="js/infoScreen.js"></script>
