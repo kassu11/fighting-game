@@ -66,7 +66,10 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
 		const {height, width} = div.getBoundingClientRect();
 		const maxTop = window.innerHeight - height - borderPaddin;
 		const maxleft = window.innerWidth - width - borderPaddin;
-		div.style.left = Math.min(x + 20, maxleft) + "px";
+		if(x + 20 <= maxleft) div.style.left = x + 20 + "px";
+		else if(x - 20 - width >= borderPaddin) div.style.left = x - 20 - width + "px";
+		else div.style.left = maxleft + "px";
+		// div.style.left = Math.min(x + 20, maxleft) + "px";
 		div.style.top = Math.min(y, maxTop) + "px";
 	}
 

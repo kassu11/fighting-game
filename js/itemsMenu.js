@@ -227,7 +227,8 @@ window.addEventListener("resize", itemsMenuInventoryResize);
 function itemsMenuInventoryResize() {
 	const invContainer = itemsMenu.querySelector(".inventoryContainer")
 	if(itemsMenu.classList.contains("inv")) {
-		const screenOffset = innerWidth - 550;
+		// const screenOffset = innerWidth - 550;
+		const screenOffset = innerWidth - 60;
 		const item = 70;
 		const itemSize = item + 10 // item + padding
 		invContainer.style.width = Math.max(screenOffset - item - screenOffset % itemSize, 0) + "px";
