@@ -545,7 +545,7 @@ function appendRecipeElement(parent, item) {
 		const img = element("img").setSrc(`./images/${item.image}`);
 		const items = element("div").setClass("items");
 
-		if(row.craftingAmount > 2) craftingButton.append(img, element("p").setText(row.craftingAmount).setClass("itemAmount"));
+		if(row.craftingAmount > 2 || item.amount) craftingButton.append(img, element("p").setText(row.craftingAmount).setClass("itemAmount"));
 		else craftingButton.append(img);
 		rowElement.append(craftingButton, items);
 

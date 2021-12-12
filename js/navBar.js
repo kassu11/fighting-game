@@ -20,6 +20,13 @@ document.querySelector("#inventoryButton").addEventListener("click", () => {
 	generateItemsOnGrid(player.inventory.slice());
 });
 
+document.querySelector("#wikiMenuButton").addEventListener("click", () => {
+	if(document.body.classList.contains("wikiMenu")) {
+		document.querySelector("#wiki .wikiContent > div")?.remove();
+	}
+	document.body.classList = "wikiMenu";
+});
+
 
 
 // craftingMenuButton.click();

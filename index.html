@@ -13,22 +13,28 @@
 		<link rel="stylesheet" href="css/itemsMenu.css">
 		<link rel="stylesheet" href="css/crafting.css">
 		<link rel="stylesheet" href="css/navBar.css">
+		<link rel="stylesheet" href="css/wiki.css">
 		<title>Fighting Game</title>
 	</head>
-	<body class="mainMenu">
+	<body class="wikiMenu">
 		<div id="hoverBox"></div>
 
-		<div id="navBar">
-			<div id="levelsMenuButton" class="button">
-				<img src="./images/treasure-map.svg">
+		<nav class="mainNav">
+			<div class="container">
+				<div id="levelsMenuButton" class="button">
+					<h2>World map</h2>
+				</div>
+				<div id="inventoryButton" class="button">
+					<h2>Inventory</h2>
+				</div>
+				<div id="craftingMenuButton" class="button">
+					<h2>Crafting</h2>
+				</div>
+				<div id="wikiMenuButton" class="button">
+					<h2>Wiki</h2>
+				</div>
 			</div>
-			<div id="inventoryButton" class="button">
-				<img src="./images/locked-chest.svg">
-			</div>
-			<div id="craftingMenuButton" class="button">
-				<img src="./images/gear-hammer.svg">
-			</div>
-		</div>
+		</nav>
 
 		<div id="figtingScreen">
 			<div class="effectContainer"></div>
@@ -192,6 +198,17 @@
 				<div class="savesFileContainer"></div>
 			</div>
 		</div>
+
+		<div id="wiki">
+			<div class="selectionContainer">
+				<div class="box">
+					<div id="enemyInfo" onclick="wikiGenerateEnemies()"></div>
+					<div id="levelInfo" onclick="wikiGenerateLevelsScreen()"></div>
+					<div id="itemInfo" onclick="wikiGenerateItemsScreen()"></div>
+				</div>
+			</div>
+			<div class="wikiContent"></div>
+		</div>
 	</body>
 </html>
 
@@ -212,4 +229,4 @@
 <script src="js/crafting.js"></script>
 <script src="js/navBar.js"></script>
 <script src="js/test.js"></script>
-<script src="js/infoScreen.js"></script>
+<script src="js/wiki.js"></script>

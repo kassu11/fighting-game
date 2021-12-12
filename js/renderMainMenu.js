@@ -11,6 +11,6 @@ for(let i = 0; i < 10; i++) {
 
 document.querySelector(".newGameButton").addEventListener("click", startNewGame);
 
-async function startNewGame() {
+function startNewGame() {
 	document.body.classList = "levelMenu";
 }

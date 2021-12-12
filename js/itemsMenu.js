@@ -236,5 +236,6 @@ function itemsMenuInventoryResize() {
 		const item = 70;
 		const itemSize = item + 10 // item + padding
 		invContainer.style.width = Math.max(screenOffset - item - screenOffset % itemSize, 0) + "px";
+		if(document.querySelector(".craftableItems").children.length) drawVisibleCraftingItems();
 	}
 } itemsMenuInventoryResize();

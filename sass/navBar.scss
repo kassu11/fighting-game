@@ -1,23 +1,81 @@
-#navBar {
+nav.mainNav {
 	position: absolute;
 	width: 100%;
 	height: 50px;
 	top: 0px;
 	left: 0px;
 	background: black;
-	display: flex;
 	z-index: 10;
+	display: flex;
+	overflow-y: hidden;
+	
+	.container {
+		display: flex;
+		margin-left: auto;
+		margin-right: auto;
+	
+		.button {
+			position: relative;
+			height: 50px;
+			cursor: pointer;
+			user-select: none;
+			transition: all .15s;
+			&:hover {
+				transform: scale(1.05);
+			}
+	
+			h2 {
+				transition: all .15s;
+				color: white;
+				letter-spacing: 3px;
+				margin: 8px 20px;
+				font-size: 25px;
+				font-family: font3;
+			}
+		}
+	
+		&:hover .button:not(:hover) {
+			opacity: .8;
+			filter: grayscale(65%);
+		}
+	
+		#levelsMenuButton h2 {
+			color: #b3ffa9;
+			text-shadow: 0 0 9px #1eff00;
+		}
+		#levelsMenuButton:hover {
+			background: #031800;
+			h2 {text-shadow: 0 0 9px #1eff00, 0 0 9px #1eff00}
+		}
+	
+		#inventoryButton h2 {
+			color: #a9b8ff;
+			text-shadow: 0 0 9px #96b0ff;
+		}
+		#inventoryButton:hover {
+			background: #000d35;
+			h2 {text-shadow: 0 0 9px #96b0ff, 0 0 9px #96b0ff}
+		}
+		#craftingMenuButton h2 {
+			color: #ffa9a9;
+			text-shadow: 0 0 9px #ff0000;
+		}
+		#craftingMenuButton:hover {
+			background: #1b0000;
+			h2 {text-shadow: 0 0 9px #ff0000, 0 0 9px #ff0000}
+		}
 
-	.button {
-		position: relative;
-		width: 50px;
-		height: 50px;
-		margin-right: 10px;
-		cursor: pointer;
-		user-select: none;
+		#wikiMenuButton h2 {
+			color: #fffea9;
+			text-shadow: 0 0 9px #fbff00;
+		}
+		#wikiMenuButton:hover {
+			background: #181700;
+			h2 {text-shadow: 0 0 9px #fbff00, 0 0 9px #fbff00}
+		}
 	}
 }
 
-body.figtingMode #navBar {
+body.figtingMode nav.mainNav {
 	display: none;
 }

@@ -408,7 +408,9 @@ html {
 						overflow: hidden;
 						> img {
 							position: absolute;
-							width: 252px;
+							width: calc(100% + 2px);
+							height: calc(100% + 2px);
+							object-fit: cover;
 							image-rendering: pixelated;
 							image-rendering: optimizespeed;
 							transform: translateX(-50%) translateY(-50%);

@@ -27,6 +27,8 @@ function addHover(target, texts = [], keys = ["default"], logic = "true") {
 
 	moveHoverBlock();
 
+	return div;
+
 	function mouseOver(e) {
 		e.stopPropagation();
 		window.onkeydown = null;
