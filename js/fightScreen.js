@@ -13,7 +13,7 @@ function updateHotbarHovers() {
 	}
 
 	slotBox.querySelectorAll(".slot").forEach((currentSlot, i) => {
-		addHover(currentSlot, [player.hotbar["slot" + (i + 1)].hoverText?.() ?? ""], []);
+		addHover(currentSlot, [player.hotbar["hotbarSlot" + (i + 1)].hoverText?.() ?? ""], []);
 	});
 
 	updatePlayersHotbar();
@@ -380,9 +380,7 @@ async function startEnemyTurn() {
 				const {meleDmg, rangeDmg} = bulletItem.calcDamage();
 				bulletDmg = meleDmg + rangeDmg;
 			}
-
-			console.log(item)
-
+			
 			card.classList.add("enemyAttacks");
 			
 			item.selfEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
@@ -433,9 +431,7 @@ async function startEnemyTurn() {
 function reduceBestItemIndexForEnemy(enemy, allMoves) {
 	const maxPlDmg = Object.values(player.hotbar).reduce((ac, item) => Math.max(ac, item.calcDamage?.().maxMeleDmg ?? 0), 0);
 	if(maxPlDmg >= enemy.hp) {
-		console.log("??")
 		const hpIndex = allMoves.bestHpMoves[0];
-		console.log(allMoves)
 		if(enemy.items[hpIndex]?.healV * currentLevel.enemyRounds + enemy.hp > maxPlDmg) return hpIndex
 	} return allMoves.bestDmgMoves[0];
 }
@@ -578,7 +574,7 @@ window.addEventListener("keydown", e => {
 	if(e.code.startsWith("Digit") || e.code.startsWith("Numpad")) {
 		const keyNumber = +e.code.replace("Digit", "").replace("Numpad", "");
 
-		if(keyNumber > 0 && keyNumber < 6) player.currentSlot = "slot" + keyNumber;
+		if(keyNumber > 0 && keyNumber < 6) player.currentSlot = "hotbarSlot" + keyNumber;
 		updatePlayersHotbar();
 	}
 });
@@ -587,7 +583,7 @@ function updatePlayersHotbar() {
 	const hotbarSlots = document.querySelectorAll("#figtingScreen .playerBox .centerContainer .slot");
 
 	hotbarSlots.forEach((slot, index) => {
-		const slotName = "slot" + (index + 1);
+		const slotName = "hotbarSlot" + (index + 1);
 		const item = player.hotbar[slotName];
 		const imgSrc = "./images/" + item.image;
 		slot.querySelector("img").src = item.image ? imgSrc : "";
@@ -603,7 +599,7 @@ document.querySelector("#figtingScreen .playerBox .hotbarBox").addEventListener(
 	if(!e.target.classList.contains("slot")) return;
 	const allSlots = document.querySelectorAll("#figtingScreen .playerBox .slot");
 	const index = Array.from(allSlots).indexOf(e.target) + 1;
-	player.currentSlot = "slot" + index;
+	player.currentSlot = "hotbarSlot" + index;
 	updatePlayersHotbar();
 });
 

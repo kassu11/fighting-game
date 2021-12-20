@@ -102,31 +102,25 @@ function Player(arr) {
 	this.effects = arr.effects?.map(effect => new Effect(effect)) || [];
 
 	this.hotbar = {
-		"slot1": {},
-		"slot2": {},
-		"slot3": {},
-		"slot4": {},
-		"slot5": {}
+		"hotbarSlot1": {},
+		"hotbarSlot2": {},
+		"hotbarSlot3": {},
+		"hotbarSlot4": {},
+		"hotbarSlot5": {}
 	};
 
 	this.armor = {
-		head: {},
-		chest: {},
-		legs: {},
+		armorhead: {},
+		armorchest: {},
+		armorlegs: {},
 	}
-
-	// for(const [slot, item] of Object.entries(arr?.armor ?? {})) {
-	// 	if(item?.id) this.armor[slot] = new Item(item); 
-	// }
 
 	this.inventory = arr.inventory?.map(item => {
 		const nItem = new Item(item, this);
 		const slot = nItem.slot ?? "";
 		if(slot) {
-			if(slot.startsWith("hotbarSlot")) this.hotbar["slot" + slot.substr(10)] = nItem;
-			else if(slot === "headSlot") this.armor["head"] = nItem;
-			else if(slot === "chestSlot") this.armor["chest"] = nItem;
-			else if(slot === "legsSlot") this.armor["legs"] = nItem;
+			if(slot.startsWith("hotbarSlot")) this.hotbar[slot] = nItem;
+			else if(slot.startsWith("armor")) this.armor[slot] = nItem;
 		}
 		return nItem;
 	}) ?? [];
@@ -156,10 +150,8 @@ function Player(arr) {
 		if(!item) return;
 		if(item.amount) item.amount -= amount;
 		if(!item.amount || item.amount <= 0) {
-			if(item.slot?.startsWith("hotbarSlot")) this.hotbar[`slot${item.slot.substr(10)}`] = {};
-			else if(item.slot === "headSlot") this.armor.head = {}
-			else if(item.slot === "chestSlot") this.armor.chest = {}
-			else if(item.slot === "legsSlot") this.armor.legs = {}
+			if(item.slot?.startsWith("hotbarSlot")) this.hotbar[item.slot] = {};
+			else if(item.slot?.startsWith("armor")) this.armor[item.slot] = {};
 			this.inventory.splice(index, 1);
 		}
 

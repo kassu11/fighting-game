@@ -273,7 +273,7 @@ function Item(item, user) {
 	this.particle = base.particle;
 	this.slot = item.slot;
 	this.amount = item.amount ?? base.amount;
-	this.canEquipTo = base.canEquipTo ?? "hotbar";
+	this.canEquipTo = base.canEquipTo ?? "hotbar"; // hotbar, armorhead, armorchest, armorlegs
 
 	this.useAmmoType = base.useAmmoType;
 	this.ammoType = base.ammoType;

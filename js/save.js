@@ -12,7 +12,7 @@ var items = {
 		name: "Helmet",
 		tags: ["armor", "helmet"],
 		image: "helmet.png",
-		canEquipTo: "head",
+		canEquipTo: "armorhead",
 		healthBoostValue: 50,
 		craftingRecipes: [
 			{
@@ -45,6 +45,22 @@ var items = {
 			}
 		]
 	},
+	haarniska: {
+		id: "haarniska",
+		name: "Helmet",
+		tags: ["armor", "chestplate"],
+		image: "iron-chestplate.png",
+		canEquipTo: "armorchest",
+		healthBoostValue: 50,
+	},
+	jalat: {
+		id: "jalat",
+		name: "Helmet",
+		tags: ["armor", "chestplate"],
+		image: "iron-leggins.png",
+		canEquipTo: "armorlegs",
+		healthBoostValue: 50,
+	},
 };
 
 var enemies = {
@@ -68,8 +84,11 @@ var player = {
 		{...items["miekka"], slot: "hotbarSlot1"},
 		{...items["miekka"], slot: "hotbarSlot2"},
 		{id: "helmet"},
+		{id: "haarniska"},
+		{id: "haarniska"},
+		{id: "jalat"},
 	],
-	currentSlot: "slot1",
+	currentSlot: "hotbarSlot1",
 };
 
 function printPlayer() {
