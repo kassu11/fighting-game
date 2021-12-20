@@ -165,7 +165,7 @@ if(typeof items === "undefined") var items = {
 		id: "chestplate",
 		name: "Panssari",
 		tags: ["armor", "chestplate"],
-		image: "basechest3.png",
+		image: "iron-chestplate.png",
 		canEquipTo: "chest",
 		healthBoostValue: 50,
 		craftingRecipes: [
@@ -180,7 +180,7 @@ if(typeof items === "undefined") var items = {
 		id: "legs",
 		name: "Jalat",
 		tags: ["armor", "leggings"],
-		image: "baselegs3.png",
+		image: "iron-leggins.png",
 		canEquipTo: "legs",
 		healthBoostValue: 50,
 		craftingRecipes: [

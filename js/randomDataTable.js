@@ -2,7 +2,7 @@
 //   armorflge13: {
 //     id: "armorflge13",
 //     name: "Armor flge13",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 7,
@@ -46,7 +46,7 @@
 //   armorkrf16n: {
 //     id: "armorkrf16n",
 //     name: "Armor krf16n",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defencePercentage: 9,
@@ -63,7 +63,7 @@
 //   armoralf3q7: {
 //     id: "armoralf3q7",
 //     name: "Armor alf3q7",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 13,
@@ -86,7 +86,7 @@
 //   armor5pq1sn: {
 //     id: "armor5pq1sn",
 //     name: "Armor 5pq1sn",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 24,
@@ -104,7 +104,7 @@
 //   armor5jecf3: {
 //     id: "armor5jecf3",
 //     name: "Armor 5jecf3",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 2,
@@ -140,7 +140,7 @@
 //   armor15ag0gs: {
 //     id: "armor15ag0gs",
 //     name: "Armor 15ag0gs",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 14,
@@ -159,7 +159,7 @@
 //   armorlov0vt: {
 //     id: "armorlov0vt",
 //     name: "Armor lov0vt",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     healthBoostValue: 11,
@@ -177,7 +177,7 @@
 //   armor539q2j: {
 //     id: "armor539q2j",
 //     name: "Armor 539q2j",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 5,
@@ -201,7 +201,7 @@
 //   armor4sgss0: {
 //     id: "armor4sgss0",
 //     name: "Armor 4sgss0",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     defenceValue: 3,
@@ -224,7 +224,7 @@
 //   armor13fdl97: {
 //     id: "armor13fdl97",
 //     name: "Armor 13fdl97",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 8,
@@ -248,7 +248,7 @@
 //   armor87bj2m: {
 //     id: "armor87bj2m",
 //     name: "Armor 87bj2m",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     healthBoostValue: 20,
@@ -271,7 +271,7 @@
 //   armorti61np: {
 //     id: "armorti61np",
 //     name: "Armor ti61np",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 17,
@@ -288,7 +288,7 @@
 //   armor6rjhae: {
 //     id: "armor6rjhae",
 //     name: "Armor 6rjhae",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     defenceValue: 4,
@@ -307,7 +307,7 @@
 //   armor7gbsa3: {
 //     id: "armor7gbsa3",
 //     name: "Armor 7gbsa3",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 11,
@@ -348,7 +348,7 @@
 //   armorkerrpa: {
 //     id: "armorkerrpa",
 //     name: "Armor kerrpa",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 11,
@@ -366,7 +366,7 @@
 //   armor1o4hv84: {
 //     id: "armor1o4hv84",
 //     name: "Armor 1o4hv84",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 4,
@@ -385,7 +385,7 @@
 //   armorrvmgv0: {
 //     id: "armorrvmgv0",
 //     name: "Armor rvmgv0",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 5,
@@ -403,7 +403,7 @@
 //   armor84vgkg: {
 //     id: "armor84vgkg",
 //     name: "Armor 84vgkg",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 44,
@@ -423,7 +423,7 @@
 //   armor5b14ca: {
 //     id: "armor5b14ca",
 //     name: "Armor 5b14ca",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defencePercentage: 6,
@@ -440,7 +440,7 @@
 //   armordapcvs: {
 //     id: "armordapcvs",
 //     name: "Armor dapcvs",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     defencePercentage: 9,
@@ -478,7 +478,7 @@
 //   armorfb86bg: {
 //     id: "armorfb86bg",
 //     name: "Armor fb86bg",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     defencePercentage: 9,
@@ -494,7 +494,7 @@
 //   armor64ct9n: {
 //     id: "armor64ct9n",
 //     name: "Armor 64ct9n",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 4,
@@ -518,7 +518,7 @@
 //   armor1so75op: {
 //     id: "armor1so75op",
 //     name: "Armor 1so75op",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     healthBoostValue: 23,
@@ -537,7 +537,7 @@
 //   armor6jk7j2: {
 //     id: "armor6jk7j2",
 //     name: "Armor 6jk7j2",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     healthBoostValue: 11,
@@ -555,7 +555,7 @@
 //   armor64ubf3: {
 //     id: "armor64ubf3",
 //     name: "Armor 64ubf3",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     healthBoostValue: 13,
@@ -580,7 +580,7 @@
 //   armord2e60q: {
 //     id: "armord2e60q",
 //     name: "Armor d2e60q",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 29,
@@ -599,7 +599,7 @@
 //   armor5q9leb: {
 //     id: "armor5q9leb",
 //     name: "Armor 5q9leb",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 19,
@@ -618,7 +618,7 @@
 //   armor5ambmj: {
 //     id: "armor5ambmj",
 //     name: "Armor 5ambmj",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 23,
@@ -638,7 +638,7 @@
 //   armor16f7lla: {
 //     id: "armor16f7lla",
 //     name: "Armor 16f7lla",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 24,
@@ -672,7 +672,7 @@
 //   armor2vl6d59: {
 //     id: "armor2vl6d59",
 //     name: "Armor 2vl6d59",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defencePercentage: 5,
@@ -689,7 +689,7 @@
 //   armorj9q00p: {
 //     id: "armorj9q00p",
 //     name: "Armor j9q00p",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 3,
@@ -712,7 +712,7 @@
 //   armorecu545: {
 //     id: "armorecu545",
 //     name: "Armor ecu545",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 21,
@@ -769,7 +769,7 @@
 //   armor2g7p1urd: {
 //     id: "armor2g7p1urd",
 //     name: "Armor 2g7p1urd",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 5,
@@ -793,7 +793,7 @@
 //   armor1itl1jp: {
 //     id: "armor1itl1jp",
 //     name: "Armor 1itl1jp",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defencePercentage: 7,
@@ -809,7 +809,7 @@
 //   armord1dutf: {
 //     id: "armord1dutf",
 //     name: "Armor d1dutf",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 5,
@@ -829,7 +829,7 @@
 //   armor5oovfc: {
 //     id: "armor5oovfc",
 //     name: "Armor 5oovfc",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defencePercentage: 15,
@@ -846,7 +846,7 @@
 //   armor57gcbm: {
 //     id: "armor57gcbm",
 //     name: "Armor 57gcbm",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     defenceValue: 5,
@@ -892,7 +892,7 @@
 //   armor8n5v7v: {
 //     id: "armor8n5v7v",
 //     name: "Armor 8n5v7v",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 14,
@@ -912,7 +912,7 @@
 //   armorcu75u1: {
 //     id: "armorcu75u1",
 //     name: "Armor cu75u1",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 4,
@@ -947,7 +947,7 @@
 //   armor7f8glc: {
 //     id: "armor7f8glc",
 //     name: "Armor 7f8glc",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     defenceValue: 4,
@@ -992,7 +992,7 @@
 //   armor5dcgcc: {
 //     id: "armor5dcgcc",
 //     name: "Armor 5dcgcc",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 22,
@@ -1013,7 +1013,7 @@
 //   armor12donf5: {
 //     id: "armor12donf5",
 //     name: "Armor 12donf5",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 25,
@@ -1029,7 +1029,7 @@
 //   armor4v21fe: {
 //     id: "armor4v21fe",
 //     name: "Armor 4v21fe",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defencePercentage: 18,
@@ -1046,7 +1046,7 @@
 //   armor11s5ja70: {
 //     id: "armor11s5ja70",
 //     name: "Armor 11s5ja70",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 13,
@@ -1090,7 +1090,7 @@
 //   armorbs1auv: {
 //     id: "armorbs1auv",
 //     name: "Armor bs1auv",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 5,
@@ -1148,7 +1148,7 @@
 //   armor5eibf5: {
 //     id: "armor5eibf5",
 //     name: "Armor 5eibf5",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     defenceValue: 8,
@@ -1166,7 +1166,7 @@
 //   armor1an2o2g: {
 //     id: "armor1an2o2g",
 //     name: "Armor 1an2o2g",
-//     image: "basechest3.png",
+//     image: "iron-chestplate.png",
 //     canEquipTo: "chest",
 //     tags: ["armor", "chestplate"],
 //     healthBoostValue: 26,
@@ -1202,7 +1202,7 @@
 //   armor5otscj: {
 //     id: "armor5otscj",
 //     name: "Armor 5otscj",
-//     image: "baselegs3.png",
+//     image: "iron-leggins.png",
 //     canEquipTo: "legs",
 //     tags: ["armor", "leggings"],
 //     healthBoostValue: 17,

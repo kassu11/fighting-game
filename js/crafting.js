@@ -4,7 +4,7 @@ const allCraftableItems = Object.values(items).filter(item => item.craftingRecip
 let lastOpenedCraftingRecipe = {height: 0, key: null}; // clears value after transition is over
 const craftingValues = {
 	gridItems: allCraftableItems,
-	sortOrder: "",
+	sortOrder: "Craftable",
 	removeFilter: [],
 	addFilter: [],
 	selectedResipe: "",
@@ -85,7 +85,7 @@ function generateCraftingItemsList(array) {
 		craftingValues.gridItems.sort((v1, v2) => {
 			const craftable1 = ManyTimesCanCraft(v1);
 			const craftable2 = ManyTimesCanCraft(v2);
-			if(craftable1 == craftable2) return v1.name > v2.name ? 1 : -1;
+			if(craftable1 == craftable2) return v1.index - v2.index;
 			if(craftable1 == 0 || craftable2 == 0) return craftable1 < craftable2 ? 1 : -1;
 			return craftable1 < craftable2 ? sortA : sortB;
 		});
@@ -390,42 +390,19 @@ function craftWithSearch() {
 		} else searchName.push(splitWithTags[i])
 	}
 
-	const perfectSearch = []; // Name and tags are identical
 	const strictSearch = []; // indexOf whole name and all tags startWith
-	const mediumSearch = []; // indexOf all words from name (not duplicate) and all tags indexOf
-	const easySearch = [];   // indexOf any word and any tag
-
 	const filteredVersionOfitems = listOfAllItemsUsedForCrafting;
 
 	if(search.length == 0 || search == "#") return generateWhatCanCraftList(filteredVersionOfitems);
 	else filteredVersionOfitems.forEach(item => {
 		const itemName = item.name.toLowerCase();
-
-		if(itemName === searchName.join(" ")) {
-			const tagNotFound = searchTags.find(tag => item.tags.find(itag => itag.indexOf(tag) !== -1) == null);
-			if(!tagNotFound) return perfectSearch.push(item);
-		} if(perfectSearch.length === 0 && itemName.indexOf(searchName.join(" ")) !== -1) { // Strict
+		
+		if(itemName.indexOf(searchName.join(" ")) !== -1) {
 			const tagNotFound = !searchTags.find(tag => item.tags.find(itag => itag.startsWith(tag)) == null);
 			if(tagNotFound || searchTags.length == 0) return strictSearch.push(item);
-		} if(strictSearch.length == 0) { // Medium
-			let newItemName = itemName;
-			const tagNotFound = searchTags.find(tag => item.tags.find(itag => itag.indexOf(tag) !== -1) == null);
-			const nameNotFound = searchName.find(name => {
-				const length = newItemName.length;
-				newItemName = newItemName.replace(name, "");
-				return newItemName.length === length;
-			}); if(!(nameNotFound || tagNotFound)) return mediumSearch.push(item);
-		} if(mediumSearch.length == 0) { // Easy
-			const findName = searchName.length == 0 ? true : searchName.find(name => itemName.indexOf(name) !== -1);
-			const findTag = searchTags.length == 0 ? true : searchTags.find(tag => item.tags.find(itag => itag.indexOf(tag) !== -1));
-			if(findTag && findName) return easySearch.push(item);
 		}
 	});
-
-	if(perfectSearch.length) generateWhatCanCraftList(perfectSearch);
-	else if(strictSearch.length) generateWhatCanCraftList(strictSearch);
-	else if(mediumSearch.length) generateWhatCanCraftList(mediumSearch);
-	else if(easySearch.length) generateWhatCanCraftList(easySearch);
+	generateWhatCanCraftList(strictSearch);
 };
 
 const whatCanCraftButton = itemsMenu.querySelector(".whatCanCraftContainer");
@@ -545,7 +522,7 @@ function appendRecipeElement(parent, item) {
 		const img = element("img").setSrc(`./images/${item.image}`);
 		const items = element("div").setClass("items");
 
-		if(row.craftingAmount > 2 || item.amount) craftingButton.append(img, element("p").setText(row.craftingAmount).setClass("itemAmount"));
+		if(row.craftingAmount > 1 || item.amount) craftingButton.append(img, element("p").setText(row.craftingAmount).setClass("itemAmount"));
 		else craftingButton.append(img);
 		rowElement.append(craftingButton, items);
 
@@ -631,7 +608,7 @@ function craftItem(item, recipe) {
 	const slotItems = [...Object.values(player.hotbar), ...Object.values(player.armor)]
 	const recipeItems = recipe.items.map(row => {
 		const total = slotItems.reduce((acc, item) => {
-			if(item.id === row.item) acc += item.amount;
+			if(item.id === row.item) acc += item.amount ?? 1;
 			return acc;
 		}, 0);
 
@@ -644,14 +621,14 @@ function craftItem(item, recipe) {
 		for(let j = 0; j < recipeItems.length; j++) {
 			const recipeRow = recipeItems[j];
 			if(item.id === recipeRow.item) {
-				if(item.slot && recipeRow.takeFromSlot === 0) continue;
+				if(item.slot && recipeRow.takeFromSlot <= 0) continue;
 				if(item.amount) {
 					if(item.slot && recipeRow.takeFromSlot > 0) recipeRow.takeFromSlot -= recipeRow.amount;
 					player.takeItem(i, recipeRow.amount)
 					recipeItems.splice(j, 1);
-				} else if(--recipeRow.amount === 0) {
-					recipeItems.splice(j, 1);
+				} else {
 					player.takeItem(i, 1);
+					if(--recipeRow.amount == 0) recipeItems.splice(j, 1);
 					if(item.slot && recipeRow.takeFromSlot > 0) recipeRow.takeFromSlot -= 1;
 				}
 

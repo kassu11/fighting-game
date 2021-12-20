@@ -50,7 +50,7 @@ function levelElement(id) {
 	const levelData = levels[id];
 	const levelButton = element("div").setClass("levelButton").setID(id);
 	const buttonContainer = element("div").setClass("levelButtonContainer");
-	const levelNum = element("p").setText(`${random(1, 99)}`.padStart(2, "0")).setClass("num");
+	const levelNum = element("p").setText(`${levelData.num}`.padStart(2, "0")).setClass("num");
 	const levelName = element("p").setText(id).setClass("name");
 	const infoText = element("p").setText("?").setClass("infoText");
 	const playButton = element("div").setClass("play");
