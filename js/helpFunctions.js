@@ -71,17 +71,13 @@ function emmet(syn) {
 	} return base;
 }
 
-
-window.addEventListener("keyup", e => {
-	if(e.code === "BracketLeft") debugger;
-})
-
 function print() {
 	let text = "{";
 
 	Object.entries(levels).forEach(([key, v], i) => {
 		text += `${i === 0 ? "" : ","}
-	${key}: {
+	"${key}": {
+		num: ${v.num},
 		enemies: ["${v.enemies.join(`", "`)}"],
 		cords: {y: ${v.cords?.y ?? 0}, x: ${v.cords?.x ?? 0}}
 	}`

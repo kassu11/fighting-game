@@ -35,6 +35,12 @@ function AddBattleParciles({x, y, dmg, bullet} = {}, type, target) {
 			p.style.transform = `translateX(-50%) rotate(${random(-20, 20)}deg)`;
 		}, 20);
 		removeElement(p, 2000);
+	} else if(type == "stab") {
+		const div = element("div").setClass("stab");
+		div.style.left = x + "px";
+		div.style.top = y + "px";
+		removeElement(div, 2000);
+		box.append(div);
 	} else if(bullet) {
 		const [div] = emmet("div.bulletContainer>img");
 		div.querySelector("img").src = "./images/" + bullet.image;

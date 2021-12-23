@@ -51,7 +51,7 @@ function levelElement(id) {
 	const levelButton = element("div").setClass("levelButton").setID(id);
 	const buttonContainer = element("div").setClass("levelButtonContainer");
 	const levelNum = element("p").setText(`${levelData.num}`.padStart(2, "0")).setClass("num");
-	const levelName = element("p").setText(id).setClass("name");
+	const levelName = element("p").setText(levelData.name ?? "").setClass("name");
 	const infoText = element("p").setText("?").setClass("infoText");
 	const playButton = element("div").setClass("play");
 	const infoButton = element("div").setClass("info");
@@ -211,13 +211,4 @@ function centerLevelMap(id, animation = true) {
 
 }
 
-centerLevelMap("level_t2aute", false)
-
-window.addEventListener("keydown", e => {
-	if(e.code === "Tab") {
-		e.preventDefault();
-		const buttons = levelButtons.querySelectorAll(".levelButton");
-		centerLevelMap(buttons[random(buttons.length - 1)].id, true);
-	}
-	// console.log(e);
-})
+centerLevelMap("level_1", false)

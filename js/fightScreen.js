@@ -570,15 +570,6 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
 	return bestResults
 }
 
-window.addEventListener("keydown", e => {
-	if(e.code.startsWith("Digit") || e.code.startsWith("Numpad")) {
-		const keyNumber = +e.code.replace("Digit", "").replace("Numpad", "");
-
-		if(keyNumber > 0 && keyNumber < 6) player.currentSlot = "hotbarSlot" + keyNumber;
-		updatePlayersHotbar();
-	}
-});
-
 function updatePlayersHotbar() {
 	const hotbarSlots = document.querySelectorAll("#figtingScreen .playerBox .centerContainer .slot");
 

@@ -89,6 +89,18 @@
 			text-shadow: 0 0 9px #15ff00d9, 5px 5px #005400, 5px 5px 9px #00ff0d96;
 		}
 
+		.stab {
+			--width: -416px;
+			height: 32px;
+			width: 32px;
+			background: url("../images/testi-stab.png") no-repeat;
+			opacity: .9;
+			transform: scale(5) translateX(-8%) translateY(-5%);
+			image-rendering: pixelated;
+			image-rendering: optimizeSpeed;
+			animation: playFrames .2s steps(13) forwards;
+		}
+
 		.bulletContainer {
 			--distance: 350px;
 			--rotate: 0deg;

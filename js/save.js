@@ -1,13 +1,91 @@
 var levels = {
-	"The beginning": {
+	"level_1": {
 		num: 1,
+		name: "The beginning",
 		enemies: ["weak_skeleton"],
-		cords: {y: -1868, x: -1613}
-	}
+		cords: {y: -933, x: -4167}
+	},
+	"level_2": {
+		num: 2,
+		name: "First challenge",
+		enemies: ["normal_skeleton"],
+		cords: {y: -867, x: -3886}
+	},
+	"level_3": {
+		num: 3,
+		name: "More then one?",
+		enemies: ["strong_skeleton"],
+		cords: {y: -633, x: -4061}
+	},
 }
 
 var items = {
-	helmet: {
+	"wooden_dagger": {
+		id: "wooden_dagger",
+		name: "Wooden dagger",
+		tags: ["weapon", "dagger"],
+		minMeleDmg: 2,
+		maxMeleDmg: 3,
+		useTime: 1,
+		particle: "stab",
+		image: "wooden-dagger.png",
+	},
+	"weak_monster_core": {
+		id: "weak_monster_core",
+		name: "Weak monster core",
+		tags: ["material", "core"],
+		image: "weak_monster_core.png",
+		amount: 1,
+	},
+	"sharp_bone": {
+		id: "sharp_bone",
+		name: "Sharp fractured bone",
+		tags: ["material"],
+		image: "sharp_bone.png",
+		amount: 1,
+		craftingRecipes: [
+			{
+				items: [
+					{item: "shattered_bones", amount: 5},
+				],
+				craftingAmount: 1
+			}
+		]
+	},
+	"shattered_bones": {
+		id: "shattered_bones",
+		name: "Shattered bones",
+		tags: ["material"],
+		image: "shattered_bone.png",
+		amount: 1,
+	},
+	"skeleton_skull": {
+		id: "skeleton_skull",
+		name: "Skeleton skull",
+		tags: ["material"],
+		image: "skeleton_skull.png",
+		amount: 1,
+	},
+	"bone_sword": {
+		id: "bone_sword",
+		name: "Bone sword",
+		minMeleDmg: 4,
+		maxMeleDmg: 5,
+		useTime: 1,
+		tags: ["weapon", "sword"],
+		image: "bone_sword.png",
+		craftingRecipes: [
+			{
+				items: [
+					{item: "wooden_dagger", amount: 1},
+					{item: "sharp_bone", amount: 3},
+					{item: "shattered_bones", amount: 1},
+				],
+				craftingAmount: 1
+			}
+		]
+	},
+	"helmet": {
 		id: "helmet",
 		name: "Helmet",
 		tags: ["armor", "helmet"],
@@ -18,7 +96,7 @@ var items = {
 			{
 				items: [
 					{
-						item: "miekka",
+						item: "weak_monster_core",
 						amount: 5
 					}
 				],
@@ -26,7 +104,7 @@ var items = {
 			}
 		]
 	},
-	miekka: {
+	"miekka": {
 		id: "miekka",
 		name: "Wooden sword",
 		tags: ["weapon", "sword"],
@@ -45,7 +123,7 @@ var items = {
 			}
 		]
 	},
-	haarniska: {
+	"haarniska": {
 		id: "haarniska",
 		name: "Helmet",
 		tags: ["armor", "chestplate"],
@@ -53,7 +131,7 @@ var items = {
 		canEquipTo: "armorchest",
 		healthBoostValue: 50,
 	},
-	jalat: {
+	"jalat": {
 		id: "jalat",
 		name: "Helmet",
 		tags: ["armor", "chestplate"],
@@ -66,34 +144,57 @@ var items = {
 var enemies = {
 	"weak_skeleton": {
 		id: "weak_skeleton",
+		maxHp: 10,
+		maxMp: 30,
+		items: [
+			{...items["wooden_dagger"]},
+		],
+		drops: [
+			{
+				"type": "one",
+				"chance": 100,
+				"items": [
+					{"item": items["sharp_bone"], "amount": [1, 3], "chance": 40},
+					{"item": items["shattered_bones"],"amount": [2, 5], "chance": 60},
+				]
+			},
+		],
+		img: "weak-skeleton.png"
+	},
+	"normal_skeleton": {
+		id: "normal_skeleton",
+		maxHp: 20,
+		maxMp: 45,
+		items: [
+			{...items["wooden_dagger"]},
+		],
+		img: "skeleton.png"
+	},
+	"strong_skeleton": {
+		id: "strong_skeleton",
 		maxHp: 31,
 		maxMp: 30,
 		items: [
 			{...items["miekka"]},
 		],
-		img: "skeleton.png"
+		img: "strong-skeleton.png"
 	},
 };
 
 var player = {
-	hp: 25,
-	mp: 45,
-	maxHp: 25,
+	maxHp: 15,
 	maxMp: 45,
 	inventory: [
-		{...items["miekka"], slot: "hotbarSlot1"},
-		{...items["miekka"], slot: "hotbarSlot2"},
-		{id: "helmet"},
-		{id: "haarniska"},
-		{id: "haarniska"},
-		{id: "jalat"},
+		// {...items["miekka"], slot: "hotbarSlot1"},
+		// {...items["miekka"], slot: "hotbarSlot2"},
+		{...items["wooden_dagger"], slot: "hotbarSlot1"},
 	],
 	currentSlot: "hotbarSlot1",
 };
 
 function printPlayer() {
 	console.log(JSON.stringify(player, (key, value) => {
-		if(key === "armor" || key === "hotbar" || key == "totalItemCounts") return undefined;
+		if(key === "armor" || key === "hotbar" || key == "totalItemCounts" || key == "effects") return undefined;
 		if(key === "inventory") return value.map(({id, slot, amount}) => {
 			if(amount == null && slot == null) return `{id: '${id}'}`;
 			return `{id: '${id}'${amount != null ? `, amount: ${amount}` : ''}${slot != null ? `, slot: '${slot}'` : ''}}`;

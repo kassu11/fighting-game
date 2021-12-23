@@ -156,6 +156,7 @@ function Player(arr) {
 		}
 
 		this.totalItemCounts[item.id] = Math.max(this.totalItemCounts[item.id] - (amount ?? 1), 0);
+		if(this.totalItemCounts[item.id] === 0) delete this.totalItemCounts[item.id];
 	}
 }
 
