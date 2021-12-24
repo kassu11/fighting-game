@@ -14,7 +14,7 @@ var levels = {
 	"level_3": {
 		num: 3,
 		name: "More then one?",
-		enemies: ["strong_skeleton"],
+		enemies: ["weak_skeleton", "weak_skeleton"],
 		cords: {y: -633, x: -4061}
 	},
 }
@@ -59,12 +59,35 @@ var items = {
 		image: "shattered_bone.png",
 		amount: 1,
 	},
+	"bone": {
+		id: "bone",
+		name: "Bone",
+		tags: ["material"],
+		image: "bone.png",
+		amount: 1,
+	},
 	"skeleton_skull": {
 		id: "skeleton_skull",
 		name: "Skeleton skull",
 		tags: ["material"],
 		image: "skeleton_skull.png",
 		amount: 1,
+	},
+	"skeleton_skull_helmet": {
+		id: "skeleton_skull_helmet",
+		name: "Skeleton skull helmet",
+		tags: ["armor", "helmet"],
+		image: "skeleton_skull_helmet.png",
+		canEquipTo: "armorhead",
+		healthBoostValue: 5,
+		craftingRecipes: [
+			{
+				items: [
+					{item: "skeleton_skull", amount: 1},
+				],
+				craftingAmount: 1
+			}
+		]
 	},
 	"bone_sword": {
 		id: "bone_sword",
@@ -80,6 +103,27 @@ var items = {
 					{item: "wooden_dagger", amount: 1},
 					{item: "sharp_bone", amount: 3},
 					{item: "shattered_bones", amount: 1},
+				],
+				craftingAmount: 1
+			}
+		]
+	},
+	"skeleton_skull_staff": {
+		id: "skeleton_skull_staff",
+		name: "Skeleton skull staff",
+		minMeleDmg: 9,
+		maxMeleDmg: 12,
+		useTime: 2,
+		mana: 10,
+		tags: ["weapon", "mana"],
+		image: "skeleton_skull_staff.png",
+		craftingRecipes: [
+			{
+				items: [
+					{item: "skeleton_skull", amount: 1},
+					{item: "weak_monster_core", amount: 1},
+					{item: "bone", amount: 1},
+					{item: "shattered_bones", amount: 10},
 				],
 				craftingAmount: 1
 			}
@@ -146,6 +190,7 @@ var enemies = {
 		id: "weak_skeleton",
 		maxHp: 10,
 		maxMp: 30,
+		img: "weak-skeleton.png",
 		items: [
 			{...items["wooden_dagger"]},
 		],
@@ -159,31 +204,41 @@ var enemies = {
 				]
 			},
 		],
-		img: "weak-skeleton.png"
 	},
 	"normal_skeleton": {
 		id: "normal_skeleton",
 		maxHp: 20,
 		maxMp: 45,
+		img: "skeleton.png",
 		items: [
 			{...items["wooden_dagger"]},
 		],
-		img: "skeleton.png"
+		drops: [
+			{
+				"type": "one",
+				"chance": 90,
+				"items": [
+					{"item": items["bone"], "amount": [1, 4], "chance": 80},
+					{"item": items["skeleton_skull"], "amount": [1], "chance": 20},
+				]
+			},
+			{"item": items["weak_monster_core"], "amount": [1], "chance": 10},
+		],
 	},
 	"strong_skeleton": {
 		id: "strong_skeleton",
 		maxHp: 31,
 		maxMp: 30,
+		img: "strong-skeleton.png",
 		items: [
 			{...items["miekka"]},
 		],
-		img: "strong-skeleton.png"
 	},
 };
 
 var player = {
 	maxHp: 15,
-	maxMp: 45,
+	maxMp: 25,
 	inventory: [
 		// {...items["miekka"], slot: "hotbarSlot1"},
 		// {...items["miekka"], slot: "hotbarSlot2"},

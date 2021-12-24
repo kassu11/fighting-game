@@ -64,7 +64,7 @@ function updateItemsMenuHotbar() {
 	}
 
 	hotbarBox.querySelectorAll(".slot").forEach((elem, i) => {
-		const item = player.hotbar["slot" + (i + 1)] ?? {};
+		const item = player.hotbar["hotbarSlot" + (i + 1)] ?? {};
 		if(item.id) addHover(elem, item?.hoverText?.() ?? "", []);
 	});
 }
@@ -195,6 +195,7 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 		debugDiv.append(debugText);
 		container.append(debugDiv);
 		debugDiv.onclick = () => {
+			player.takeItem(index, item.amount ?? 1);
 			player.inventory.splice(index, 1);
 			generateItemsOnGrid(player.inventory);
 			container.innerHTML = "";
