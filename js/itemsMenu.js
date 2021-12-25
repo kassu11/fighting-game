@@ -3,6 +3,7 @@ const itemsMenuHoverOpacitys = [];
 let itemsMenuArray = [];
 
 function generateItemsOnGrid(items) {
+	player.updateArmorStats();
 	const armorSlotNames = ["head", "chest", "legs"];
 	itemsMenuArray = items;
 	if(!Array.isArray(items)) return;
@@ -160,8 +161,6 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 		const div = document.createElement("div");
 		div.classList.add("equipHotbar");
 
-		console.log(item.canEquipTo, item.slot)
-
 		if(item.slot == `${item.canEquipTo}`) {
 			div.classList.add("remove");
 			div.innerHTML = `<p class="slotText">Unequip ${item.name ?? ""}</p>`
@@ -221,7 +220,6 @@ function updateItemsArmor() {
 	armorBox.innerHTML = "";
 
 	for(const [key, item] of Object.entries(player.armor)) {
-		console.log(key, item)
 		const div = element("div").setClass(`armorSlot ${key}${item.id ? "" : " empty"}`);
 		const img = element("img").setSrc("./images/" + key + ".png");
 		if(item.image) img.setSrc("./images/" + item.image);

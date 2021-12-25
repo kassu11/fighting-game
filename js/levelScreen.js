@@ -20,30 +20,6 @@ for(const [key, value] of Object.entries(levels)) {
 		wikiGenerateLevel(key);
 		document.body.classList = "wikiMenu"
 	};
-
-	// const info = document.createElement("div");
-	// levelElem.querySelector(".info").addEventListener("click", e => {
-	// 	e.stopPropagation();
-	// 	levelMenu.querySelector(".levelInfoScreen").style.display = null;
-		
-	// 	levelMenu.querySelector(".levelInfoScreen .enemyRowContainer").innerHTML = "";
-
-	// 	const enemyRow = value.enemies.map(id => {
-	// 		const [row] = emmet("div.enemyRow>.enemyCard>img^div.dropTree");
-	// 		row.querySelector(".enemyCard>img").src = "./images/" + enemies[id].img;
-	// 		row.querySelector(".dropTree").append(...getEnemyDropTreeElements(id));
-	// 		return row;
-	// 	});
-
-	// 	levelMenu.querySelector(".levelInfoScreen .enemyRowContainer").append(...enemyRow);
-	// });
-	// info.classList.add("info")
-
-	// div.append(info);
-
-	// div.addEventListener("click", e => {
-	// 	startLevel(key);
-	// });
 }
 
 function levelElement(id) {

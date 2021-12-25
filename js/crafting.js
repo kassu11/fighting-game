@@ -1,6 +1,4 @@
 const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes?.length).map((data, i) => new Item({...data, index: i}, player));
-// const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 64
-// const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 4096
 let lastOpenedCraftingRecipe = {height: 0, key: null}; // clears value after transition is over
 const craftingValues = {
 	gridItems: allCraftableItems,
@@ -24,12 +22,25 @@ function generateCraftingItemsList(array) {
 	if(craftingValues.sortOrder == "") craftingValues.gridItems.sort((v1, v2) => v1.index - v2.index);
 	else if(craftingValues.sortOrder.startsWith("Name")) {
 		craftingValues.gridItems.sort((v1, v2) => v1.name > v2.name ? sortA : sortB)
+	} else if(craftingValues.sortOrder.startsWith("Tags")) {
+		craftingValues.gridItems.sort((v1, v2) => {
+			const tag1 = v1.tags.join("");
+			const tag2 = v2.tags.join("");
+			if(tag1 == tag2) return v1.name > v2.name ? 1 : -1;
+			return tag1 > tag2 ? sortA : sortB;
+		});
+	} else if(craftingValues.sortOrder.startsWith("Use_time")) {
+		craftingValues.gridItems.sort((v1, v2) => {
+			const time1 = v1.useTime ?? -1;
+			const time2 = v2.useTime ?? -1;
+			if(time1 == time2) return v1.name > v2.name ? 1 : -1;
+			if(time1 == -1 || time2 == -1) return time1 < time2 ? 1 : -1;
+			return time1 < time2 ? sortA : sortB;
+		});
 	} else if(craftingValues.sortOrder.startsWith("Damage")) {
 		craftingValues.gridItems.sort((v1, v2) => {
-			const data1 = v1.calcDamage();
-			const data2 = v2.calcDamage();
-			const dm1 = (data1.maxMeleDmg + data1.maxRangeDmg) || -1;
-			const dm2 = (data2.maxMeleDmg + data2.maxRangeDmg) || -1;
+			const dm1 = v1.calcDamage().totalMaxDmg() || -1;
+			const dm2 = v2.calcDamage().totalMaxDmg() || -1;
 			if(dm1 == dm2) return v1.name > v2.name ? 1 : -1;
 			if(dm1 == -1 || dm2 == -1) return dm1 < dm2 ? 1 : -1;
 			return dm2 > dm1 ? sortA : sortB;
@@ -66,21 +77,6 @@ function generateCraftingItemsList(array) {
 			if(data1 == -1 || data2 == -1) return data1 < data2 ? 1 : -1;
 			return data1 < data2 ? sortA : sortB;
 		});
-	} else if(craftingValues.sortOrder.startsWith("Tags")) {
-		craftingValues.gridItems.sort((v1, v2) => {
-			const tag1 = v1.tags.join("");
-			const tag2 = v2.tags.join("");
-			if(tag1 == tag2) return v1.name > v2.name ? 1 : -1;
-			return tag1 > tag2 ? sortA : sortB;
-		});
-	} else if(craftingValues.sortOrder.startsWith("Use_time")) {
-		craftingValues.gridItems.sort((v1, v2) => {
-			const time1 = v1.useTime ?? -1;
-			const time2 = v2.useTime ?? -1;
-			if(time1 == time2) return v1.name > v2.name ? 1 : -1;
-			if(time1 == -1 || time2 == -1) return time1 < time2 ? 1 : -1;
-			return time1 < time2 ? sortA : sortB;
-		});
 	} else if(craftingValues.sortOrder.startsWith("Craftable")) {
 		craftingValues.gridItems.sort((v1, v2) => {
 			const craftable1 = ManyTimesCanCraft(v1);
@@ -110,7 +106,10 @@ function filterCraftingItems(array) {
 		return true;
 
 		function filterResults(type) {
-			if(type == "Damage" && (value.maxMeleDmg || value.maxRangeDmg)) return true;
+			if(type == "Melee_damage" && value.maxMeleDmg) return true;
+			if(type == "Range_damage" && value.maxRangeDmg) return true;
+			if(type == "Magic_damage" && value.maxMagicDmg) return true;
+			if(type == "Bullet_damage" && value.maxArrowDmg) return true;
 			if(type == "Defence" && value.defencePercentage) return true;
 			if(type == "Health_boost" && value.healthBoostValue) return true;
 			if(type == "Mana_boost" && value.manaBoostValue) return true;
@@ -197,7 +196,7 @@ sortButton.addEventListener("click", e => {
 			return subMenuContainer.textContent = "";
 		}
 		
-		["Name", "Damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg", "Use_time", "Tags", "Craftable"].forEach(sortTitle => {
+		["Name", "Tags", "Use_time", "Damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg",  "Craftable"].forEach(sortTitle => {
 			const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+div.removeSelection`);
 			subMenuElement.querySelector("p").textContent = sortTitle.replaceAll("_", " ");
 			if(sortTitle == lastName) subMenuElement.classList.add(lastSortState);
@@ -251,7 +250,7 @@ typesButton.addEventListener("click", e => {
 			return subMenuContainer.textContent = "";
 		}
 
-		return ["Damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg", "Healing", "Mana", "Use_time"].forEach(title => {
+		return ["Melee_damage", "Range_damage", "Magic_damage", "Bullet_damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg", "Healing", "Mana", "Use_time"].forEach(title => {
 			const [subMenuElement] = emmet(`.typeValue.${title}>div.directionContainer+p+div.removeSelection`);
 			subMenuElement.querySelector("p").textContent = title.replaceAll("_", " ");
 			if(craftingValues.removeFilter.find(e => e === title)) subMenuElement.classList.add("remove");

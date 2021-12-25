@@ -287,6 +287,7 @@ function saveGameArray(name) {
 function stringifyPlayer() {
 	return JSON.stringify(player, (key, value) => {
 		if(key === "armor" || key === "hotbar" || key == "totalItemCounts" || key == "effects") return undefined;
+		if(key.endsWith("BoostValue") || key.endsWith("BoostPercentage")) return undefined;
 		if(key === "inventory") return value.map(({id, slot, amount}) => {
 			const arr = {id};
 			if(amount) arr.amount = amount;

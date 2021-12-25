@@ -78,6 +78,7 @@ function print() {
 		text += `${i === 0 ? "" : ","}
 	"${key}": {
 		num: ${v.num},
+		name: "${v.name ?? ""}",
 		enemies: ["${v.enemies.join(`", "`)}"],
 		cords: {y: ${v.cords?.y ?? 0}, x: ${v.cords?.x ?? 0}}
 	}`

@@ -158,6 +158,38 @@ function Player(arr) {
 		this.totalItemCounts[item.id] = Math.max(this.totalItemCounts[item.id] - (amount ?? 1), 0);
 		if(this.totalItemCounts[item.id] === 0) delete this.totalItemCounts[item.id];
 	}
+
+	this.armorMeleBoostValue = 0;
+	this.armorMeleBoostPercentage = 1;
+	this.armorRangeBoostValue = 0;
+	this.armorRangeBoostPercentage = 1;
+	this.armorMagicBoostValue = 0;
+	this.armorMagicBoostPercentage = 1;
+	this.armorArrowBoostValue = 0;
+	this.armorArrowBoostPercentage = 1;
+
+	this.updateArmorStats = () => {
+		this.armorMeleBoostValue = 0;
+		this.armorMeleBoostPercentage = 1;
+		this.armorRangeBoostValue = 0;
+		this.armorRangeBoostPercentage = 1;
+		this.armorMagicBoostValue = 0;
+		this.armorMagicBoostPercentage = 1;
+		this.armorArrowBoostValue = 0;
+		this.armorArrowBoostPercentage = 1;
+
+		for(const armor of Object.values(this.armor)) {
+			if(!armor.id) continue;
+			if(armor.meleDmgValue) this.armorMeleBoostValue += armor.meleDmgValue;
+			if(armor.meleDmgPercentage) this.armorMeleBoostPercentage += armor.meleDmgPercentage;
+			if(armor.rangeDmgValue) this.armorRangeBoostValue += armor.rangeDmgValue;
+			if(armor.rangeDmgPercentage) this.armorRangeBoostPercentage += armor.rangeDmgPercentage;
+			if(armor.magicDmgValue) this.armorMagicBoostValue += armor.magicDmgValue;
+			if(armor.magicDmgPercentage) this.armorMagicBoostPercentage += armor.magicDmgPercentage;
+			if(armor.arrowDmgValue) this.armorArrowBoostValue += armor.arrowDmgValue;
+			if(armor.arrowDmgPercentage) this.armorArrowBoostPercentage += armor.arrowDmgPercentage;
+		}
+	}
 }
 
 Player.prototype.effect = effect;

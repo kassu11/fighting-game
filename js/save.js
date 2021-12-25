@@ -1,24 +1,3 @@
-var levels = {
-	"level_1": {
-		num: 1,
-		name: "The beginning",
-		enemies: ["weak_skeleton"],
-		cords: {y: -933, x: -4167}
-	},
-	"level_2": {
-		num: 2,
-		name: "First challenge",
-		enemies: ["normal_skeleton"],
-		cords: {y: -867, x: -3886}
-	},
-	"level_3": {
-		num: 3,
-		name: "More then one?",
-		enemies: ["weak_skeleton", "weak_skeleton"],
-		cords: {y: -633, x: -4061}
-	},
-}
-
 var items = {
 	"wooden_dagger": {
 		id: "wooden_dagger",
@@ -153,6 +132,9 @@ var items = {
 		name: "Wooden sword",
 		tags: ["weapon", "sword"],
 		minMeleDmg: 12,
+		minMagicDmg: 12,
+		minRangeDmg: 12,
+		minArrowDmg: 12,
 		useTime: 2,
 		image: "miekka1.png",
 		craftingRecipes: [
@@ -184,6 +166,43 @@ var items = {
 		healthBoostValue: 50,
 	},
 };
+
+var levels = {
+	"level_1": {
+		num: 1,
+		name: "The beginning",
+		enemies: ["weak_skeleton"],
+		cords: {y: -933, x: -4167}
+	},
+	"level_2": {
+		num: 2,
+		name: "First challenge",
+		enemies: ["normal_skeleton"],
+		cords: {y: -867, x: -3886}
+	},
+	"level_3": {
+		num: 3,
+		name: "More then one?",
+		enemies: ["weak_skeleton", "weak_skeleton"],
+		cords: {y: -633, x: -4061}
+	},
+	"level_4": {
+		num: 4,
+		name: "More then one?",
+		enemies: ["strong_skeleton"],
+		cords: {y: -567, x: -3822},
+		drops: [
+			{
+				"type": "one",
+				"chance": 100,
+				"items": [
+					{"item": items["sharp_bone"], "amount": [1, 3], "chance": 40},
+					{"item": items["shattered_bones"],"amount": [2, 5], "chance": 60},
+				]
+			},
+		],
+	}
+}
 
 var enemies = {
 	"weak_skeleton": {
@@ -240,8 +259,8 @@ var player = {
 	maxHp: 15,
 	maxMp: 25,
 	inventory: [
-		// {...items["miekka"], slot: "hotbarSlot1"},
-		// {...items["miekka"], slot: "hotbarSlot2"},
+		{...items["helmet"], slot: "armorhead"},
+		{...items["miekka"], slot: "hotbarSlot2"},
 		{...items["wooden_dagger"], slot: "hotbarSlot1"},
 	],
 	currentSlot: "hotbarSlot1",
