@@ -231,6 +231,47 @@
 			}
 		}
 
+		.craftingButton {
+			position: absolute;
+			display: block;
+			background: #305130;
+			border: 2px solid #1a321a;
+			bottom: 100%;
+			padding: 5px 10px;
+			left: 0px;
+			color: #a9ffa9;
+			font-weight: 800;
+
+			&:before {
+				content: "";
+				position: absolute;
+				padding: 10px;
+				left: -8px;
+				top: -9px;
+				background: #1a321a;
+				border-radius: 50%;
+			}
+			&:after {
+				content: "!";
+				position: absolute;
+				left: -0.5px;
+				top: -10px;
+				font-size: 17px;
+				font-weight: 900;
+				color: white;
+			}
+
+			&.notEnough {
+				background: #3e1919;
+				border: 2px solid #2b0e0e;
+				color: #ff9797;
+
+				&:before {
+					background: #2b0e0e;
+				}
+			}
+		}
+
 		.craftingTooltip {
 			display: grid;
 			grid-template-columns: 1fr 1fr;

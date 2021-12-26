@@ -1,9 +1,11 @@
 document.querySelector("#craftingMenuButton").addEventListener("click", e => {
+	if(craftingValues.craftingElementsHeight.length == 0) generateCraftingItemsList();
+	else if(itemsMenu.classList.contains("craft") && document.body.classList.contains("itemsMenu")) generateCraftingItemsList();
+	else updateVisibleCraftingItems();
 	itemsMenu.classList = "craft";
 	document.body.classList = "itemsMenu";
 	itemsMenuInventoryResize();
 	generateItemsOnGrid(player.inventory.slice());
-	generateCraftingItemsList();
 });
 document.querySelector("#levelsMenuButton").addEventListener("click", e => {
 	document.body.classList = "levelMenu"

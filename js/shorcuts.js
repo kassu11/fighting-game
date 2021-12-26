@@ -8,7 +8,7 @@ window.addEventListener("keydown", e => {
 		if(document.body.classList.contains("figtingMode")){
 			if(keyNumber > 0 && keyNumber < 6) player.currentSlot = "hotbarSlot" + keyNumber;
 			updatePlayersHotbar();
-		} else if(document.body.classList.contains("settings")) return;
+		} else if(document.body.classList.contains("settings") || document.activeElement === searchBar) return;
 		else if(keyNumber == 1) document.querySelector("#levelsMenuButton").click();
 		else if(keyNumber == 2) document.querySelector("#inventoryButton").click();
 		else if(keyNumber == 3) document.querySelector("#craftingMenuButton").click();

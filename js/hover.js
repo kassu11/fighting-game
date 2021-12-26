@@ -8,7 +8,6 @@ window.addEventListener("mousemove", ({x, y}) => {globalHoverHiiri.x = x; global
 // document.querySelector("popUpDmg").appendChild(luoTextiSyntaxt(testiTaulu[0]));
 
 // addHover(".playerBox .hpBox", ["default", "ctrl\n\n\n\nasdasdasdhasdakjsdh", "alt", "shift"], ["ctrlKey", "altKey", "shiftKey"]);
-// addHover(".playerBox .mpBox", "asdasdasd\nasdasd");
 
 function addHover(target, texts = [], keys = ["default"], logic = "true") {
 	const div = document.createElement("div");

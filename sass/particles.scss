@@ -104,10 +104,11 @@
 		.bulletContainer {
 			--distance: 350px;
 			--rotate: 0deg;
+			--rotateZ: 0deg;
 			position: absolute;
 			width: 100px;
     	height: 100px;
-			transform: rotate(var(--rotate)) translate(calc(var(--distance)), calc(var(--distance)));
+			transform: rotate(var(--rotate)) translate(calc(var(--distance)), calc(var(--distance))) rotateZ(var(--rotateZ));
 			animation-timing-function: ease-in;
 			animation-duration: 1s;
 			animation-name: moveBullet;
@@ -133,19 +134,19 @@
 
 @keyframes moveBullet {
 	0% {
-		transform: rotate(var(--rotate)) translate(var(--distance), var(--distance));
+		transform: rotate(var(--rotate)) translate(var(--distance), var(--distance)) rotateZ(var(--rotateZ));
 	}
 	20%, 50% {
-		transform: rotate(var(--rotate)) translate(0px, 0px);
+		transform: rotate(var(--rotate)) translate(0px, 0px) rotateZ(var(--rotateZ));
 		opacity: 1;
 	}
 
-	20% {transform: rotate(var(--rotate)) translate(7px, 15px)}
-	22% {transform: rotate(var(--rotate)) translate(-4px, 0px)}
-	30% {transform: rotate(var(--rotate)) translate(0px, 0px)}
+	20% {transform: rotate(var(--rotate)) translate(7px, 15px) rotateZ(var(--rotateZ))}
+	22% {transform: rotate(var(--rotate)) translate(-4px, 0px) rotateZ(var(--rotateZ))}
+	30% {transform: rotate(var(--rotate)) translate(0px, 0px) rotateZ(var(--rotateZ))}
 
 	70%, 100% {
 		opacity: 0;
-		transform: rotate(var(--rotate)) translate(0px, 0px);
+		transform: rotate(var(--rotate)) translate(0px, 0px) rotateZ(var(--rotateZ));
 	}
 }

@@ -108,6 +108,60 @@ var items = {
 			}
 		]
 	},
+	"rope": {
+		id: "rope",
+		name: "Rope",
+		amount: 1,
+		tags: ["material"],
+		image: "rope.png",
+	},
+	"bone_bow": {
+		id: "bone_bow",
+		name: "Bone bow",
+		useAmmoType: "arrow",
+		tags: ["weapon", "bow"],
+		image: "bone_bow.png",
+		useTime: 2,
+		minRangeDmg: 6,
+		maxRangeDmg: 7,
+		animationDelay: 200,
+		craftingRecipes: [
+			{
+				items: [
+					{item: "rope", amount: 10},
+					{item: "bone", amount: 3},
+					{item: "shattered_bones", amount: 2},
+				],
+				craftingAmount: 1
+			}
+		]
+	},
+	"bone_arrow": {
+		id: "bone_arrow",
+		name: "Bone arrow",
+		ammoType: "arrow",
+		tags: ["ammo", "arrow"],
+		image: "bone_arrow.png",
+		amount: 1,
+		bulletRotate: 50,
+		isNotUsable: true,
+		minRangeDmg: 3,
+		animationDelay: 200,
+		craftingRecipes: [
+			{
+				items: [
+					{item: "sharp_bone", amount: 3},
+				],
+				craftingAmount: 4
+			},
+			{
+				items: [
+					{item: "bone", amount: 2},
+				],
+				craftingAmount: 5
+			},
+		]
+	},
 	"helmet": {
 		id: "helmet",
 		name: "Helmet",
@@ -184,23 +238,16 @@ var levels = {
 		num: 3,
 		name: "More then one?",
 		enemies: ["weak_skeleton", "weak_skeleton"],
-		cords: {y: -633, x: -4061}
+		cords: {y: -633, x: -4061},
+		drops: [
+			{"item": items["rope"],"amount": [1, 3], "chance": 100},
+		],
 	},
 	"level_4": {
 		num: 4,
 		name: "More then one?",
 		enemies: ["strong_skeleton"],
 		cords: {y: -567, x: -3822},
-		drops: [
-			{
-				"type": "one",
-				"chance": 100,
-				"items": [
-					{"item": items["sharp_bone"], "amount": [1, 3], "chance": 40},
-					{"item": items["shattered_bones"],"amount": [2, 5], "chance": 60},
-				]
-			},
-		],
 	}
 }
 

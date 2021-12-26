@@ -47,6 +47,7 @@ function AddBattleParciles({x, y, dmg, bullet} = {}, type, target) {
 		div.style.left = x + "px";
 		div.style.top = y + "px";
 		div.style.setProperty("--rotate", `${random(0, 360)}deg`);
+		div.style.setProperty("--rotateZ", `${bullet.bulletRotate}deg`);
 		box.append(div);
 		removeElement(div, 1000)
 	}

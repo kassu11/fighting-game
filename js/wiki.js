@@ -182,7 +182,7 @@ function wikiGenerateItemInfo(id) {
 	const itemName = element("p").setClass("name").setText(item.name);
 	const itemTags = element("p").setClass("tags").setText("#" + item.tags.join("# "));
 
-	const enemiesWithItem = enemyDrops[id];
+	const enemiesWithItem = enemyDrops[id] || [];
 	const levelsWithItem = Object.keys(enemiesWithItem.reduce((acc, enemy) => {
 		enemyInLevels[enemy]?.forEach(level => acc[level] = true);
 		return acc;

@@ -251,7 +251,8 @@ if(typeof items === "undefined") var items = {
 		name: "Wooden arrow",
 		ammoType: "arrow",
 		image: "arrow.png",
-		isNotUsable: true, 
+		isNotUsable: true,
+		bulletRotate: 0,
 		amount: 10,
 		minRangeDmg: 6,
 	}
@@ -282,6 +283,7 @@ function Item(item, user) {
 	this.useAmmoType = base.useAmmoType;
 	this.ammoType = base.ammoType;
 	this.isNotUsable = base.isNotUsable;
+	this.bulletRotate = base.bulletRotate ?? 0;
 
 	this.healthBoostValue = base.healthBoostValue;
 	this.manaBoostValue = base.manaBoostValue;

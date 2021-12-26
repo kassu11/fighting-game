@@ -78,7 +78,7 @@ else var player = new Player({
 function Player(arr) {
 	this.hp = arr.hp;
 	this.mp = arr.mp;
-	this.maxHp = arr.maxHp;
+	this.maxHp = 15;
 	this.debug = true;
 	this.maxHpF = () => {
 		const extra = Object.values(this.armor).reduce((a, b) => a + (b?.healthBoostValue ?? 0), 0) || 0;
@@ -91,7 +91,7 @@ function Player(arr) {
 		return (100 - total) / 100;
 	}
 	
-	this.maxMp = arr.maxMp;
+	this.maxMp = 25;
 	this.maxMpF = () => {
 		const extra = Object.values(this.armor).reduce((a, b) => a + (b?.manaBoostValue ?? 0), 0) || 0;
 		return this.maxMp + extra;
