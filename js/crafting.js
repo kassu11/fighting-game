@@ -2,7 +2,7 @@ const allCraftableItems = Object.values(items).filter(item => item.craftingRecip
 let lastOpenedCraftingRecipe = {height: 0, key: null}; // clears value after transition is over
 const craftingValues = {
 	gridItems: allCraftableItems,
-	sortOrder: "Craftable",
+	sortOrder: "",
 	removeFilter: [],
 	addFilter: [],
 	selectedResipe: "",
@@ -611,7 +611,7 @@ function rightClickRecipeItem(e, item) {
 		<p>${item.name}</p>
 		<div class="remove"></div>
 	</div>`;
-	e.preventDefault();
+	e?.preventDefault();
 	return false
 }
 

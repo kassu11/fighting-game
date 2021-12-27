@@ -101,6 +101,22 @@
 			animation: playFrames .2s steps(13) forwards;
 		}
 
+		.boneExplosion {
+			object-fit: contain;
+			image-rendering: pixelated;
+			image-rendering: optimizeSpeed;
+			transform: translateX(-50%) rotate(0deg);
+			pointer-events: none;
+			user-select: none;
+			position: absolute;
+			animation-name: dmgDrop0;
+			animation-duration: 2s;
+			animation-fill-mode: forwards;
+			margin-left: 0px;
+			transition: margin-left 3s cubic-bezier(0.28, 0.72, 0.58, 1), transform 1.5s;
+			z-index: 1;
+		}
+
 		.bulletContainer {
 			--distance: 350px;
 			--rotate: 0deg;

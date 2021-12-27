@@ -139,8 +139,8 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 	let totalBulletDmg = 0;
 	if(bulletIndex !== -1) {
 		totalBulletDmg = player.inventory[bulletIndex].calcDamage().totalDmg();
-		player.takeItem(bulletIndex, 1);
 		bulletItem = player.inventory[bulletIndex];
+		player.takeItem(bulletIndex, 1);
 	}
 	
 	const totalWeaponDmg = item.calcDamage().totalDmg();

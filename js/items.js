@@ -328,17 +328,17 @@ Item.prototype.calcDamage = function() {
 	const arrowDmgValue = this.user?.armorArrowBoostValue ?? 0;
 	const arrowDmgPercentage = this.user?.armorArrowBoostPercentage ?? 1;
 
-	const minMeleDmg = Math.max( (this.minMeleDmg ?? 0) * meleDmgPercentage * dmgPercentage - dmgReduction + meleDmgValue, 0 );
-	const maxMeleDmg = Math.max( (this.maxMeleDmg ?? 0) * meleDmgPercentage * dmgPercentage - dmgReduction + meleDmgValue, 0 );
+	const minMeleDmg = Math.max( this.minMeleDmg ? this.minMeleDmg * meleDmgPercentage * dmgPercentage - dmgReduction + meleDmgValue : 0, 0 );
+	const maxMeleDmg = Math.max( this.maxMeleDmg ? this.maxMeleDmg * meleDmgPercentage * dmgPercentage - dmgReduction + meleDmgValue : 0, 0 );
 
-	const minRangeDmg = Math.max( (this.minRangeDmg ?? 0) * rangeDmgPercentage * dmgPercentage - dmgReduction + rangeDmgValue, 0 );
-	const maxRangeDmg = Math.max( (this.maxRangeDmg ?? 0) * rangeDmgPercentage * dmgPercentage - dmgReduction + rangeDmgValue, 0 );
+	const minRangeDmg = Math.max( this.minRangeDmg ? this.minRangeDmg * rangeDmgPercentage * dmgPercentage - dmgReduction + rangeDmgValue : 0, 0 );
+	const maxRangeDmg = Math.max( this.maxRangeDmg ? this.maxRangeDmg * rangeDmgPercentage * dmgPercentage - dmgReduction + rangeDmgValue : 0, 0 );
 
-	const minMagicDmg = Math.max( (this.minMagicDmg ?? 0) * magicDmgPercentage * dmgPercentage - dmgReduction + magicDmgValue, 0 );
-	const maxMagicDmg = Math.max( (this.maxMagicDmg ?? 0) * magicDmgPercentage * dmgPercentage - dmgReduction + magicDmgValue, 0 );
+	const minMagicDmg = Math.max( this.minMagicDmg ? this.minMagicDmg * magicDmgPercentage * dmgPercentage - dmgReduction + magicDmgValue : 0, 0 );
+	const maxMagicDmg = Math.max( this.maxMagicDmg ? this.maxMagicDmg * magicDmgPercentage * dmgPercentage - dmgReduction + magicDmgValue : 0, 0 );
 
-	const minArrowDmg = Math.max( (this.minArrowDmg ?? 0) * arrowDmgPercentage * dmgPercentage - dmgReduction + arrowDmgValue, 0 );
-	const maxArrowDmg = Math.max( (this.maxArrowDmg ?? 0) * arrowDmgPercentage * dmgPercentage - dmgReduction + arrowDmgValue, 0 );
+	const minArrowDmg = Math.max( this.minArrowDmg ? this.minArrowDmg * arrowDmgPercentage * dmgPercentage - dmgReduction + arrowDmgValue : 0, 0 );
+	const maxArrowDmg = Math.max( this.maxArrowDmg ? this.maxArrowDmg * arrowDmgPercentage * dmgPercentage - dmgReduction + arrowDmgValue : 0, 0 );
 
 	return {
 		intentToHurt: (this.minMeleDmg ?? this.minRangeDmg ?? this.minMagicDmg ?? this.minArrowDmg) != null,

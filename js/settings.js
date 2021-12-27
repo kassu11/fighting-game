@@ -135,11 +135,12 @@ function loadGameRow(array, index) {
 		currentSave.index = index;
 		currentSave.loadTime = performance.now();
 		player = new Player(JSON.parse(allSaves[index].pl));
+		player.updateArmorStats();
 		if(document.body.classList.contains("itemsMenu")) {
 			generateItemsOnGrid(player.inventory);
 			if(itemsMenu.classList.contains("inv")) {
-				updateItemsMenuHotbar();
 				updateItemsArmor();
+				updateItemsMenuHotbar();
 			} else {
 				generateCraftingItemsList();
 			}
@@ -211,7 +212,7 @@ function saveElement(array, index, callback) {
 
 	const secondRow = element("div").setClass("secondRow");
 	const date = element("p").setClass("saveFileLastPlayed").setText(formatSaveElementDate(array.lastPlayed));
-	const itemsElem = element("p").setClass("saveFileItems").setText("Items collected: " + array.items + "/" + Object.keys(items).length);
+	const itemsElem = element("p").setClass("saveFileItems").setText("Items collected: " + array.items + "/" + (Object.keys(items).length - 1));
 	secondRow.append(date, itemsElem);
 	
 	const lastPlayed = element("p").setClass("totalTimePlayed").setText("Time played: " + convertTimeToString(array.totalTime));

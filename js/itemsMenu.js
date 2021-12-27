@@ -184,8 +184,23 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 			
 			updateItemsArmor();
 			generateItemsOnGrid(itemsMenuArray);
+			updateItemsMenuHotbar();
 			closePopUp();
 		});
+	} else if(item.canEquipTo == "none") {
+		container.querySelector(".equipBox p").setText("Can't be equipped");
+
+		if(allItemsUsedForCrafting[item.id]) {
+			const div = element("div").setClass("equipHotbar add");
+			const p = element("p").setText("Where to use?");
+			div.append(p);
+			container.append(div);
+			div.onclick = () => {
+				rightClickRecipeItem(null, item);
+				document.querySelector("#craftingMenuButton").click();
+				container.innerHTML = "";
+			};
+		}
 	}
 
 	if(player.debug) {
