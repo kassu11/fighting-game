@@ -371,7 +371,36 @@ var levels = {
 		"drops": [
 			{"item": items["leather"], "amount": [1, 2], "chance": 80},
 			{"item": items["wood"], "amount": [3, 5], "chance": 70},
-			{"item": items["rope"], "amount": [2, 3], "chance": 50}
+			{"item": items["rope"], "amount": [2, 3], "chance": 50},
+			{
+				"type": "one",
+				"chance": 90,
+				"items": [
+					{"item": items["bone"], "amount": [2, 4], "chance": 100},
+					{"item": items["skeleton_skull"], "amount": [1], "chance": 20}
+				]
+			},
+			{"item": items["common_monster_core"], "amount": [1], "chance": 30}
+		]
+	},
+	"level_7": {
+		"num": 6,
+		"name": "Test level",
+		"enemies": ["strong_skeleton", "weak_skeleton", "weak_skeleton", "normal_skeleton"],
+		"cords": {"y": -298, "x": -3720},
+		"drops": [
+			{"item": items["leather"], "amount": [1, 2], "chance": 80},
+			{"item": items["wood"], "amount": [3, 5], "chance": 70},
+			{"item": items["rope"], "amount": [2, 3], "chance": 50},
+			{
+				"type": "one",
+				"chance": 90,
+				"items": [
+					{"item": items["bone"], "amount": [2, 4], "chance": 100},
+					{"item": items["skeleton_skull"], "amount": [1], "chance": 20}
+				]
+			},
+			{"item": items["common_monster_core"], "amount": [1], "chance": 30}
 		]
 	}
 }
@@ -379,8 +408,9 @@ var levels = {
 var enemies = {
 	"weak_skeleton": {
 		id: "weak_skeleton",
+		name: "Weak skeleton",
 		maxHp: 10,
-		maxMp: 30,
+		maxMp: 10,
 		img: "weak-skeleton.png",
 		items: [
 			{...items["wooden_dagger"]},
@@ -398,8 +428,9 @@ var enemies = {
 	},
 	"normal_skeleton": {
 		id: "normal_skeleton",
+		name: "Normal skeleton",
 		maxHp: 20,
-		maxMp: 45,
+		maxMp: 15,
 		img: "skeleton.png",
 		items: [
 			{...items["wooden_dagger"]},
@@ -418,6 +449,7 @@ var enemies = {
 	},
 	"strong_skeleton": {
 		id: "strong_skeleton",
+		name: "Strong skeleton",
 		maxHp: 31,
 		maxMp: 20,
 		img: "strong-skeleton.png",

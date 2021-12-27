@@ -356,12 +356,17 @@ function calcSavesUsedStorage(string) {
 	return (string.length * 2 / 1024).toFixed(2);
 }
 
-if(allSaves.length !== 0) {
-	openSettings();
-	openSettingsLoadGame();
-
-	const backButton = settingsElem.querySelector(".container .inputContainer .button")
-	backButton.setText("Start new game");
-	backButton.onclick = () => document.body.classList.remove("settings");
-
+function openMainMenu() {
+	if(allSaves.length !== 0) {
+		openSettings();
+		openSettingsLoadGame();
+	
+		const backButton = settingsElem.querySelector(".container .inputContainer .button")
+		backButton.setText("Start new game");
+		backButton.onclick = () => document.body.classList.remove("settings");
+	
+	}
 }
+
+// openMainMenu();
+document.querySelector("#wikiMenuButton").click();
