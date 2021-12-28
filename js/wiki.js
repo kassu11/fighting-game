@@ -60,8 +60,11 @@ drawWikiMainPage();
 function wikiGenerateLevelsScreen() {
 	const container = document.querySelector("#wiki .wikiContent");
 	container.innerHTML = "";
-	
+
+	const levelHeader = element("h1").setText("Info about levels"); 
 	const levelContainer = element("div").setClass("levelContainer");
+	
+	levelContainer.append(levelHeader);
 	container.append(levelContainer);
 	
 	levelContainer.append( ...wikiGenerateLevels(allLevelKeys) );
@@ -115,6 +118,15 @@ function wikiGenerateLevel(levelId) {
 		rowContainer.append(imageContainer, enemyStats);
 		enemyContainer.append(row);
 	}
+
+	const locateLevelButton = element("div").setClass("locateLevelButton");
+	const locateLevelText = element("p").setText("Locate level").setClass("miniTitle");
+	locateLevelButton.onclick = () => {
+		document.body.classList = "levelMenu";
+		centerLevelMap(levelId, false, true);
+	}
+	locateLevelButton.append(locateLevelText);
+	levelContainer.append(locateLevelButton);
 }
 
 function wikiGenerateEnemyInfo(id) {
@@ -143,7 +155,7 @@ function wikiGenerateEnemyInfo(id) {
 
 	const dropTreeContainer = element("div").setClass("dropTreeContainer");
 	
-	const dropTitle = element("p").setText("Drop table").setClass("miniTitle");
+	const dropTitle = element("p").setText("Loot table").setClass("miniTitle");
 	dropTreeContainer.append(dropTitle, dropTree);
 	
 	const enemyStats = element("div").setClass("enemyStats");
@@ -173,6 +185,11 @@ function wikiGenerateLevels(array) {
 		const numContainer = element("div").setClass("numContainer");
 		const num = element("p").setText(level.num.toString().padStart(2, "0"));
 		const play = element("div").setClass("play");
+
+		play.onclick = () => {
+			document.body.classList = "levelMenu";
+			centerLevelMap(id, false, true);
+		}
 		
 		numContainer.appendChild(num);
 
@@ -183,7 +200,10 @@ function wikiGenerateLevels(array) {
 			cardContainer.append(img)
 			return cardContainer;
 		});
-		div.onclick = () => wikiGenerateLevel(id);
+		div.onclick = e => {
+			if(e.target.classList.contains("play")) return;
+			wikiGenerateLevel(id)
+		};
 
 		enemyContainer.append(...enemyImages);
 		div.append(numContainer, play, enemyContainer);
@@ -196,22 +216,22 @@ function wikiGenerateItemsScreen() {
 	container.innerHTML = "";
 
 	const itemsContainer = element("div").setClass("itemsContainer");
+	const itemsHeader = element("h1").setText("All items from drops");
+	itemsContainer.append(itemsHeader);
 	container.append(itemsContainer);
 
-	for(const itemID of Object.keys(enemyDrops)) {
-		const item = items[itemID];
-		const itemRow = element("div").setClass("itemRow");
+	for(const itemID of new Set([...Object.keys(enemyDrops), ...Object.keys(levelDrops)])) {
+		const item = new Item(items[itemID], player);
+		const itemBox = element("div").setClass("itemBox");
 		const itemImage = element("img").setSrc(`./images/${item.image}`);
-		const itemName = element("p").setClass("name").setText(item.name);
-		const itemTags = element("p").setClass("tags").setText("#" + item.tags.join("# "));
-		const itemPercentage = element("p").setText(`${enemyDrops[itemID].length}/${allLevelKeys.length}`);
-		const itemPercentageBar = element("div").setClass("itemPercentageBar");
-		itemPercentageBar.style.width = `${(enemyDrops[itemID].length / allLevelKeys.length) * 100}%`;
-		itemPercentageBar.style.backgroundColor = getPercentageColor(enemyDrops[itemID].length / allLevelKeys.length);
-		itemRow.append(itemImage, itemName, itemPercentage, itemPercentageBar);
-		itemsContainer.append(itemRow);
+		itemBox.append(itemImage);
+		itemsContainer.append(itemBox);
+		const hover = addHover(itemBox, item.hoverText());
 
-		itemRow.onclick = () => wikiGenerateItemInfo(itemID);
+		itemBox.onclick = () => {
+			wikiGenerateItemInfo(itemID);
+			if(hoverBox.querySelector("div") === hover) hover.remove();
+		};
 	}
 
 }
@@ -225,13 +245,12 @@ function wikiGenerateItemInfo(id) {
 	container.append(itemContainer);
 
 	const itemImage = element("img").setSrc(`./images/${item.image}`);
-	const imageContainer = element("div").setClass("imageContainer");
 	const imageBox = element("div").setClass("imageBox");
-	imageContainer.append(imageBox);
 	imageBox.append(itemImage);
 
-	const itemName = element("p").setClass("name").setText(item.name);
-	const itemTags = element("p").setClass("tags").setText("#" + item.tags.join("# "));
+	addHover(imageBox, new Item(item, player).hoverText())
+
+	const itemName = element("h1").setClass("itemName").setText(item.name);
 
 	const enemiesWithItem = enemyDrops[id] || [];
 	const levelsWithItem = Object.keys(enemiesWithItem.reduce((acc, enemy) => {
@@ -243,31 +262,50 @@ function wikiGenerateItemInfo(id) {
 	const footer = element("div").setClass("footer");
 
 	const levelsContainer = element("div").setClass("levelsContainer");
-	levelsContainer.append(...wikiGenerateLevels(levelsWithItem));
+	levelsContainer.append(...wikiGenerateLevels([...new Set(levelsWithItem)].sort((a, b) => {
+		return levels[a].num - levels[b].num;
+	})));
 
 	const listOfEnemysContainer = element("div").setClass("listOfEnemysContainer");
+
 	for(const enemyID of enemiesWithItem) {
-		const enemy = enemies[enemyID];
-		const enemyRow = element("div").setClass("enemyRow");
+		const row = element("div").setClass("enemyRow");
+		const rowContainer = element("div").setClass("container");
+		row.append(rowContainer);
 
-		enemyRow.onclick = () => wikiGenerateEnemyInfo(enemyID);
-
-		const enemyImage = element("img").setSrc(`./images/${enemy.img}`);
+		const enemyImage = element("img").setSrc(`./images/${enemies[enemyID].img}`);
 		const imageContainer = element("div").setClass("imageContainer");
 		const imageBox = element("div").setClass("imageBox");
 		imageContainer.append(imageBox);
 		imageBox.append(enemyImage);
 
-		const enemyName = element("p").setClass("name").setText(enemy.id);
-		const enemyHp = element("p").setClass("hp").setText(`HP: ${enemy.maxHp}`);
+		imageContainer.onclick = () => wikiGenerateEnemyInfo(enemyID);
 
-		enemyRow.append(imageContainer, enemyName, enemyHp);
-		listOfEnemysContainer.append(enemyRow);
+		const dropTree = element("div").setClass("dropTree");
+		dropTree.append(...createDropTreeElements(enemies[enemyID].drops))
+
+		const enemyStats = element("div").setClass("enemyStats");
+		const statsText = customTextSyntax(
+			`§<b>700<b><c>#ff9b9b<c>${enemies[enemyID].name}\n` +
+			`§<b>700<b><c>#5cff4d<c>${enemies[enemyID].maxHp}HP\n` +
+			`§<b>700<b><c>#36a2ff<c>${enemies[enemyID].maxMp}MP`);
+		enemyStats.append(statsText, dropTree);
+
+		rowContainer.append(imageContainer, enemyStats);
+		listOfEnemysContainer.append(row);
 	}
+
+	const levelsTitle = element("p").setText("Get from level(s)").setClass("miniTitle");
+	const enemiesTitle = element("p").setText("Get from enemies").setClass("miniTitle");
+
+	levelsContainer.prepend(levelsTitle);
+	listOfEnemysContainer.prepend(enemiesTitle);
 
 	footer.append(levelsContainer, listOfEnemysContainer);
 
-	itemContainer.append(imageContainer, itemName, itemTags, footer);
+	if(enemiesWithItem.length === 0) listOfEnemysContainer.remove();
+
+	itemContainer.append(itemName, imageBox, footer);
 }
 
 function wikiGenerateEnemies() {
@@ -275,6 +313,8 @@ function wikiGenerateEnemies() {
 	container.innerHTML = "";
 
 	const allEnemyContainer = element("div").setClass("allEnemyContainer");
+	const allEnemyHeader = element("h1").setText("All enemies");
+	allEnemyContainer.append(allEnemyHeader);
 	container.append(allEnemyContainer);
 
 	for(const enemyId of Object.keys(enemyInLevels)) {

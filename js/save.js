@@ -363,46 +363,46 @@ var levels = {
 			{"item": items["rope"], "amount": [2, 3], "chance": 50}
 		]
 	},
-	"level_6": {
-		"num": 6,
-		"name": "Level 6",
-		"enemies": ["strong_skeleton"],
-		"cords": {"y": -298, "x": -3720},
-		"drops": [
-			{"item": items["leather"], "amount": [1, 2], "chance": 80},
-			{"item": items["wood"], "amount": [3, 5], "chance": 70},
-			{"item": items["rope"], "amount": [2, 3], "chance": 50},
-			{
-				"type": "one",
-				"chance": 90,
-				"items": [
-					{"item": items["bone"], "amount": [2, 4], "chance": 100},
-					{"item": items["skeleton_skull"], "amount": [1], "chance": 20}
-				]
-			},
-			{"item": items["common_monster_core"], "amount": [1], "chance": 30}
-		]
-	},
-	"level_7": {
-		"num": 6,
-		"name": "Test level",
-		"enemies": ["strong_skeleton", "weak_skeleton", "weak_skeleton", "normal_skeleton"],
-		"cords": {"y": -298, "x": -3720},
-		"drops": [
-			{"item": items["leather"], "amount": [1, 2], "chance": 80},
-			{"item": items["wood"], "amount": [3, 5], "chance": 70},
-			{"item": items["rope"], "amount": [2, 3], "chance": 50},
-			{
-				"type": "one",
-				"chance": 90,
-				"items": [
-					{"item": items["bone"], "amount": [2, 4], "chance": 100},
-					{"item": items["skeleton_skull"], "amount": [1], "chance": 20}
-				]
-			},
-			{"item": items["common_monster_core"], "amount": [1], "chance": 30}
-		]
-	}
+	// "level_6": {
+	// 	"num": 6,
+	// 	"name": "Level 6",
+	// 	"enemies": ["strong_skeleton"],
+	// 	"cords": {"y": -298, "x": -3720},
+	// 	"drops": [
+	// 		{"item": items["leather"], "amount": [1, 2], "chance": 80},
+	// 		{"item": items["wood"], "amount": [3, 5], "chance": 70},
+	// 		{"item": items["rope"], "amount": [2, 3], "chance": 50},
+	// 		{
+	// 			"type": "one",
+	// 			"chance": 90,
+	// 			"items": [
+	// 				{"item": items["bone"], "amount": [2, 4], "chance": 100},
+	// 				{"item": items["skeleton_skull"], "amount": [1], "chance": 20}
+	// 			]
+	// 		},
+	// 		{"item": items["common_monster_core"], "amount": [1], "chance": 30}
+	// 	]
+	// },
+	// "level_7": {
+	// 	"num": 7,
+	// 	"name": "Test level",
+	// 	"enemies": ["strong_skeleton", "weak_skeleton", "weak_skeleton", "normal_skeleton"],
+	// 	"cords": {"y": -298, "x": -3720},
+	// 	"drops": [
+	// 		{"item": items["leather"], "amount": [1, 2], "chance": 80},
+	// 		{"item": items["wood"], "amount": [3, 5], "chance": 70},
+	// 		{"item": items["rope"], "amount": [2, 3], "chance": 50},
+	// 		{
+	// 			"type": "one",
+	// 			"chance": 90,
+	// 			"items": [
+	// 				{"item": items["bone"], "amount": [2, 4, 6, 8, 10], "chance": 100},
+	// 				{"item": items["skeleton_skull"], "amount": [1], "chance": 20}
+	// 			]
+	// 		},
+	// 		{"item": items["common_monster_core"], "amount": [1], "chance": 30}
+	// 	]
+	// }
 }
 
 var enemies = {
