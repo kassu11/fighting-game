@@ -89,13 +89,42 @@
 			text-shadow: 0 0 9px #15ff00d9, 5px 5px #005400, 5px 5px 9px #00ff0d96;
 		}
 
+		.stab {
+			--width: -416px;
+			height: 32px;
+			width: 32px;
+			background: url("../images/testi-stab.png") no-repeat;
+			opacity: .9;
+			transform: scale(5) translateX(-8%) translateY(-5%);
+			image-rendering: pixelated;
+			image-rendering: optimizeSpeed;
+			animation: playFrames .2s steps(13) forwards;
+		}
+
+		.boneExplosion {
+			object-fit: contain;
+			image-rendering: pixelated;
+			image-rendering: optimizeSpeed;
+			transform: translateX(-50%) rotate(0deg);
+			pointer-events: none;
+			user-select: none;
+			position: absolute;
+			animation-name: dmgDrop0;
+			animation-duration: 2s;
+			animation-fill-mode: forwards;
+			margin-left: 0px;
+			transition: margin-left 3s cubic-bezier(0.28, 0.72, 0.58, 1), transform 1.5s;
+			z-index: 1;
+		}
+
 		.bulletContainer {
 			--distance: 350px;
 			--rotate: 0deg;
+			--rotateZ: 0deg;
 			position: absolute;
 			width: 100px;
     	height: 100px;
-			transform: rotate(var(--rotate)) translate(calc(var(--distance)), calc(var(--distance)));
+			transform: rotate(var(--rotate)) translate(calc(var(--distance)), calc(var(--distance))) rotateZ(var(--rotateZ));
 			animation-timing-function: ease-in;
 			animation-duration: 1s;
 			animation-name: moveBullet;
@@ -121,19 +150,19 @@
 
 @keyframes moveBullet {
 	0% {
-		transform: rotate(var(--rotate)) translate(var(--distance), var(--distance));
+		transform: rotate(var(--rotate)) translate(var(--distance), var(--distance)) rotateZ(var(--rotateZ));
 	}
 	20%, 50% {
-		transform: rotate(var(--rotate)) translate(0px, 0px);
+		transform: rotate(var(--rotate)) translate(0px, 0px) rotateZ(var(--rotateZ));
 		opacity: 1;
 	}
 
-	20% {transform: rotate(var(--rotate)) translate(7px, 15px)}
-	22% {transform: rotate(var(--rotate)) translate(-4px, 0px)}
-	30% {transform: rotate(var(--rotate)) translate(0px, 0px)}
+	20% {transform: rotate(var(--rotate)) translate(7px, 15px) rotateZ(var(--rotateZ))}
+	22% {transform: rotate(var(--rotate)) translate(-4px, 0px) rotateZ(var(--rotateZ))}
+	30% {transform: rotate(var(--rotate)) translate(0px, 0px) rotateZ(var(--rotateZ))}
 
 	70%, 100% {
 		opacity: 0;
-		transform: rotate(var(--rotate)) translate(0px, 0px);
+		transform: rotate(var(--rotate)) translate(0px, 0px) rotateZ(var(--rotateZ));
 	}
 }

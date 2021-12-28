@@ -3,6 +3,7 @@ const itemsMenuHoverOpacitys = [];
 let itemsMenuArray = [];
 
 function generateItemsOnGrid(items) {
+	player.updateArmorStats();
 	const armorSlotNames = ["head", "chest", "legs"];
 	itemsMenuArray = items;
 	if(!Array.isArray(items)) return;
@@ -24,8 +25,8 @@ function generateItemsOnGrid(items) {
 				div.append(slotNum);
 				// itemHover += `\nEquipped: §<c>#00ff1e<c><css>font-weight: 600<css>hotbar ${num}`;
 				itemHover = `<nct>equippedHotbar<nct>Equipped: hotbar ${num}<nct>itemData<nct>` + itemHover;
-			} else if(armorSlotNames.some(v => item.slot.startsWith(v))) {
-				const index = armorSlotNames.findIndex(v => item.slot.startsWith(v));
+			} else if(item.slot.startsWith("armor")) {
+				const index = armorSlotNames.indexOf(item.slot.substr(5));
 				div.innerHTML += `<p class="slotNum">${index + 1}</p>`
 				div.classList.add("armor");
 				// itemHover += `\nEquipped: §<c>#008eff<c><css>font-weight: 600<css>${armorSlotNames[index]}`;
@@ -52,9 +53,10 @@ function generateItemsOnGrid(items) {
 function updateItemsMenuHotbar() {
 	const hotbarBox = itemsMenu.querySelector(".hotbarBox");
 	hotbarBox.innerHTML = "";
+	const hotbarLength = Object.keys(player.hotbar).length;
 
-	for(let i = 1; i <= Object.keys(player.hotbar).length; i++) {
-		const item = player.hotbar["slot" + i];
+	for(let i = 1; i <= hotbarLength; i++) {
+		const item = player.hotbar["hotbarSlot" + i];
 		hotbarBox.innerHTML += `<div class="slot">
 			<p class="slotNumber">${i}</p>
 			<img src="${item.image ? "./images/" + item.image : ""}" class="slotImage">
@@ -63,7 +65,7 @@ function updateItemsMenuHotbar() {
 	}
 
 	hotbarBox.querySelectorAll(".slot").forEach((elem, i) => {
-		const item = player.hotbar["slot" + (i + 1)] ?? {};
+		const item = player.hotbar["hotbarSlot" + (i + 1)] ?? {};
 		if(item.id) addHover(elem, item?.hoverText?.() ?? "", []);
 	});
 }
@@ -82,7 +84,7 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 	: hotbarElements ? Array.from(hotbarElements).indexOf(target) + 1
 	: isArmorSlot ? target.classList[1] : null;
 	const item = isInvItem ? itemsMenuArray[index]
-	: isHotbarItem ? player.hotbar["slot" + index]
+	: isHotbarItem ? player.hotbar["hotbarSlot" + index]
 	: isArmorSlot ? player.armor[target.classList[1]] : {};
 	
 	if(!item.id) return closePopUp();
@@ -107,9 +109,10 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 	if(item.canEquipTo == "hotbar") {
 		container.querySelector(".equipBox p").textContent = "Equip to hotbar:";
 		for(let i = 1; i <= Object.keys(player.hotbar).length; i++) {
-			const hotbarItem = player.hotbar["slot" + i] ?? {};
+			const hotbarItem = player.hotbar["hotbarSlot" + i] ?? {};
 			const num = item.slot?.startsWith("hotbarSlot") ? +item.slot.substr(10) : -1;
 			const div = document.createElement("div");
+
 			div.classList.add("equipHotbar");
 			if(num == i) {
 				div.classList.add("remove");
@@ -130,18 +133,18 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 	
 			div.addEventListener("click", ({}, slot = i) => {
 				if(num > -1 && num != slot) {
-					if(player.hotbar["slot" + slot].id) {
-						player.hotbar["slot" + num] = player.hotbar["slot" + slot];
-						player.hotbar["slot" + num].slot = "hotbarSlot" + num;
-						player.hotbar["slot" + slot] = {};
-					} else player.hotbar["slot" + num] = {};
+					if(player.hotbar["hotbarSlot" + slot].id) {
+						player.hotbar["hotbarSlot" + num] = player.hotbar["hotbarSlot" + slot];
+						player.hotbar["hotbarSlot" + num].slot = "hotbarSlot" + num;
+						player.hotbar["hotbarSlot" + slot] = {};
+					} else player.hotbar["hotbarSlot" + num] = {};
 				}
-				player.hotbar["slot" + slot].slot = null;
-				player.hotbar["slot" + slot] = item;
+				player.hotbar["hotbarSlot" + slot].slot = null;
+				player.hotbar["hotbarSlot" + slot] = item;
 				item.slot = "hotbarSlot" + slot;
 	
 				if(num == slot) {
-					player.hotbar["slot" + slot] = {};
+					player.hotbar["hotbarSlot" + slot] = {};
 					item.slot = null;
 				}
 	
@@ -152,38 +155,52 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 	
 			container.append(div);
 		}
-	} else if(["head", "legs", "chest"].indexOf(item.canEquipTo) != -1) {
-		const slotName = item.canEquipTo;
+	} else if(item.canEquipTo.startsWith("armor")) {
+		const slotName = item.canEquipTo.substr(5);
 		container.querySelector(".equipBox p").textContent = `Equip to ${slotName}:`;
 		const div = document.createElement("div");
 		div.classList.add("equipHotbar");
 
-		if(item.slot == `${slotName}Slot`) {
+		if(item.slot == `${item.canEquipTo}`) {
 			div.classList.add("remove");
 			div.innerHTML = `<p class="slotText">Unequip ${item.name ?? ""}</p>`
-		} else if(player.armor[slotName].id) {
+		} else if(player.armor[item.canEquipTo].id) {
 			div.classList.add("replace");
-			div.innerHTML = `<p class="slotText">Replace ${player.armor[slotName].name ?? ""}</p>`
+			div.innerHTML = `<p class="slotText">Replace ${player.armor[item.canEquipTo].name ?? ""}</p>`
 		} else {
 			div.classList.add("add");
 			div.innerHTML = `<p class="slotText">Add to empty</p>`
 		} container.append(div);
 
 		div.addEventListener("click", () => {
-			const slotItem = player.armor?.[slotName] ?? {};
-			if(item.slot == `${slotName}Slot`) {
+			if(item.slot == item.canEquipTo) {
 				item.slot = "";
-				player.armor[slotName] = {};
+				player.armor[item.canEquipTo] = {};
 			} else {
-				slotItem.slot = "";
-				player.armor[slotName] = item;
-				item.slot = `${slotName}Slot`;
-			} 
+				player.armor[item.canEquipTo].slot = "";
+				player.armor[item.canEquipTo] = item;
+				item.slot = item.canEquipTo;
+			}
 			
 			updateItemsArmor();
 			generateItemsOnGrid(itemsMenuArray);
+			updateItemsMenuHotbar();
 			closePopUp();
 		});
+	} else if(item.canEquipTo == "none") {
+		container.querySelector(".equipBox p").setText("Can't be equipped");
+
+		if(allItemsUsedForCrafting[item.id]) {
+			const div = element("div").setClass("equipHotbar add");
+			const p = element("p").setText("Where to use?");
+			div.append(p);
+			container.append(div);
+			div.onclick = () => {
+				rightClickRecipeItem(null, item);
+				document.querySelector("#craftingMenuButton").click();
+				container.innerHTML = "";
+			};
+		}
 	}
 
 	if(player.debug) {
@@ -192,6 +209,7 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 		debugDiv.append(debugText);
 		container.append(debugDiv);
 		debugDiv.onclick = () => {
+			player.takeItem(index, item.amount ?? 1);
 			player.inventory.splice(index, 1);
 			generateItemsOnGrid(player.inventory);
 			container.innerHTML = "";
@@ -216,21 +234,14 @@ function updateItemsArmor() {
 	const armorBox = itemsMenu.querySelector(".menuWindow .armorContainer .armorBox");
 	armorBox.innerHTML = "";
 
-	["head", "chest", "legs"].forEach(v => {
-		const div = document.createElement("div");
-		const img = document.createElement("img");
-		const item = player.armor[v] ?? {};
-		div.classList.add(`armorSlot`, v);
-
-		if(player.armor[v]?.id) img.src = "./images/" + item.image;
-		else {
-			img.src = "./images/base" + v + ".png";
-			div.classList.add("empty");
-		}
+	for(const [key, item] of Object.entries(player.armor)) {
+		const div = element("div").setClass(`armorSlot ${key}${item.id ? "" : " empty"}`);
+		const img = element("img").setSrc("./images/" + key + ".png");
+		if(item.image) img.setSrc("./images/" + item.image);
 		addHover(div, item.hoverText?.() ?? "", []);
 		div.append(img);
 		armorBox.append(div);
-	});
+	}
 }
 
 window.addEventListener("resize", itemsMenuInventoryResize);

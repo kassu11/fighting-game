@@ -71,22 +71,33 @@ function emmet(syn) {
 	} return base;
 }
 
-
-window.addEventListener("keyup", e => {
-	if(e.code === "BracketLeft") debugger;
-})
-
 function print() {
 	let text = "{";
 
-	Object.entries(levels).forEach(([key, v], i) => {
-		text += `${i === 0 ? "" : ","}
-	${key}: {
-		enemies: ["${v.enemies.join(`", "`)}"],
-		cords: {y: ${v.cords?.y ?? 0}, x: ${v.cords?.x ?? 0}}
-	}`
-	});
-	console.log(text + "\n}");
+	// Object.entries(levels).forEach(([key, v], i) => {
+	// 	text += `${i === 0 ? "" : ","}
+	// "${key}": {
+	// 	num: ${v.num},
+	// 	name: "${v.name ?? ""}",
+	// 	enemies: ["${v.enemies.join(`", "`)}"],
+	// 	cords: {y: ${v.cords?.y ?? 0}, x: ${v.cords?.x ?? 0}}
+	// }`
+	// });
+
+	console.log(JSON.stringify(levels, (key, value) => {
+		if(key == "enemies" || key == "cords") {
+			return "§'" + JSON.stringify(value).replaceAll('"', "'").replaceAll(",", ", ").replaceAll(":", ": ") + "'§";
+		}
+		if(value["item"]) {
+			const copyValue = {...value};
+			copyValue["item"] = `§'items['${copyValue["item"].id}']'§`;
+			return "§'" + JSON.stringify(copyValue).replaceAll('"', "'").replaceAll(",", ", ").replaceAll(":", ": ") + "'§";
+		}
+		return value;
+	}, "\t").replaceAll(`'`, `"`).replaceAll(`"§"`, ""))
+
+
+	// console.log(text + "\n}");
 }
 
 const element = value => document.createElement(value);

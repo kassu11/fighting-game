@@ -20,30 +20,6 @@ for(const [key, value] of Object.entries(levels)) {
 		wikiGenerateLevel(key);
 		document.body.classList = "wikiMenu"
 	};
-
-	// const info = document.createElement("div");
-	// levelElem.querySelector(".info").addEventListener("click", e => {
-	// 	e.stopPropagation();
-	// 	levelMenu.querySelector(".levelInfoScreen").style.display = null;
-		
-	// 	levelMenu.querySelector(".levelInfoScreen .enemyRowContainer").innerHTML = "";
-
-	// 	const enemyRow = value.enemies.map(id => {
-	// 		const [row] = emmet("div.enemyRow>.enemyCard>img^div.dropTree");
-	// 		row.querySelector(".enemyCard>img").src = "./images/" + enemies[id].img;
-	// 		row.querySelector(".dropTree").append(...getEnemyDropTreeElements(id));
-	// 		return row;
-	// 	});
-
-	// 	levelMenu.querySelector(".levelInfoScreen .enemyRowContainer").append(...enemyRow);
-	// });
-	// info.classList.add("info")
-
-	// div.append(info);
-
-	// div.addEventListener("click", e => {
-	// 	startLevel(key);
-	// });
 }
 
 function levelElement(id) {
@@ -51,7 +27,7 @@ function levelElement(id) {
 	const levelButton = element("div").setClass("levelButton").setID(id);
 	const buttonContainer = element("div").setClass("levelButtonContainer");
 	const levelNum = element("p").setText(`${levelData.num}`.padStart(2, "0")).setClass("num");
-	const levelName = element("p").setText(id).setClass("name");
+	const levelName = element("p").setText(levelData.name ?? "").setClass("name");
 	const infoText = element("p").setText("?").setClass("infoText");
 	const playButton = element("div").setClass("play");
 	const infoButton = element("div").setClass("info");
@@ -190,14 +166,44 @@ window.addEventListener("resize", () => {
 	}
 });
 
-function centerLevelMap(id, animation = true) {
+function centerLevelMap(id, animation = true, scale = false) {
 	const button = levelButtons.querySelector(`#${id}`);
 	const container = levelButtons.querySelector(".container");
-	const containerData = container.getBoundingClientRect();
 
-	
 	if(!button) return;
-	if(animation) container.style.transition = "all .8s";
+	if(scale) {
+		container.style.transition = null;
+
+		let startX = +container.style.left.substr(0, container.style.left.length - 2);
+		let startY = +container.style.top.substr(0, container.style.top.length - 2);
+		const scale = +container.style.getPropertyValue("--scale") || 1;
+
+		const [x, y] = [window.innerWidth / 2, window.innerHeight / 2];
+		const {width, height} = container.getBoundingClientRect();
+		
+		container.style.setProperty("--scale", 4);
+		
+		const {width: w2, height: h2} = container.getBoundingClientRect();
+	
+		const trueX = width - startX + x - width;
+		const trueY = height - startY + y - height;
+	
+		const perX = trueX / width;
+		const perY = trueY / height;
+	
+		const trueScaledX = w2 * perX;
+		const trueScaledY = h2 * perY;
+		
+		container.style.left = x - trueScaledX + "px";
+		container.style.top = y - trueScaledY + "px";
+	
+		levelMenuDownData.startX = trueScaledX;
+		levelMenuDownData.startY = trueScaledY;
+	}
+	
+
+	const containerData = container.getBoundingClientRect();
+	if(animation) container.style.transition = "left .8s, top .8s";
 
 	const numData = button.querySelector(".NumContainer").getBoundingClientRect();
 	const infoData = button.querySelector(".info").getBoundingClientRect();
@@ -208,16 +214,6 @@ function centerLevelMap(id, animation = true) {
 
 	container.style.left = containerData.left - numData.left + window.innerWidth / 2 - buttonWidth / 2 + "px"
 	container.style.top = containerData.top - numData.top + window.innerHeight / 2 - buttonHeight / 2 + topNavHeight + "px"
-
 }
 
-centerLevelMap("level_t2aute", false)
-
-window.addEventListener("keydown", e => {
-	if(e.code === "Tab") {
-		e.preventDefault();
-		const buttons = levelButtons.querySelectorAll(".levelButton");
-		centerLevelMap(buttons[random(buttons.length - 1)].id, true);
-	}
-	// console.log(e);
-})
+centerLevelMap("level_1", false)

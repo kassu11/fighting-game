@@ -1,10 +1,8 @@
 const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes?.length).map((data, i) => new Item({...data, index: i}, player));
-// const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 64
-// const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes).reduce((ac, v, i, a) => [...a, ...ac], []).reduce((ac, v, i, a) => [...a, ...ac], []).map((data, i) => new Item({...data, index: i}, player)); // 4096
 let lastOpenedCraftingRecipe = {height: 0, key: null}; // clears value after transition is over
 const craftingValues = {
 	gridItems: allCraftableItems,
-	sortOrder: "Craftable",
+	sortOrder: "",
 	removeFilter: [],
 	addFilter: [],
 	selectedResipe: "",
@@ -17,6 +15,7 @@ const craftInv = itemsMenu.querySelector(".crafting .craftableItems");
 function generateCraftingItemsList(array) {
 	if(array) craftingValues.gridItems = array;
 	craftInv.textContent = "";
+	const hover = hoverBox.querySelector("div");
 
 	const sortA = craftingValues.sortOrder.indexOf("reverse") !== -1 ? -1 : 1;
 	const sortB = sortA * -1;
@@ -24,12 +23,25 @@ function generateCraftingItemsList(array) {
 	if(craftingValues.sortOrder == "") craftingValues.gridItems.sort((v1, v2) => v1.index - v2.index);
 	else if(craftingValues.sortOrder.startsWith("Name")) {
 		craftingValues.gridItems.sort((v1, v2) => v1.name > v2.name ? sortA : sortB)
+	} else if(craftingValues.sortOrder.startsWith("Tags")) {
+		craftingValues.gridItems.sort((v1, v2) => {
+			const tag1 = v1.tags.join("");
+			const tag2 = v2.tags.join("");
+			if(tag1 == tag2) return v1.name > v2.name ? 1 : -1;
+			return tag1 > tag2 ? sortA : sortB;
+		});
+	} else if(craftingValues.sortOrder.startsWith("Use_time")) {
+		craftingValues.gridItems.sort((v1, v2) => {
+			const time1 = v1.useTime ?? -1;
+			const time2 = v2.useTime ?? -1;
+			if(time1 == time2) return v1.name > v2.name ? 1 : -1;
+			if(time1 == -1 || time2 == -1) return time1 < time2 ? 1 : -1;
+			return time1 < time2 ? sortA : sortB;
+		});
 	} else if(craftingValues.sortOrder.startsWith("Damage")) {
 		craftingValues.gridItems.sort((v1, v2) => {
-			const data1 = v1.calcDamage();
-			const data2 = v2.calcDamage();
-			const dm1 = (data1.maxMeleDmg + data1.maxRangeDmg) || -1;
-			const dm2 = (data2.maxMeleDmg + data2.maxRangeDmg) || -1;
+			const dm1 = v1.calcDamage().totalMaxDmg() || -1;
+			const dm2 = v2.calcDamage().totalMaxDmg() || -1;
 			if(dm1 == dm2) return v1.name > v2.name ? 1 : -1;
 			if(dm1 == -1 || dm2 == -1) return dm1 < dm2 ? 1 : -1;
 			return dm2 > dm1 ? sortA : sortB;
@@ -66,21 +78,6 @@ function generateCraftingItemsList(array) {
 			if(data1 == -1 || data2 == -1) return data1 < data2 ? 1 : -1;
 			return data1 < data2 ? sortA : sortB;
 		});
-	} else if(craftingValues.sortOrder.startsWith("Tags")) {
-		craftingValues.gridItems.sort((v1, v2) => {
-			const tag1 = v1.tags.join("");
-			const tag2 = v2.tags.join("");
-			if(tag1 == tag2) return v1.name > v2.name ? 1 : -1;
-			return tag1 > tag2 ? sortA : sortB;
-		});
-	} else if(craftingValues.sortOrder.startsWith("Use_time")) {
-		craftingValues.gridItems.sort((v1, v2) => {
-			const time1 = v1.useTime ?? -1;
-			const time2 = v2.useTime ?? -1;
-			if(time1 == time2) return v1.name > v2.name ? 1 : -1;
-			if(time1 == -1 || time2 == -1) return time1 < time2 ? 1 : -1;
-			return time1 < time2 ? sortA : sortB;
-		});
 	} else if(craftingValues.sortOrder.startsWith("Craftable")) {
 		craftingValues.gridItems.sort((v1, v2) => {
 			const craftable1 = ManyTimesCanCraft(v1);
@@ -95,6 +92,9 @@ function generateCraftingItemsList(array) {
 
 	drawVisibleCraftingItems(true);
 	craftInv.scrollTop = 0;
+	if(hover === hoverBox.querySelector("div")) {
+		if(itemsMenu.querySelector(".crafting:hover")) hoverBox.innerHTML = "";
+	}
 }
 
 function filterCraftingItems(array) {
@@ -110,7 +110,10 @@ function filterCraftingItems(array) {
 		return true;
 
 		function filterResults(type) {
-			if(type == "Damage" && (value.maxMeleDmg || value.maxRangeDmg)) return true;
+			if(type == "Melee_damage" && value.maxMeleDmg) return true;
+			if(type == "Range_damage" && value.maxRangeDmg) return true;
+			if(type == "Magic_damage" && value.maxMagicDmg) return true;
+			if(type == "Bullet_damage" && value.maxArrowDmg) return true;
 			if(type == "Defence" && value.defencePercentage) return true;
 			if(type == "Health_boost" && value.healthBoostValue) return true;
 			if(type == "Mana_boost" && value.manaBoostValue) return true;
@@ -173,13 +176,6 @@ function craftingSearch(returnEmpty = false) {
 		searchBar.classList.add("failed");
 		if(returnEmpty) generateCraftingItemsList([]);
 	}
-		
-	const refressFaled = craftInv.querySelector(".craftingItem:hover>.name");
-	if(refressFaled) return;
-	const hoverIsCraftingRecipeItemRow = hoverBox.querySelector("div[crafting] .itemTitle");
-	const hoverIsCraftingWarning = hoverBox.querySelector("div[cantbecrafted]");
-	const hoverIsCraftingRecipe = hoverBox.querySelector("div[recipe]");
-	if(hoverIsCraftingRecipeItemRow || hoverIsCraftingWarning || hoverIsCraftingRecipe) hoverBox.textContent = "";
 };
 
 const sortButton = itemsMenu.querySelector(".toolBar .sort");
@@ -197,7 +193,7 @@ sortButton.addEventListener("click", e => {
 			return subMenuContainer.textContent = "";
 		}
 		
-		["Name", "Damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg", "Use_time", "Tags", "Craftable"].forEach(sortTitle => {
+		["Name", "Tags", "Use_time", "Damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg",  "Craftable"].forEach(sortTitle => {
 			const [subMenuElement] = emmet(`.sortValue.${sortTitle}>div.directionContainer+p+div.removeSelection`);
 			subMenuElement.querySelector("p").textContent = sortTitle.replaceAll("_", " ");
 			if(sortTitle == lastName) subMenuElement.classList.add(lastSortState);
@@ -251,7 +247,7 @@ typesButton.addEventListener("click", e => {
 			return subMenuContainer.textContent = "";
 		}
 
-		return ["Damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg", "Healing", "Mana", "Use_time"].forEach(title => {
+		return ["Melee_damage", "Range_damage", "Magic_damage", "Bullet_damage", "Defence", "Health_boost", "Mana_boost", "Reduce_dmg", "Healing", "Mana", "Use_time"].forEach(title => {
 			const [subMenuElement] = emmet(`.typeValue.${title}>div.directionContainer+p+div.removeSelection`);
 			subMenuElement.querySelector("p").textContent = title.replaceAll("_", " ");
 			if(craftingValues.removeFilter.find(e => e === title)) subMenuElement.classList.add("remove");
@@ -332,18 +328,21 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
 	const item = craftingValues.gridItems[itemIndex];
 	const recipes = item.craftingRecipes;
 	const recipesSubmenu = clickedItem.querySelector(".recipes");
+	let recipeAdded = false;
 
 	craftingValues.lastCrafted.id = "";
 
 	if(!recipesSubmenu.textContent && recipes?.length) {
 		addHover(recipesSubmenu, "");
 		appendRecipeElement(recipesSubmenu, item);
+		recipeAdded = true;
 	}
 	
 	if(clickedItem.classList.toggle("selected")) {
 		const totalHeight = Array.from(recipesSubmenu.children).map(e => e.getBoundingClientRect().height).reduce((a, v) => a + v);
 		recipesSubmenu.style.maxHeight = `${totalHeight}px`;
 		updateElementHeightArray(craftingValues.craftingElementsHeight, itemIndex, 49 + totalHeight);
+		if(!recipeAdded) updateCraftingItem(itemIndex, item);
 		// Jos avaat receptin ja scrollaat alas, kesken avaamis transitionin, näet vähän mustaa, tää fixaa sen :D
 		Object.assign(lastOpenedCraftingRecipe, {height: totalHeight + 49, key: recipesSubmenu});
 		setTimeout(() => {
@@ -357,8 +356,6 @@ craftInv.addEventListener("click", function openCraftingRecipes(e) {
 		drawVisibleCraftingItems();
 	}
 });
-
-
 
 const allItemsUsedForCrafting = allCraftableItems.reduce((ac, va) => {
 	va.craftingRecipes.forEach(row => {
@@ -482,6 +479,7 @@ function craftingItem(index, item, open = false) {
 	return craftingItemDiv;
 }
 
+
 function updateCraftingItem(index, item) {
 	const craftingItemDiv = craftInv.querySelector(`div[index="${index}"].craftingItem`);
 	const open = craftingItemDiv.classList.contains("selected");
@@ -522,6 +520,8 @@ function appendRecipeElement(parent, item) {
 		const img = element("img").setSrc(`./images/${item.image}`);
 		const items = element("div").setClass("items");
 
+		addCraftingButtonHover(craftingButton, item, row.craftingAmount);
+
 		if(row.craftingAmount > 1 || item.amount) craftingButton.append(img, element("p").setText(row.craftingAmount).setClass("itemAmount"));
 		else craftingButton.append(img);
 		rowElement.append(craftingButton, items);
@@ -543,6 +543,7 @@ function appendRecipeElement(parent, item) {
 				const warningElem = element("p").setClass("warning").setText("!");
 				addHover([warningElem, "cantBeCrafted"], "Item can't be crafted");
 				itemDiv.append(warningElem);
+				if(enemyDrops[nItem.id] || levelDrops[nItem.id]) itemDiv.onclick = () => leftClickRecipeItemToGetWiki(nItem.id);
 			} else itemDiv.onclick = () => leftClickRecipeItem(nItem);
 			itemDiv.oncontextmenu = e => rightClickRecipeItem(e, nItem);
 
@@ -559,6 +560,11 @@ function appendRecipeElement(parent, item) {
 	}
 
 	if(cantCraftResipe) parent.classList.add("cantCraft");
+}
+
+function addCraftingButtonHover(elem, item, amount) {
+	const notEnoughText = `<nct><v>craftInv.querySelector(".row:hover.cantCraft") ? "craftingButton notEnough" : "craftingButton"<v><nct>Craft item [ ${amount} ]§<nct>itemData<nct>`;
+	addHover([elem, "crafting"], notEnoughText + item.hoverText());
 }
 
 function canYouCraft(item) {
@@ -587,20 +593,25 @@ function leftClickRecipeItem(item) {
 		generateCraftingItemsList([item]);
 		itemsMenu.querySelector("#clearCraftingSearchBar").classList.remove("hidden");
 		craftInv.querySelector(".craftingItem")?.click();
-		hoverBox.querySelector("[recipe]")?.remove();
 	}
+}
+
+function leftClickRecipeItemToGetWiki(itemId) {
+	if(enemyDrops[itemId] || levelDrops[itemId]) {
+		document.body.classList = "wikiMenu";
+		wikiGenerateItemInfo(itemId);
+	};
 }
 
 function rightClickRecipeItem(e, item) {
 	craftingValues.itemNeedsToBeInRecipe = item.id;
 	generateCraftingItemsList(allItemsUsedForCrafting[item.id]);
-	hoverBox.querySelector("div[recipe]")?.remove?.();
 	whatCanCraftButton.querySelector(".value").innerHTML = `<div class="row selected" itemid="${item.id}">
 		<img src="./images/${item.image}">
 		<p>${item.name}</p>
 		<div class="remove"></div>
 	</div>`;
-	e.preventDefault();
+	e?.preventDefault();
 	return false
 }
 
@@ -643,15 +654,18 @@ function craftItem(item, recipe) {
 
 	updateVisibleCraftingItems();
 	generateItemsOnGrid(player.inventory);
+	hoverBox.querySelector(".craftingButton")?.classList.toggle("notEnough", craftInv.querySelector(".row:hover.cantCraft"))
 }
 
 function recipeItemHover(elem, recipeRow, item) {
 	const notEnoughText = `<nct><v>(player.totalItemCounts["${recipeRow.item}"] || 0) < ${recipeRow.amount} ? "notEnough" : "notEnough hidden"<v><nct>Not enough items§<nct>itemData<nct>`;
+	const leftToopTip = (item?.craftingRecipes || enemyDrops[item.id] || levelDrops[item.id]);
+	const leftText = item?.craftingRecipes ? "Show recipe" : "Show wiki";
 	const tooltipText = [
 		"<ct>craftingTooltip<ct>",
-		`[Left click]<cl>hotkey${item?.craftingRecipes ? "" : " hide"}<cl>`,
+		`[Left click]<cl>hotkey${leftToopTip ? "" : " hide"}<cl>`,
 		`§<cl>right hotkey<cl>[Right click]`,
-		`§Show recipe${item?.craftingRecipes ? "" : "<cl>hide<cl>"}`,
+		`§${leftText}${leftToopTip ? "" : "<cl>hide<cl>"}`,
 		`§<cl>right<cl>Used in`].join("");
 
 	addHover([elem, "crafting"], notEnoughText + item.hoverText() + tooltipText);

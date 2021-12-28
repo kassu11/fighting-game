@@ -35,12 +35,37 @@ function AddBattleParciles({x, y, dmg, bullet} = {}, type, target) {
 			p.style.transform = `translateX(-50%) rotate(${random(-20, 20)}deg)`;
 		}, 20);
 		removeElement(p, 2000);
+	} else if(type == "stab") {
+		const div = element("div").setClass("stab");
+		div.style.left = x + "px";
+		div.style.top = y + "px";
+		removeElement(div, 2000);
+		box.append(div);
+	} else if(type == "boneExplosion") {
+		for(let i = 0; i < 20; i++) {
+			const min = 200,
+						max = 500;
+			const img = element("img").setClass("boneExplosion").setSrc("./images/bone.png");
+			box.append(img);
+			const left = random(0, 1);
+			const num = left ? random(-max, -min) : random(min, max);
+			img.style.animationName = "dmgDrop" + random(0, 2);
+			img.style.left = x + "px";
+			img.style.width = random(40, 70) + "px";
+			img.style.top = y - 60 + "px";
+			setTimeout(v => {
+				img.style.marginLeft = num + "px";
+				img.style.transform = `translateX(-50%) rotate(${num + (300 * num / Math.abs(num))}deg)`;
+			}, 20);
+			removeElement(img, 2000);
+		}
 	} else if(bullet) {
 		const [div] = emmet("div.bulletContainer>img");
 		div.querySelector("img").src = "./images/" + bullet.image;
 		div.style.left = x + "px";
 		div.style.top = y + "px";
 		div.style.setProperty("--rotate", `${random(0, 360)}deg`);
+		div.style.setProperty("--rotateZ", `${bullet.bulletRotate}deg`);
 		box.append(div);
 		removeElement(div, 1000)
 	}

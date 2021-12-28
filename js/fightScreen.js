@@ -13,7 +13,7 @@ function updateHotbarHovers() {
 	}
 
 	slotBox.querySelectorAll(".slot").forEach((currentSlot, i) => {
-		addHover(currentSlot, [player.hotbar["slot" + (i + 1)].hoverText?.() ?? ""], []);
+		addHover(currentSlot, [player.hotbar["hotbarSlot" + (i + 1)].hoverText?.() ?? ""], []);
 	});
 
 	updatePlayersHotbar();
@@ -24,6 +24,7 @@ function updateHotbarHovers() {
 function startLevel(lvlId, time) {
 	player.hp = player.maxHpF();
 	player.mp = player.maxMpF();
+	player.updateArmorStats();
 	if(!(time > 0)) player.effects = [];
 	figtingScreen.querySelectorAll(".playerBox > div").forEach(container => container.style = null);
 	Array.from(figtingScreen.querySelector("#victoryDrop").children).forEach(e => removeElement(e, 400));
@@ -125,7 +126,6 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 	
 	if(item.needTarget) item.giveEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
 	let bulletIndex = -1;
-	let bulletItem = null;
 	if(item.useAmmoType) {
 		for(const hotbarItem of Object.values(player.hotbar)) {
 			if(item.useAmmoType === hotbarItem.ammoType) {
@@ -134,24 +134,24 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 			}
 		}
 	}
-
-	let totalDmg = 0;
+	
+	let bulletItem = null;
+	let totalBulletDmg = 0;
 	if(bulletIndex !== -1) {
-		const {meleDmg, rangeDmg} = player.inventory[bulletIndex].calcDamage();
-		totalDmg += meleDmg + rangeDmg;
+		totalBulletDmg = player.inventory[bulletIndex].calcDamage().totalDmg();
 		bulletItem = player.inventory[bulletIndex];
 		player.takeItem(bulletIndex, 1);
 	}
 	
-	const {meleDmg, rangeDmg} = item.calcDamage();
-	enemy.hp -= totalDmg + meleDmg + rangeDmg;
+	const totalWeaponDmg = item.calcDamage().totalDmg();
+	enemy.hp -= totalBulletDmg + totalWeaponDmg;
 
 	item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
 	if(item.mana) player.mp -= item.mana;
 	if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
 	if(item.manaHealV) player.mp = Math.min(player.mp + item.manaHealV, player.maxMpF());
 	if(item.needTarget) {
-		addPlayerItemUseParticle(target, item, {x: e.x, y: e.y, dmg: totalDmg + meleDmg + rangeDmg, bullet: bulletItem});
+		addPlayerItemUseParticle(target, item, {x: e.x, y: e.y, dmg: totalBulletDmg + totalWeaponDmg, bullet: bulletItem});
 	}
 	if(item.amount) player.takeItem(player.inventory.findIndex(e => e.slot == item.slot), 1);
 
@@ -211,18 +211,22 @@ function removeDeadEnemy(target, enemy) {
 	target.classList.add("deathAnimation");
 	target.style.animationName = "deathAnimation";
 
-	enemy.drops?.forEach(drop => {
-		const nItem = new Item(drop.item);
-		const amount = convertArrayOfNumbers(drop.amount);
-		const index = itemStackIndex(currentLevel.drops, nItem);
-		if(amount) nItem.amount = amount;
-		if(index == -1) currentLevel.drops.push(nItem);
-		else currentLevel.drops[index].amount += nItem.amount;
-	});
+	enemy.drops?.forEach(addItemsToCurrentDrops);
+}
+
+function addItemsToCurrentDrops(drop) {
+	const nItem = new Item(drop.item);
+	const amount = convertArrayOfNumbers(drop.amount);
+	const index = itemStackIndex(currentLevel.drops, nItem);
+	if(amount) nItem.amount = amount;
+	if(index == -1) currentLevel.drops.push(nItem);
+	else currentLevel.drops[index].amount += nItem.amount;
 }
 
 function playerWonTheBattle() {
 	setTimeout(() => document.querySelector("#figthEndScreen").classList = "victory", 1900);
+	if(levels[currentLevel.id].drops) dropsFromLootTable(levels[currentLevel.id].drops).forEach(addItemsToCurrentDrops);
+	
 	currentLevel.drops.forEach(item => {
 		const div = document.createElement("div");
 		const img = document.createElement("img");
@@ -375,26 +379,21 @@ async function startEnemyTurn() {
 					return true;
 				}
 			}) : null;
-			let bulletDmg = 0;
-			if(bulletItem) {
-				const {meleDmg, rangeDmg} = bulletItem.calcDamage();
-				bulletDmg = meleDmg + rangeDmg;
-			}
-
-			console.log(item)
-
+			let bulletDmg = bulletItem ? bulletItem.calcDamage().totalDmg() : 0;
+			
 			card.classList.add("enemyAttacks");
 			
 			item.selfEffect?.forEach(ef => enemy.effect(ef.id, ef.power, ef.duration + 1));
-			const {meleDmg : dmg, rangeDmg, intentToHurt} = item?.calcDamage() ?? {};
+			const dmgData = item?.calcDamage();
+			const totalWeaponDmg = dmgData.totalDmg();
 			const PLdefenceValue = player.calcDefenceValue();
 			const PLdefencePercentage = Math.max(player.calcDefencePercentage(), 0);
-			const realDmg = Math.round( Math.max(dmg + rangeDmg + bulletDmg - PLdefenceValue, 0) * PLdefencePercentage ) ?? 0;
+			const realDmg = Math.round( Math.max(totalWeaponDmg + bulletDmg - PLdefenceValue, 0) * PLdefencePercentage ) ?? 0;
 			player.hp -= realDmg;
 
 			await sleep(300);
 			
-			if(intentToHurt) enemyTurnAnimations("attack", card, realDmg, item);
+			if(dmgData.intentToHurt) enemyTurnAnimations("attack", card, realDmg, item);
 			if(item.amount && --item.amount <= 0) enemy.items.splice(itemIndex, 1);
 			if(item.mana) enemy.mp -= item.mana;
 			if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
@@ -431,11 +430,9 @@ async function startEnemyTurn() {
 }
 
 function reduceBestItemIndexForEnemy(enemy, allMoves) {
-	const maxPlDmg = Object.values(player.hotbar).reduce((ac, item) => Math.max(ac, item.calcDamage?.().maxMeleDmg ?? 0), 0);
+	const maxPlDmg = Object.values(player.hotbar).reduce((ac, item) => Math.max(ac, item.calcTotalDamage?.() ?? 0), 0);
 	if(maxPlDmg >= enemy.hp) {
-		console.log("??")
 		const hpIndex = allMoves.bestHpMoves[0];
-		console.log(allMoves)
 		if(enemy.items[hpIndex]?.healV * currentLevel.enemyRounds + enemy.hp > maxPlDmg) return hpIndex
 	} return allMoves.bestDmgMoves[0];
 }
@@ -550,14 +547,13 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
 				}
 			}) : null;
 
-			let totalDmg = 0;
+			let totalBulletDmg = 0;
 			if(bulletItem) {
-				const {meleDmg, rangeDmg} = bulletItem.calcDamage();
-				totalDmg += meleDmg + rangeDmg;
+				totalBulletDmg = bulletItem.calcDamage().totalDmg();
 			} else if(item.useAmmoType) break main;
 			
-			const {meleDmg, rangeDmg} = item.calcDamage();
-			nPlayer.hp -= totalDmg + meleDmg + rangeDmg;
+			const weaponDmg = item.calcDamage().totalDmg();
+			nPlayer.hp -= totalBulletDmg + weaponDmg;
 			nEnemy.hp = Math.min(nEnemy.hp + (item?.healV ?? 0), nEnemy.maxHp);
 			nEnemy.mp = Math.min(nEnemy.mp + (item?.manaHealV ?? 0), nEnemy.maxMp);
 		}
@@ -574,20 +570,11 @@ function countAllEnemyMoves(numberOfMoves, enemy) {
 	return bestResults
 }
 
-window.addEventListener("keydown", e => {
-	if(e.code.startsWith("Digit") || e.code.startsWith("Numpad")) {
-		const keyNumber = +e.code.replace("Digit", "").replace("Numpad", "");
-
-		if(keyNumber > 0 && keyNumber < 6) player.currentSlot = "slot" + keyNumber;
-		updatePlayersHotbar();
-	}
-});
-
 function updatePlayersHotbar() {
 	const hotbarSlots = document.querySelectorAll("#figtingScreen .playerBox .centerContainer .slot");
 
 	hotbarSlots.forEach((slot, index) => {
-		const slotName = "slot" + (index + 1);
+		const slotName = "hotbarSlot" + (index + 1);
 		const item = player.hotbar[slotName];
 		const imgSrc = "./images/" + item.image;
 		slot.querySelector("img").src = item.image ? imgSrc : "";
@@ -603,7 +590,7 @@ document.querySelector("#figtingScreen .playerBox .hotbarBox").addEventListener(
 	if(!e.target.classList.contains("slot")) return;
 	const allSlots = document.querySelectorAll("#figtingScreen .playerBox .slot");
 	const index = Array.from(allSlots).indexOf(e.target) + 1;
-	player.currentSlot = "slot" + index;
+	player.currentSlot = "hotbarSlot" + index;
 	updatePlayersHotbar();
 });
 

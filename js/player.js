@@ -78,7 +78,7 @@ else var player = new Player({
 function Player(arr) {
 	this.hp = arr.hp;
 	this.mp = arr.mp;
-	this.maxHp = arr.maxHp;
+	this.maxHp = 15;
 	this.debug = true;
 	this.maxHpF = () => {
 		const extra = Object.values(this.armor).reduce((a, b) => a + (b?.healthBoostValue ?? 0), 0) || 0;
@@ -91,7 +91,7 @@ function Player(arr) {
 		return (100 - total) / 100;
 	}
 	
-	this.maxMp = arr.maxMp;
+	this.maxMp = 25;
 	this.maxMpF = () => {
 		const extra = Object.values(this.armor).reduce((a, b) => a + (b?.manaBoostValue ?? 0), 0) || 0;
 		return this.maxMp + extra;
@@ -102,31 +102,25 @@ function Player(arr) {
 	this.effects = arr.effects?.map(effect => new Effect(effect)) || [];
 
 	this.hotbar = {
-		"slot1": {},
-		"slot2": {},
-		"slot3": {},
-		"slot4": {},
-		"slot5": {}
+		"hotbarSlot1": {},
+		"hotbarSlot2": {},
+		"hotbarSlot3": {},
+		"hotbarSlot4": {},
+		"hotbarSlot5": {}
 	};
 
 	this.armor = {
-		head: {},
-		chest: {},
-		legs: {},
+		armorhead: {},
+		armorchest: {},
+		armorlegs: {},
 	}
-
-	// for(const [slot, item] of Object.entries(arr?.armor ?? {})) {
-	// 	if(item?.id) this.armor[slot] = new Item(item); 
-	// }
 
 	this.inventory = arr.inventory?.map(item => {
 		const nItem = new Item(item, this);
 		const slot = nItem.slot ?? "";
 		if(slot) {
-			if(slot.startsWith("hotbarSlot")) this.hotbar["slot" + slot.substr(10)] = nItem;
-			else if(slot === "headSlot") this.armor["head"] = nItem;
-			else if(slot === "chestSlot") this.armor["chest"] = nItem;
-			else if(slot === "legsSlot") this.armor["legs"] = nItem;
+			if(slot.startsWith("hotbarSlot")) this.hotbar[slot] = nItem;
+			else if(slot.startsWith("armor")) this.armor[slot] = nItem;
 		}
 		return nItem;
 	}) ?? [];
@@ -156,14 +150,45 @@ function Player(arr) {
 		if(!item) return;
 		if(item.amount) item.amount -= amount;
 		if(!item.amount || item.amount <= 0) {
-			if(item.slot?.startsWith("hotbarSlot")) this.hotbar[`slot${item.slot.substr(10)}`] = {};
-			else if(item.slot === "headSlot") this.armor.head = {}
-			else if(item.slot === "chestSlot") this.armor.chest = {}
-			else if(item.slot === "legsSlot") this.armor.legs = {}
+			if(item.slot?.startsWith("hotbarSlot")) this.hotbar[item.slot] = {};
+			else if(item.slot?.startsWith("armor")) this.armor[item.slot] = {};
 			this.inventory.splice(index, 1);
 		}
 
 		this.totalItemCounts[item.id] = Math.max(this.totalItemCounts[item.id] - (amount ?? 1), 0);
+		if(this.totalItemCounts[item.id] === 0) delete this.totalItemCounts[item.id];
+	}
+
+	this.armorMeleBoostValue = 0;
+	this.armorMeleBoostPercentage = 1;
+	this.armorRangeBoostValue = 0;
+	this.armorRangeBoostPercentage = 1;
+	this.armorMagicBoostValue = 0;
+	this.armorMagicBoostPercentage = 1;
+	this.armorArrowBoostValue = 0;
+	this.armorArrowBoostPercentage = 1;
+
+	this.updateArmorStats = () => {
+		this.armorMeleBoostValue = 0;
+		this.armorMeleBoostPercentage = 1;
+		this.armorRangeBoostValue = 0;
+		this.armorRangeBoostPercentage = 1;
+		this.armorMagicBoostValue = 0;
+		this.armorMagicBoostPercentage = 1;
+		this.armorArrowBoostValue = 0;
+		this.armorArrowBoostPercentage = 1;
+
+		for(const armor of Object.values(this.armor)) {
+			if(!armor.id) continue;
+			if(armor.meleDmgValue) this.armorMeleBoostValue += armor.meleDmgValue;
+			if(armor.meleDmgPercentage) this.armorMeleBoostPercentage += armor.meleDmgPercentage;
+			if(armor.rangeDmgValue) this.armorRangeBoostValue += armor.rangeDmgValue;
+			if(armor.rangeDmgPercentage) this.armorRangeBoostPercentage += armor.rangeDmgPercentage;
+			if(armor.magicDmgValue) this.armorMagicBoostValue += armor.magicDmgValue;
+			if(armor.magicDmgPercentage) this.armorMagicBoostPercentage += armor.magicDmgPercentage;
+			if(armor.arrowDmgValue) this.armorArrowBoostValue += armor.arrowDmgValue;
+			if(armor.arrowDmgPercentage) this.armorArrowBoostPercentage += armor.arrowDmgPercentage;
+		}
 	}
 }
 

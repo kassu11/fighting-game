@@ -1,0 +1,289 @@
+.settings #settingsBox {
+	display: grid;
+}
+
+#settingsBox {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.63);
+	left: 0px;
+	top: 0px;
+	z-index: 15;
+	place-items: center;
+	display: none;
+
+	.container {
+		position: absolute;
+		background: #171717;
+		padding: 10px;
+		border: 5px solid hsl(0, 0%, 20%);
+		max-width: 100%;
+		max-height: min(700px, 100%);
+		display: flex;
+		flex-direction: column;
+
+		.button {
+			font-size: 30px;
+			font-weight: 700;
+			font-family: helvetica;
+			background: gray;
+			padding: 10px;
+			margin: 5px 2px;
+			border: 5px solid #171717;
+			cursor: pointer;
+			transition: all 0.1s;
+			text-align: center;
+
+			&:hover {
+				background: rgb(53, 53, 53);
+				color: white;
+			}
+		}
+
+		.inputContainer {
+			position: relative;
+			width: 100%;
+			display: flex;
+			flex-wrap: wrap;
+			background: #333;
+			border: 5px solid #333;
+			margin-bottom: 7px;
+
+			input {
+				width: 100%;
+				height: 30px;
+				border: none;
+				background: #171717;
+				font-size: 20px;
+				font-weight: 300;
+				font-family: helvetica;
+				color: white;
+				padding: 5px;
+				margin: 7px;
+				outline: none;
+				margin-bottom: 0px;
+			}
+
+			.button {
+				flex-grow: 1;
+				margin: 7px
+			}
+		}
+		.saveFileSpaceContainer {
+			position: relative;
+			height: 20px;
+			flex-shrink: 0;
+			display: flex;
+			background: hsl(348, 83%, 10%);
+			margin-bottom: 7px;
+			max-width: 100%;
+			width: 500px;
+
+			.saveFileBar {
+				background: crimson;
+			}
+
+			.saveFileSpaceMax {
+				right: 0px;
+			}
+
+			p {
+				position: absolute;
+				color: white;
+				margin: 0px 3px;
+				font-family: font3;
+				font-weight: 500;
+			}
+		}
+
+		.savesContainer {
+			position: relative;
+			overflow-y: auto;
+			height: 100vh;
+			background: #333333;
+			border: 5px solid #333;
+
+			.saveFileRow {
+				position: relative;
+				background: #171717;
+				border: 5px solid #171717;
+				margin: 7px;
+				cursor: pointer;
+				transition: background .2s;
+
+				&:hover {
+					background: #0e0e0e;
+
+					.saveFileName[readonly].saveFileName {
+						background: hsl(0, 0%, 8%);
+					}
+
+				}
+
+				p {
+					margin: 0px;
+					color: white;
+					font-family: font3;
+					white-space: nowrap;
+					font-size: 18px;
+					pointer-events: none;
+				}
+
+				.nameAndSpace, .secondRow, .thirdRow {pointer-events: none}
+
+				.nameAndSpace {
+					display: flex;
+					gap: 5px;
+					flex-wrap: wrap;
+
+					.saveFileName {
+						outline: none;
+						background: rgb(255, 255, 255);
+						border: none;
+						flex-grow: 1;
+						padding: 0px 0px 2px 5px;
+						min-width: 100px;
+						font-family: font3;
+						font-weight: 700;
+						font-size: 20px;
+						color: #519fff;
+						text-shadow: 0 0 3px #519fff70;
+						text-overflow: ellipsis;
+						transition: background .2s;
+						pointer-events: all;
+					}
+
+					.saveFileName[readonly] {
+						pointer-events: none;
+						background: #262626;
+						user-select: none;
+
+						&::placeholder {
+							color: transparent;
+							text-shadow: 0 0 3px transparent;
+						}
+					}			
+				}
+
+				.secondRow {
+					display: flex;
+					position: relative;
+					width: 100%;
+					flex-wrap: wrap;
+					gap: 0px 5px;
+
+					.saveFileLastPlayed {margin-right: auto;}
+				}
+
+				.thirdRow {
+					display: flex;
+					position: relative;
+					width: 100%;
+					flex-wrap: wrap;
+
+					.totalTimePlayed {margin-right: auto;}
+
+					.saveRowButton {
+						position: relative;
+						background: #808080;
+						width: max-content;
+						padding: 2px 15px 5px;
+						cursor: pointer;
+						font-family: 'font3';
+						font-weight: 700;
+						font-size: 22px;
+						margin-left: 7px;
+						pointer-events: all;
+					}
+				}
+
+			}
+		}
+	}
+
+	.popUpContainer {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		display: grid;
+		place-items: center;
+		background: rgba(0, 0, 0, 0.63);
+
+		.popUp {
+			position: absolute;
+			background: #0e0e0e;
+			font-family: font3;
+			width: 350px;
+			border: 5px solid #1a1a1a;
+			box-shadow: inset 0 0 20px black;
+	
+			p {
+				margin: 0px;
+			}
+	
+			.popUpHeader {
+				position: absolute;
+				transform: translateY(-100%) translateX(-50%);
+				font-size: 70px;
+				line-height: 0.8;
+				left: 50%;
+				font-weight: 700;
+				background: #3e0000;
+				padding: 5px 15px 11px;
+				box-shadow: inset 0 0 35px 27px #140000;
+				text-align: center;
+				color: #ff7272;
+				text-shadow: #ff7272 0px 0px 5px;
+				border: 10px solid #320f0f;
+			}
+
+			.popUpBody {
+				font-size: 20px;
+				text-align: center;
+				width: 100%;
+				padding: 10px 0px;
+				color: #f90;
+				font-weight: 500;
+				text-shadow: 0 0 4px #ffa500b0;
+			}
+
+			.buttonRow {
+				position: relative;
+				display: flex;
+
+				.button {
+					position: relative;
+					width: 50%;
+					cursor: pointer;
+					text-align: center;
+					padding: 5px;
+					font-size: 35px;
+					font-weight: 900;
+					margin: 10px;
+					box-shadow: inset 0 0 34px 20px #000000c2;
+					transition: filter .15s, transform .1s;
+					user-select: none;
+
+					&:hover {
+						filter: brightness(1.2);
+					}
+					&:hover:active {
+						transform: scale(1.02);
+					}
+	
+					&.yes {
+						background: #f00;
+						border: 5px solid #8b0000;
+						color: #ff9898;
+					}
+					&.no {
+						background: #04ff00;
+						border: 5px solid #006400;
+						color: #6cff6c;
+					}
+				}
+			}		
+		}
+	}
+}

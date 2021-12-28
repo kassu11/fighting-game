@@ -273,11 +273,14 @@
 								image-rendering: optimizespeed;
 								position: absolute;
 								width: calc(100% - 10px);
+								height: calc(100% - 10px);
 								left: 5px;
 								top: 50%;
 								transform: translateY(-50%);
 								pointer-events: none;
 								user-select: none;
+								object-fit: contain;
+								&[src=""] {display: none}
 							}
 
 							.itemAmount {
@@ -348,6 +351,7 @@
 							background: #1d7eff;
 							border: 10px solid #002248;
 							margin: 10px;
+							user-select: none;
 	
 							img {
 								pointer-events: none;
