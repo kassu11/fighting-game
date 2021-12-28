@@ -368,5 +368,4 @@ function openMainMenu() {
 	}
 }
 
-// openMainMenu();
-document.querySelector("#wikiMenuButton").click();
+openMainMenu();
