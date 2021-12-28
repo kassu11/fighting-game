@@ -3,8 +3,8 @@ function generateArmor(num) {
 	return [...new Array(num)].map((_, i) => {
 		const time = Math.round(new Date().getTime() / random(10000));
 		const [img, eq, tag] = [
-			["baselegs3.png", "legs", "leggings"],  
-			["basechest3.png", "chest", "chestplate"], 
+			["iron-leggins.png", "legs", "leggings"],  
+			["iron-chestplate.png", "chest", "chestplate"], 
 			["helmet.png", "head", "helmet"]
 		][random(2)];
 		return {

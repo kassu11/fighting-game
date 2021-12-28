@@ -139,14 +139,26 @@
 				}
 
 				.info {
-					background: #4300bd;
+					background: hsl(261, 100%, 37%);
 					width: 40px;
 					height: 40px;
 					position: absolute;
 					right: -107px;
 					bottom: -107px;
-					box-shadow: 0 0 0px 3px #30008a;
+					box-shadow: 0 0 0px 3px hsl(261, 100%, 27%);
 					pointer-events: inherit;
+					cursor: pointer;
+					transition: box-shadow .2s, background .2s;
+
+					&:hover {
+						box-shadow: 0 0 0px 3px hsl(261, 100%, 30%);
+						background: hsl(261, 100%, 40%);
+
+						.infoText {
+							color: hsl(261, 100%, 70%);
+							transform: scale(1.1);
+						}
+					}
 
 					.infoText {
 						position: absolute;
@@ -157,6 +169,7 @@
 						font-family: font1;
 						white-space: nowrap;
 						color: #8746ff;
+						transition: color .2s, transform .2s;
 						text-shadow: -1px 1px 0px #000, -2px 2px 0px #000, -3px 3px 0px #000;
 					}
 				}

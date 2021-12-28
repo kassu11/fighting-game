@@ -21,8 +21,7 @@ if(typeof enemies === "undefined") var enemies = {
 			},
 			{"item": items["hp_pot"], "chance": 100, "amount": [1, 2]}
 		],
-		img: "vihu2.png",
-		imgTop: 7,
+		img: "vihu2.png"
 	},
 	red_guy: {
 		id: "red_guy",
@@ -44,7 +43,6 @@ if(typeof enemies === "undefined") var enemies = {
 			{"item": items["dmgBooster"], "chance": 100, "amount": [2, 4]}
 		],
 		img: "vihu3.png",
-		imgTop: 7,
 	},
 	octopus: {
 		id: "octopus",
@@ -81,7 +79,6 @@ if(typeof enemies === "undefined") var enemies = {
 			{"item": items["helmet"], "chance": 100, "amount": [2, 4]}
 		],
 		img: "octopus.png",
-		imgTop: 7,
 	},
 	fish_dude: {
 		id: "fish_dude",
@@ -110,7 +107,6 @@ if(typeof enemies === "undefined") var enemies = {
 			},
 		],
 		img: "enemy4.png",
-		imgTop: 7,
 	},
 	tongue_monster: {
 		id: "tongue_monster",
@@ -122,7 +118,6 @@ if(typeof enemies === "undefined") var enemies = {
 		effects: [],
 		drops: [],
 		img: "vihu1.png",
-		imgTop: 1,
 	},
 	devil: {
 		id: "devil",
@@ -215,10 +210,6 @@ function Enemy(enemy) {
 		}
 	});
 	this.img = enemy.img;
-	this.imgLeft = enemy.imgLeft;
-	this.imgTop = enemy.imgTop;
-	this.imgWidth = enemy.imgWidth;
-	this.imgHeight = enemy.imgHeight;
 
 	this.drops = dropsFromLootTable(enemy.drops);
 

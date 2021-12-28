@@ -77,11 +77,6 @@ function addEnemyCard(enemy, time) {
 		<div class="effectBox"></div>
 	</div>`
 
-	if(enemy.imgLeft) enemyCard.querySelector("img").style.left = `calc(50% + ${enemy.imgLeft}px)`;
-	if(enemy.imgTop) enemyCard.querySelector("img").style.top = `calc(50% + ${enemy.imgTop}px)`;
-	if(enemy.imgWidth) enemyCard.querySelector("img").style.width = enemy.imgWidth + "px";
-	if(enemy.imgHeight) enemyCard.querySelector("img").style.height = enemy.imgHeight + "px";
-
 	box.append(enemyCard);
 	if(time != null) {
 		enemyCard.classList.add("creatingAnimation");

@@ -115,15 +115,19 @@ function Player(arr) {
 		legs: {},
 	}
 
-	for(const [slot, item] of Object.entries(arr?.armor ?? {})) {
-		if(item?.id) this.armor[slot] = new Item(item); 
-	}
-	
+	// for(const [slot, item] of Object.entries(arr?.armor ?? {})) {
+	// 	if(item?.id) this.armor[slot] = new Item(item); 
+	// }
 
 	this.inventory = arr.inventory?.map(item => {
 		const nItem = new Item(item, this);
 		const slot = nItem.slot ?? "";
-		if(slot.startsWith("hotbarSlot")) this.hotbar["slot" + slot.substr(10)] = nItem;
+		if(slot) {
+			if(slot.startsWith("hotbarSlot")) this.hotbar["slot" + slot.substr(10)] = nItem;
+			else if(slot === "headSlot") this.armor["head"] = nItem;
+			else if(slot === "chestSlot") this.armor["chest"] = nItem;
+			else if(slot === "legsSlot") this.armor["legs"] = nItem;
+		}
 		return nItem;
 	}) ?? [];
 

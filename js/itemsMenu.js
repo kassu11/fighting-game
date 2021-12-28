@@ -74,9 +74,7 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 	const isInvItem = target.classList.contains("inv");
 	const isArmorSlot = target.classList.contains("armorSlot");
 
-	for(let i = 10, parent = target; --i > 0; parent = parent?.parentNode) {
-		if(parent?.classList?.contains("container")) return;
-	} 
+	if(target.closest(".container")) return;
 
 	const itemElements = isInvItem ? itemsMenu.querySelector(".inventoryBox").childNodes : null;
 	const hotbarElements = isHotbarItem ? itemsMenu.querySelectorAll(".hotbarContainer .hotbarBox .slot") : null;
@@ -188,6 +186,18 @@ itemsMenu.addEventListener("click", ({target, x, y}) => {
 		});
 	}
 
+	if(player.debug) {
+		const debugDiv = element("div").setClass("debug");
+		const debugText = element("p").setText("Delete item").setClass("debugText");
+		debugDiv.append(debugText);
+		container.append(debugDiv);
+		debugDiv.onclick = () => {
+			player.inventory.splice(index, 1);
+			generateItemsOnGrid(player.inventory);
+			container.innerHTML = "";
+		}
+	}
+
 
 	const maxY = innerHeight - container.getBoundingClientRect().height - 10;
 	const maxX = innerWidth - container.getBoundingClientRect().width - 10;
@@ -227,7 +237,8 @@ window.addEventListener("resize", itemsMenuInventoryResize);
 function itemsMenuInventoryResize() {
 	const invContainer = itemsMenu.querySelector(".inventoryContainer")
 	if(itemsMenu.classList.contains("inv")) {
-		const screenOffset = innerWidth - 550;
+		// const screenOffset = innerWidth - 550;
+		const screenOffset = innerWidth - 60;
 		const item = 70;
 		const itemSize = item + 10 // item + padding
 		invContainer.style.width = Math.max(screenOffset - item - screenOffset % itemSize, 0) + "px";
@@ -236,5 +247,6 @@ function itemsMenuInventoryResize() {
 		const item = 70;
 		const itemSize = item + 10 // item + padding
 		invContainer.style.width = Math.max(screenOffset - item - screenOffset % itemSize, 0) + "px";
+		if(document.querySelector(".craftableItems").children.length) drawVisibleCraftingItems();
 	}
 } itemsMenuInventoryResize();
