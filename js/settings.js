@@ -136,6 +136,14 @@ function loadGameRow(array, index) {
 		currentSave.loadTime = performance.now();
 		player = new Player(JSON.parse(allSaves[index].pl));
 		player.updateArmorStats();
+		updateLevelScreen();
+
+		for(const levelId of Object.keys(levels)) {
+			if(player.levels.has(levelId)) continue;
+			centerLevelMap(levelId, false);
+			break;
+		}
+		
 		if(document.body.classList.contains("itemsMenu")) {
 			generateItemsOnGrid(player.inventory);
 			if(itemsMenu.classList.contains("inv")) {
@@ -271,7 +279,6 @@ function formatSaveElementDate(date) {
 	if(!diff.includes("d")) {
 		return "Last played: " + diff + " ago";
 	} return `Last played: ${time.getDate()}.${time.getMonth()}.${time.getFullYear()} klo ${time.getHours()}.${time.getMinutes()}`;
-
 }
 
 function saveGameArray(name) {
@@ -289,6 +296,7 @@ function stringifyPlayer() {
 	return JSON.stringify(player, (key, value) => {
 		if(key === "armor" || key === "hotbar" || key == "totalItemCounts" || key == "effects") return undefined;
 		if(key.endsWith("BoostValue") || key.endsWith("BoostPercentage")) return undefined;
+		if(key === "levels") return [...value];
 		if(key === "inventory") return value.map(({id, slot, amount}) => {
 			const arr = {id};
 			if(amount) arr.amount = amount;

@@ -1,4 +1,4 @@
-const allLevelKeys = Object.keys(levels).sort((a, b) => a > b ? 1 : -1);
+const allLevelKeys = Object.keys(levels).sort((a, b) => levels[a].num - levels[b].num);
 const enemyInLevels = allLevelKeys.reduce((acc, key) => {
 	const level = levels[key];
 	for(const enemy of level.enemies) {

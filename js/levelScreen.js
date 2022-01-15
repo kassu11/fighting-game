@@ -2,25 +2,26 @@
 const levelMenu = document.querySelector("#levelMenu");
 
 const levelButtonContainer = levelMenu.querySelector(".levelButtons .container");
-for(const [key, value] of Object.entries(levels)) {
-	const levelElem = levelElement(key);
-	// const div = document.createElement("div");
-	// const p = document.createElement("p");
-	// div.classList.add("levelButton")
-	// div.id = key;
-	// p.textContent = key;
-	// div.append(p);
-	if(value.cords) {
-		levelElem.style.left = value.cords.x + "px";
-		levelElem.style.top =  value.cords.y + "px";
-	} else levelElem.style.left = random(window.innerWidth - 200) + "px";
-	levelButtonContainer.append(levelElem);
 
-	levelElem.querySelector(".info").onclick = () => {
-		wikiGenerateLevel(key);
-		document.body.classList = "wikiMenu"
-	};
+function updateLevelScreen() {
+	levelButtonContainer.innerHTML = `<img src="./images/mapBg.png" alt="">`;
+	for(const [key, value] of Object.entries(levels)) {
+		const levelElem = levelElement(key);
+		if(player.levels?.has(key)) levelElem.classList.add("completed");
+		if(value.cords) {
+			levelElem.style.left = value.cords.x + "px";
+			levelElem.style.top =  value.cords.y + "px";
+		} else levelElem.style.left = random(window.innerWidth - 200) + "px";
+		levelButtonContainer.append(levelElem);
+	
+		levelElem.querySelector(".info").onclick = () => {
+			wikiGenerateLevel(key);
+			document.body.classList = "wikiMenu"
+		};
+	}
 }
+
+updateLevelScreen();
 
 function levelElement(id) {
 	const levelData = levels[id];
@@ -181,7 +182,7 @@ function centerLevelMap(id, animation = true, scale = false) {
 		const [x, y] = [window.innerWidth / 2, window.innerHeight / 2];
 		const {width, height} = container.getBoundingClientRect();
 		
-		container.style.setProperty("--scale", 4);
+		container.style.setProperty("--scale", 3);
 		
 		const {width: w2, height: h2} = container.getBoundingClientRect();
 	

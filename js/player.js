@@ -79,7 +79,7 @@ function Player(arr) {
 	this.hp = arr.hp;
 	this.mp = arr.mp;
 	this.maxHp = 15;
-	this.debug = true;
+	this.debug = false;
 	this.maxHpF = () => {
 		const extra = Object.values(this.armor).reduce((a, b) => a + (b?.healthBoostValue ?? 0), 0) || 0;
 		return this.maxHp + extra;
@@ -132,10 +132,10 @@ function Player(arr) {
 	}, {});
 
 	this.giveItem = ({amount, ...itemData}) => {
-		const item = new Item(itemData);
+		const item = new Item(itemData, this);
 		const index = itemStackIndex(this.inventory, item);
 		if(!item.amount && amount) {
-			for(let i = 1; i < amount; i++) this.inventory.push(new Item(itemData));
+			for(let i = 1; i < amount; i++) this.inventory.push(new Item(itemData, this));
 		} else item.amount = amount;
 
 		if(index == -1) this.inventory.push(item);
@@ -159,6 +159,8 @@ function Player(arr) {
 		if(this.totalItemCounts[item.id] === 0) delete this.totalItemCounts[item.id];
 	}
 
+	this.levels = new Set(arr.levels ?? []);
+
 	this.armorMeleBoostValue = 0;
 	this.armorMeleBoostPercentage = 1;
 	this.armorRangeBoostValue = 0;
@@ -178,8 +180,12 @@ function Player(arr) {
 		this.armorArrowBoostValue = 0;
 		this.armorArrowBoostPercentage = 1;
 
-		for(const armor of Object.values(this.armor)) {
-			if(!armor.id) continue;
+		let setBonusCount = 0;
+		const setBonusType = this.armor?.armorhead?.armorSet ?? "";
+
+		for(const armor of [...Object.values(this.armor), {...armorSetBonus[setBonusType] ?? {}}]) {
+			if(!armor.id && setBonusCount !== 3) continue;
+			if(setBonusType === armor.armorSet) setBonusCount++;
 			if(armor.meleDmgValue) this.armorMeleBoostValue += armor.meleDmgValue;
 			if(armor.meleDmgPercentage) this.armorMeleBoostPercentage += armor.meleDmgPercentage;
 			if(armor.rangeDmgValue) this.armorRangeBoostValue += armor.rangeDmgValue;
@@ -189,6 +195,8 @@ function Player(arr) {
 			if(armor.arrowDmgValue) this.armorArrowBoostValue += armor.arrowDmgValue;
 			if(armor.arrowDmgPercentage) this.armorArrowBoostPercentage += armor.arrowDmgPercentage;
 		}
+
+		return setBonusCount;
 	}
 }
 

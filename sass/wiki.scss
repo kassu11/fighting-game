@@ -9,6 +9,7 @@
 	left: 0px;
 	top: 50px;
 	place-items: center;
+	user-select: none;
 
 	.selectionContainer {
 		background: #1c1c1c;
@@ -158,6 +159,7 @@
 			text-shadow: -2px -2px 0px #0000005e;
 			filter: brightness(2);
 			margin: 0px;
+			user-select: none;
 		}
 
 		.dropTree {
@@ -165,6 +167,7 @@
 			margin: 10px 0px 0px;
 			flex-wrap: wrap;
 			gap: 15px 0px;
+			user-select: none;
 
 			.row, .items {
 				position: relative;

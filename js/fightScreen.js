@@ -148,8 +148,22 @@ document.querySelector(".enemyContainer").addEventListener("click", async (e) =>
 
 	item.selfEffect?.forEach(ef => player.effect(ef.id, ef.power, ef.duration + 1));
 	if(item.mana) player.mp -= item.mana;
-	if(item.healV) player.hp = Math.min(player.hp + item.healV, player.maxHpF());
-	if(item.manaHealV) player.mp = Math.min(player.mp + item.manaHealV, player.maxMpF());
+	if(item.healV) {
+		player.hp = Math.min(player.hp + item.healV, player.maxHpF());
+		const area = 50;
+		const {width, left, top, height} = figtingScreen.querySelector(".playerBox .hpBox")?.getBoundingClientRect();
+		const x = random(width / 2 - area, width / 2 + area);
+		const y = random(top, top + height) - 100;
+		AddBattleParciles({x, y, dmg: item.healV}, "heal");
+	}
+	if(item.manaHealV) {
+		player.mp = Math.min(player.mp + item.manaHealV, player.maxMpF());
+		const area = 50;
+		const {width, left, top, height} = figtingScreen.querySelector(".playerBox .mpBox")?.getBoundingClientRect();
+		const x = random(window.innerWidth - width / 2 - area, window.innerWidth - width / 2 + area);
+		const y = random(top, top + height) - 100;
+		AddBattleParciles({x, y, dmg: item.manaHealV}, "mana");
+	}
 	if(item.needTarget) {
 		addPlayerItemUseParticle(target, item, {x: e.x, y: e.y, dmg: totalBulletDmg + totalWeaponDmg, bullet: bulletItem});
 	}
@@ -177,7 +191,7 @@ function findParentElementWithClass(elem, text) {
 }
 
 async function addPlayerItemUseParticle(target, item, arr) {
-	if(arr.bullet) AddBattleParciles(arr,"", target);
+	if(arr.bullet) AddBattleParciles(arr,"bullet", target);
 	if(item.animationDelay) await sleep(item.animationDelay);
 
 	if(item.particle) AddBattleParciles(arr, item.particle);
@@ -226,6 +240,9 @@ function addItemsToCurrentDrops(drop) {
 function playerWonTheBattle() {
 	setTimeout(() => document.querySelector("#figthEndScreen").classList = "victory", 1900);
 	if(levels[currentLevel.id].drops) dropsFromLootTable(levels[currentLevel.id].drops).forEach(addItemsToCurrentDrops);
+	player.levels.add(currentLevel.id);
+	levelMenu.querySelector(`.levelButton#${currentLevel.id}`)?.classList.add("completed");
+
 	
 	currentLevel.drops.forEach(item => {
 		const div = document.createElement("div");
@@ -259,8 +276,8 @@ function updateEnemyCard(target) {
 	const enemy = currentLevel.enemies.get(target);
 	if(enemy?.id == null) return;
 
-	const hpPercentage = Math.max(enemy.hp / enemy.maxHp, 0) * 100;
-	const mpPercentage = Math.max(enemy.mp / enemy.maxMp, 0) * 100;
+	const hpPercentage = (Math.max(enemy.hp / enemy.maxHp, 0) * 100).toFixed(1);
+	const mpPercentage = (Math.max(enemy.mp / enemy.maxMp, 0) * 100).toFixed(1);
 	const hpDirection = +target.querySelector(".hpBG1").style.width.slice(0, -1) - hpPercentage;
 	const mpDirection = +target.querySelector(".mpBG1").style.width.slice(0, -1) - mpPercentage;
 
@@ -272,10 +289,10 @@ function updateEnemyCard(target) {
 	target.querySelector(".mpBG1").style.width = mpPercentage + "%";
 	target.querySelector(".mpBG2").style.width = mpPercentage + "%";
 
-	if(hpDirection < 0) target.querySelector(".hpBox").classList = "hpBox reverse";
-	else if(hpDirection > 0) target.querySelector(".hpBox").classList = "hpBox forward";
-	if(mpDirection < 0) target.querySelector(".mpBox").classList = "mpBox reverse";
-	else if(mpDirection > 0) target.querySelector(".mpBox").classList = "mpBox forward";
+	if(hpDirection < -0.1) target.querySelector(".hpBox").classList = "hpBox reverse";
+	else if(hpDirection > 0.1) target.querySelector(".hpBox").classList = "hpBox forward";
+	if(mpDirection < -0.1) target.querySelector(".mpBox").classList = "mpBox reverse";
+	else if(mpDirection > 0.1) target.querySelector(".mpBox").classList = "mpBox forward";
 
 	target.querySelector(".effectContainer .effectBox").innerHTML = "";
 	enemy.effects.forEach((effect, index) => {
@@ -345,11 +362,11 @@ function updateEffectHovers() {
 
 function updatePlayerBars() {
 	const target = figtingScreen.querySelector(".playerBox");
-	const hpPercentage = Math.max(player.hp / player.maxHpF(), 0) * 100;
-	const mpPercentage = Math.max(player.mp / player.maxMpF(), 0) * 100;
+	const hpPercentage = (Math.max(player.hp / player.maxHpF(), 0) * 100).toFixed(1);
+	const mpPercentage = (Math.max(player.mp / player.maxMpF(), 0) * 100).toFixed(1);
 	const hpDirection = +target.querySelector(".hpBG1").style.width.slice(0, -1) - hpPercentage;
 	const mpDirection = +target.querySelector(".mpBG1").style.width.slice(0, -1) - mpPercentage;
-
+	
 	target.querySelector(".hpText").textContent = player.hp + "/" + player.maxHpF();
 	target.querySelector(".mpText").textContent = player.mp + "/" + player.maxMpF();
 
@@ -358,10 +375,10 @@ function updatePlayerBars() {
 	target.querySelector(".mpBG1").style.width = mpPercentage + "%";
 	target.querySelector(".mpBG2").style.width = mpPercentage + "%";
 
-	if(hpDirection < 0) target.querySelector(".hpBox").classList = "hpBox reverse";
-	else if(hpDirection > 0) target.querySelector(".hpBox").classList = "hpBox forward";
-	if(mpDirection < 0) target.querySelector(".mpBox").classList = "mpBox reverse";
-	else if(mpDirection > 0) target.querySelector(".mpBox").classList = "mpBox forward";
+	if(hpDirection < -0.1) target.querySelector(".hpBox").classList = "hpBox reverse";
+	else if(hpDirection > 0.1) target.querySelector(".hpBox").classList = "hpBox forward";
+	if(mpDirection < -0.1) target.querySelector(".mpBox").classList = "mpBox reverse";
+	else if(mpDirection > 0.1) target.querySelector(".mpBox").classList = "mpBox forward";
 }
 
 async function startEnemyTurn() {
@@ -392,8 +409,11 @@ async function startEnemyTurn() {
 			player.hp -= realDmg;
 
 			await sleep(300);
-			
-			if(dmgData.intentToHurt) enemyTurnAnimations("attack", card, realDmg, item);
+
+			if(dmgData.intentToHurt) {
+				if(bulletItem) enemyTurnAnimations("range", card, realDmg, bulletItem);
+				else enemyTurnAnimations("attack", card, realDmg, item);
+			}
 			if(item.amount && --item.amount <= 0) enemy.items.splice(itemIndex, 1);
 			if(item.mana) enemy.mp -= item.mana;
 			if(item.healV) enemy.hp = Math.min(enemy.hp + item.healV, enemy.maxHp);
@@ -447,17 +467,7 @@ function enemyTurnAnimations(type, card, dmg, item) {
 		const cardTop = window.innerHeight - bottom - hotbarHeight / 2,
 					cardTopOffset = random(-hotbarHeight / 3, hotbarHeight / 3);
 
-		playerBox.querySelector(".centerContainer").style.animationName = 'none';
-		playerBox.querySelector(".centerContainer").offsetHeight; /* trigger reflow */
-		playerBox.querySelector(".centerContainer").style.animationName = "hotbarShake" + random(0, 3);
-
-		playerBox.querySelector(".leftContainer").style.animationName = 'none';
-		playerBox.querySelector(".leftContainer").offsetHeight; /* trigger reflow */
-		playerBox.querySelector(".leftContainer").style.animationName = "playerBarsShake" + random(0, 3);
-
-		playerBox.querySelector(".rightContainer").style.animationName = 'none';
-		playerBox.querySelector(".rightContainer").offsetHeight; /* trigger reflow */
-		playerBox.querySelector(".rightContainer").style.animationName = "playerBarsShake" + random(0, 3);
+		playerShake();
 
 		card.style.left = cardLeft + cardLeftoffset + "px";
 		card.style.top = cardTop + cardTopOffset + "px";
@@ -473,15 +483,29 @@ function enemyTurnAnimations(type, card, dmg, item) {
 				AddBattleParciles({x: particleX, y: particleY - 100, dmg}, "enemyMeleDmg");
 			}
 		}, 150);
-	} else if(type == "poison") {
+	} else if(type == "range") {
 		const playerBox = figtingScreen.querySelector(".playerBox");
-		const {left, width, bottom} = card.getBoundingClientRect();
+		const {top, left, width, height} = card.getBoundingClientRect();
+		const x = random(width) + left,
+					y = random(height) + top;
 		const {height: hotbarHeight, width: hotbarWidth} = playerBox.querySelector(".hotbarBox").getBoundingClientRect();
-		const cardLeft = window.innerWidth / 2 - left - width / 2,
-					cardLeftoffset = random(0, hotbarWidth - 250) - (hotbarWidth - 250) / 2;
-		const cardTop = window.innerHeight - bottom - hotbarHeight / 2,
-					cardTopOffset = random(-hotbarHeight / 3, hotbarHeight / 3);
+		const x2 = random(hotbarWidth - 50) + window.innerWidth / 2 - hotbarWidth / 2 + 25;
+		const y2 = random(window.innerHeight - hotbarHeight, window.innerHeight - 20);
 
+		AddBattleParciles({x, y, x2, y2, dmg, bullet: item}, "bullet2");
+		
+		setTimeout(e => {
+			updatePlayerBars();
+			if(item.particle) AddBattleParciles({x: x2, y: y2}, item.particle);
+			if(dmg != null && dmg !== NaN) {
+				playerShake();
+				AddBattleParciles({x: x2, y: y2 - 150, dmg}, "enemyMeleDmg");
+			}
+		}, 200);
+	}
+
+	function playerShake() {
+		const playerBox = figtingScreen.querySelector(".playerBox");
 		playerBox.querySelector(".centerContainer").style.animationName = 'none';
 		playerBox.querySelector(".centerContainer").offsetHeight; /* trigger reflow */
 		playerBox.querySelector(".centerContainer").style.animationName = "hotbarShake" + random(0, 3);
@@ -493,21 +517,6 @@ function enemyTurnAnimations(type, card, dmg, item) {
 		playerBox.querySelector(".rightContainer").style.animationName = 'none';
 		playerBox.querySelector(".rightContainer").offsetHeight; /* trigger reflow */
 		playerBox.querySelector(".rightContainer").style.animationName = "playerBarsShake" + random(0, 3);
-
-		card.style.left = cardLeft + cardLeftoffset + "px";
-		card.style.top = cardTop + cardTopOffset + "px";
-
-		setTimeout(e => {
-			const particleX = window.innerWidth / 2 + cardLeftoffset;
-			const particleY = window.innerHeight - hotbarHeight / 2 + cardTopOffset;
-			card.style.left = null;
-			card.style.top = null;
-			if(item.particle) AddBattleParciles({x: particleX, y: particleY}, item.particle);
-			if(dmg) {
-				updatePlayerBars();
-				AddBattleParciles({x: particleX, y: particleY - 100, dmg}, "enemyMeleDmg");
-			}
-		}, 150);
 	}
 }
 

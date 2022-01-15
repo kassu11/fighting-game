@@ -1,4 +1,4 @@
-function AddBattleParciles({x, y, dmg, bullet} = {}, type, target) {
+function AddBattleParciles({x, y, dmg, bullet, x2, y2} = {}, type, target) {
 	const box = document.querySelector("#figtingScreen .effectContainer");
 	if(type == "explosion") {
 		const div = document.createElement("div");
@@ -14,7 +14,7 @@ function AddBattleParciles({x, y, dmg, bullet} = {}, type, target) {
 		div.style.top = y + "px";
 		removeElement(div, 2000);
 		box.append(div);
-	} else if(type == "meleDmg" || type == "enemyMeleDmg" || type == "poison") {
+	} else if(type == "meleDmg" || type == "enemyMeleDmg" || type == "poison" || type == "heal" || type == "mana") {
 		if(dmg == null || dmg == NaN) return;
 		const min = 100,
 					max = 300;
@@ -28,8 +28,10 @@ function AddBattleParciles({x, y, dmg, bullet} = {}, type, target) {
 		p.style.left = x + "px";
 		p.style.top = y - 60 + "px";
 		if(type == "meleDmg") p.style.fontSize = random(45, 70) + "px";
-		else if(type == "enemyMeleDmg" || type == "poison") p.style.fontSize = random(70, 100) + "px";
+		else if(type == "enemyMeleDmg" || type == "poison" || type == "heal" || type == "mana") p.style.fontSize = random(70, 100) + "px";
 		if(type == "poison") p.classList.add("poison");
+		if(type == "heal") p.classList.add("heal");
+		if(type == "mana") p.classList.add("mana");
 		setTimeout(v => {
 			p.style.marginLeft = num + "px";
 			p.style.transform = `translateX(-50%) rotate(${random(-20, 20)}deg)`;
@@ -59,12 +61,25 @@ function AddBattleParciles({x, y, dmg, bullet} = {}, type, target) {
 			}, 20);
 			removeElement(img, 2000);
 		}
-	} else if(bullet) {
+	} else if(bullet && type == "bullet") {
 		const [div] = emmet("div.bulletContainer>img");
 		div.querySelector("img").src = "./images/" + bullet.image;
 		div.style.left = x + "px";
 		div.style.top = y + "px";
 		div.style.setProperty("--rotate", `${random(0, 360)}deg`);
+		div.style.setProperty("--rotateZ", `${bullet.bulletRotate}deg`);
+		box.append(div);
+		removeElement(div, 1000)
+	} else if(bullet && type == "bullet2") {
+		const [div] = emmet("div.bulletContainer2>img");
+		div.querySelector("img").src = "./images/" + bullet.image;
+		const rotation = Math.atan2(y2 - y, x2 - x) * 180 / Math.PI + 135;
+		
+		div.style.setProperty("--x1", `${x}px`);
+		div.style.setProperty("--y1", `${y}px`);
+		div.style.setProperty("--x2", `${x2}px`);
+		div.style.setProperty("--y2", `${y2}px`);
+		div.style.setProperty("--rotate", `${rotation}deg`);
 		div.style.setProperty("--rotateZ", `${bullet.bulletRotate}deg`);
 		box.append(div);
 		removeElement(div, 1000)

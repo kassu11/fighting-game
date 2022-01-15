@@ -22,6 +22,7 @@ html {
 		height: 100%;
 		overflow: hidden;
 		display: unset;
+		user-select: none;
 
 		@at-root #figthEndScreen {
 			position: absolute;
@@ -324,6 +325,7 @@ html {
 				max-width: 100%;
 				max-height: 100%;
 				display: flex;
+				user-select: none;
 				
 				@at-root #figtingScreen .enemyCard {
 					position: relative;

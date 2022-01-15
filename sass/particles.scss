@@ -88,6 +88,14 @@
 			color: rgb(0, 255, 21);
 			text-shadow: 0 0 9px #15ff00d9, 5px 5px #005400, 5px 5px 9px #00ff0d96;
 		}
+		.heal {
+			color: rgb(255, 0, 76);
+			text-shadow: 0 0 9px #ff006ad9, 5px 5px #540031, 5px 5px 9px #ff008c96;
+		}
+		.mana {
+			color: rgb(0, 140, 255);
+			text-shadow: 0 0 9px #0099ffd9, 5px 5px #003254, 5px 5px 9px #00a2ff96;
+		}
 
 		.stab {
 			--width: -416px;
@@ -139,6 +147,38 @@
 				width: 1000%;
 				image-rendering: pixelated;
 				image-rendering: optimizespeed;
+				transform: translateY(-50%);
+			}
+		}
+
+		.bulletContainer2 {
+			--x1: 0px;
+			--y1: 0px;
+			--x2: 0px;
+			--y2: 0px;
+			--rotate: 0deg;
+			--rotateZ: 0deg;
+			transform: rotate(var(--rotate)) rotateZ(var(--rotateZ));
+			position: absolute;
+			width: 100px;
+    	height: 100px;
+			left: var(--x1);
+			top: var(--y1);
+			animation-timing-function: ease-in;
+			animation-duration: 1s;
+			animation-name: moveBullet2;
+			animation-fill-mode: forwards;
+			transform-origin: 5px 5px;
+
+			img {
+				position: absolute;
+				max-width: 100%;
+				max-height: 100%;
+				object-fit: contain;
+				width: 1000%;
+				image-rendering: pixelated;
+				image-rendering: optimizespeed;
+				transform: translateY(-50%);
 			}
 		}
 	}
@@ -147,7 +187,6 @@
 @keyframes playFrames {
 	100% {background-position: var(--width)}
 }
-
 @keyframes moveBullet {
 	0% {
 		transform: rotate(var(--rotate)) translate(var(--distance), var(--distance)) rotateZ(var(--rotateZ));
@@ -164,5 +203,23 @@
 	70%, 100% {
 		opacity: 0;
 		transform: rotate(var(--rotate)) translate(0px, 0px) rotateZ(var(--rotateZ));
+	}
+}
+@keyframes moveBullet2 {
+	0% {
+		left: var(--x1);
+		top: var(--y1);
+		opacity: 1;
+	}
+
+	20% {left: calc(var(--x2) + 7px); top: calc(var(--y2) + 15px)}
+	22% {left: calc(var(--x2) - 4px); top: calc(var(--y2) + 3px)}
+	30% {left: var(--x2); top: var(--y2)}
+	50% {opacity: 1}
+	
+	70%, 100% {
+		left: var(--x2);
+		top: var(--y2);
+		opacity: 0;
 	}
 }

@@ -222,7 +222,7 @@ function dropsFromLootTable(lootTable = []) {
 	const items = [];
 
 	lootTable?.forEach(drop => {
-		const r = random(1, 100);
+		const r = random(100);
 		if(r > drop.chance || drop.chance == null) return;
 		if(drop?.type == "all") typeAll(drop);
 		else if(drop?.type == "one") typeOne(drop);
@@ -278,3 +278,25 @@ function dropsFromLootTable(lootTable = []) {
 //     (A * B * C * D)
 //   );
 // }
+
+
+
+function printEnemyDropRates(id) {
+	const mahikset = {};
+	const max = 10000;
+	for(let i = 0; i < max; i++) {
+		const enemy = new Enemy(enemies[id]);
+		enemy.drops.forEach(v => {
+			const key = JSON.stringify(v);
+			mahikset[key] ??= 0;
+			mahikset[key]++;
+		});
+	}
+	
+	for(const [key, value] of Object.entries(mahikset)) {
+		const taulu = JSON.parse(key);
+		console.log(`ID: ${taulu.item.id} chance: ${taulu.chance}`, value, value / max)
+	}
+}
+
+printEnemyDropRates("goblin")

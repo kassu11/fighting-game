@@ -305,6 +305,8 @@ function Item(item, user) {
 	this.selfEffect = base.selfEffect?.map(effect => new Effect(effect)) ?? [];
 	this.giveEffect = base.giveEffect?.map(effect => new Effect(effect)) ?? [];
 
+	this.armorSet = base.armorSet;
+
 	this.meleDmgValue = base.meleDmgValue;
 	this.meleDmgPercentage = base.meleDmgPercentage;
 	this.rangeDmgValue = base.rangeDmgValue;
@@ -433,7 +435,7 @@ Item.prototype.hoverText = function() {
 		const oldClass = calcDmg.maxArrowDmg > oldDmgText.slice(-1) ? "lesser" : "";
 		const newClass = sameDmg ? "hidden" : calcDmg.maxArrowDmg < oldDmgText.slice(-1) ? "lesser" : "";
 
-		text.push(`\nArrow damage: §<cl>dmg ${oldClass} ${sameDmg ? "" : "line"}<cl>${oldDmgText.join("-")}§<cl>dmg ${newClass}<cl> ${dmgText.join("-")}§`);
+		text.push(`\nBullet damage: §<cl>dmg ${oldClass} ${sameDmg ? "" : "line"}<cl>${oldDmgText.join("-")}§<cl>dmg ${newClass}<cl> ${dmgText.join("-")}§`);
 	}
 
 	if(this.useTime) text.push(`\nUse time: §${this.useTime} ${this.useTime > 1 ? "Rounds" : "Round"} <c>yellow<c>§`);

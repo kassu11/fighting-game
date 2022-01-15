@@ -4,6 +4,7 @@
 
 .levelMenu {
 	background: #231d11;
+	user-select: none;
 
 	#levelMenu {
 		display: unset;
@@ -175,7 +176,7 @@
 				}
 			}
 
-			:where(.complete.levelButton) {
+			:where(.completed.levelButton) {
 				.levelButtonContainer {
 					background: #095f00;
 					box-shadow: inset 0 0 0 10px #00cd01;

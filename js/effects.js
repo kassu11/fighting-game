@@ -8,7 +8,7 @@ function Effect(effect) {
 	switch(effect.id) {
 		case "Strength": {
 			this.dmgPercentage = .25 * effect.power;
-			this.img = "./images/dmgBuff.png"
+			this.img = "./images/wooden-dagger.png"
 			break;
 		}
 		case "Weakness": {
@@ -16,7 +16,7 @@ function Effect(effect) {
 			if(effect.power <= 0) this.reduceDmg = 3;
 			else if(effect.power <= valuesArr.length) this.reduceDmg = valuesArr[effect.power - 1];
 			else this.reduceDmg = Math.round((effect.power - 3) ** 2 * 10 / 5) * 5;
-			this.img = "./images/miekka1.png";
+			this.img = "./images/heikkous.png";
 			break;
 		}
 		case "Regeneration": {
@@ -24,7 +24,7 @@ function Effect(effect) {
 			if(effect.power <= 0) this.regenHP = 3;
 			else if(effect.power <= regenArr.length) this.regenHP = regenArr[effect.power - 1];
 			else this.regenHP = Math.round((effect.power - 3) ** 2 * 10 / 5) * 5;
-			this.img = "./images/miekka1.png";
+			this.img = "./images/regen_icon.png";
 			break;
 		}
 		case "Poison": {
@@ -32,7 +32,7 @@ function Effect(effect) {
 			if(effect.power <= 0) this.poisonHP = 3;
 			else if(effect.power <= poisonArr.length) this.poisonHP = poisonArr[effect.power - 1];
 			else this.poisonHP = Math.round((effect.power - 3) ** 2 * 10 / 5) * 5;
-			this.img = "./images/miekka1.png";
+			this.img = "./images/slime_ball.png";
 			break;
 		}
 	}
@@ -42,22 +42,48 @@ function giveEffectsToPlAndEn(pl = player, en = currentLevel.enemies, lite = fal
 	pl.effects.forEach(effect => {
 		if(effect.regenHP) pl.hp = Math.min(pl.maxHpF(), pl.hp + effect.regenHP);
 		if(effect.poisonHP) pl.hp -= effect.poisonHP;
+		if(lite) return;
+
+		if(effect.regenHP) {
+			const area = 50;
+			const {width, left, top, height} = figtingScreen.querySelector(".playerBox .hpBox")?.getBoundingClientRect();
+			const x = random(width / 2 - area, width / 2 + area);
+			const y = random(top, top + height) - 50;
+			AddBattleParciles({x, y, dmg: effect.regenHP}, "heal");
+		}
+		if(effect.poisonHP) {
+			const area = 50;
+			const {width, left, top, height} = figtingScreen.querySelector(".playerBox .hpBox")?.getBoundingClientRect();
+			const x = random(width / 2 - area, width / 2 + area);
+			const y = random(top, top + height) - 100;
+			AddBattleParciles({x, y, dmg: effect.poisonHP}, "poison");
+		}
+
 	});
 
 	en.forEach((enemy, card) => {
 		enemy.effects.forEach(effect => {
 			if(effect.regenHP) enemy.hp = Math.min(enemy.maxHp, enemy.hp + effect.regenHP);
+			if(effect.poisonHP) enemy.hp -= effect.poisonHP 
+			
+			if(lite) return;
+
+			if(effect.regenHP) {
+				const padding = 10;
+				const {width, left, top, height} = card.getBoundingClientRect();
+				const x = random(left + padding, left + width - padding);
+				const y = random(top + padding, top + height - padding);
+				AddBattleParciles({x, y, dmg: effect.regenHP}, "heal");
+			}
 			if(effect.poisonHP) {
-				enemy.hp -= effect.poisonHP;
-				if(!lite) {
-					const padding = 10;
-					const {width, left, top, height} = card.getBoundingClientRect();
-					const x = random(left + padding, left + width - padding);
-					const y = random(top + padding, top + height - padding);
-					AddBattleParciles({x, y, dmg: effect.poisonHP}, "poison");
-					shakeEnemyCard(card)
-				}
-			} if(lite) return;
+				const padding = 10;
+				const {width, left, top, height} = card.getBoundingClientRect();
+				const x = random(left + padding, left + width - padding);
+				const y = random(top + padding, top + height - padding);
+				AddBattleParciles({x, y, dmg: effect.poisonHP}, "poison");
+				shakeEnemyCard(card)
+			}
+
 			updateEnemyCard(card);
 		});
 	});

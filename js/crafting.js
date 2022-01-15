@@ -1,4 +1,4 @@
-const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes?.length).map((data, i) => new Item({...data, index: i}, player));
+const allCraftableItems = Object.values(items).filter(item => item.craftingRecipes?.length).map((data, i) => new Item({...data, index: i}));
 let lastOpenedCraftingRecipe = {height: 0, key: null}; // clears value after transition is over
 const craftingValues = {
 	gridItems: allCraftableItems,
@@ -367,7 +367,6 @@ const allItemsUsedForCrafting = allCraftableItems.reduce((ac, va) => {
 	return ac;
 }, {});
 const listOfAllItemsUsedForCrafting = Object.keys(allItemsUsedForCrafting).map(e => new Item({id: e}));
-
 
 const whatCanCraft = itemsMenu.querySelector(".whatCanCraft");
 whatCanCraft.addEventListener("input", craftWithSearch)
