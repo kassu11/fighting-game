@@ -376,6 +376,7 @@ var items = {
 		name: "Life essence",
 		amount: 1,
 		tags: ["material"],
+		canEquipTo: "none",
 		image: "life_essence.png",
 	},
 	"magical_bone_tiara": {
@@ -401,6 +402,7 @@ var items = {
 		id: "slime_ball",
 		name: "Slime ball",
 		amount: 1,
+		canEquipTo: "none",
 		tags: ["material"],
 		image: "slime_ball.png",
 	},
@@ -408,6 +410,7 @@ var items = {
 		id: "glass",
 		name: "Glass",
 		amount: 1,
+		canEquipTo: "none",
 		tags: ["material"],
 		image: "glass.png",
 	},

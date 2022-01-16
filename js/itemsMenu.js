@@ -70,6 +70,13 @@ function updateItemsMenuHotbar() {
 	});
 }
 
+document.querySelector("nav.mainNav").addEventListener("click", function closePopUp() {
+	const container = document.querySelector("#itemMenuPopUp > .container");
+	container.innerHTML = "";
+	container.setAttribute("index", "");
+	while(itemsMenuHoverOpacitys.length) itemsMenuHoverOpacitys.pop().style.opacity = null;
+});
+
 itemsMenu.addEventListener("click", ({target, x, y}) => {
 	const container = itemsMenu.querySelector("#itemMenuPopUp .container");
 	const isHotbarItem = target.classList.contains("slot");

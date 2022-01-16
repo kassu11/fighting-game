@@ -478,7 +478,6 @@ function craftingItem(index, item, open = false) {
 	return craftingItemDiv;
 }
 
-
 function updateCraftingItem(index, item) {
 	const craftingItemDiv = craftInv.querySelector(`div[index="${index}"].craftingItem`);
 	const open = craftingItemDiv.classList.contains("selected");
